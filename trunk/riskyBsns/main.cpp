@@ -51,23 +51,23 @@ void initTerritoryNodes()
 		territoryNodes.add(ter);
 	}
 		//Alaska
-	territoryNodes.get(0)->setArea(V2DF(80,550),15);
+	territoryNodes.get(0)->setArea(V2DF(80,550),30);
 		//Alberta
-	territoryNodes.get(1)->setArea(V2DF(150,500),25);
+	territoryNodes.get(1)->setArea(V2DF(165,505),20);
 		//Central America
-	territoryNodes.get(2)->setArea(V2DF(175,350),55);
+	territoryNodes.get(2)->setArea(V2DF(190,360),45);
 		//Eastern United States
-	territoryNodes.get(3)->setArea(V2DF(220,430),50);
+	territoryNodes.get(3)->setArea(V2DF(220,440),40);
 		//Greenland
-	territoryNodes.get(4)->setArea(V2DF(450,575),45);
+	territoryNodes.get(4)->setArea(V2DF(465,580),40);
 		//Northwest Territory
-	territoryNodes.get(5)->setArea(V2DF(190,550),30);
+	territoryNodes.get(5)->setArea(V2DF(215,565),30);
 		//Ontario
-	territoryNodes.get(6)->setArea(V2DF(240,500),35);
+	territoryNodes.get(6)->setArea(V2DF(245,505),25);
 		//Quebec
-	territoryNodes.get(7)->setArea(V2DF(310,500),45);
+	territoryNodes.get(7)->setArea(V2DF(310,500),40);
 		//Western United States
-	territoryNodes.get(8)->setArea(V2DF(130,450),40);
+	territoryNodes.get(8)->setArea(V2DF(140,450),40);
 
 	//South America
 	//Europe
