@@ -44,12 +44,45 @@ TemplateArray<Territory *> territoryNodes;
 void initTerritoryNodes()
 {
 	Territory * ter;
-	//North America
+
+	//set continent ID
 	for(int i = 0; i < TERRITORIES_N_AMERICA; ++i)
 	{
 		ter = new Territory(CONTINENT_ID_N_AMERICA);
 		territoryNodes.add(ter);
 	}
+	for(int i = TERRITORIES_N_AMERICA; i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA); ++i)
+	{
+		ter = new Territory(CONTINENT_ID_S_AMERICA);
+		territoryNodes.add(ter);
+	}
+	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA); i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE); ++i)
+	{
+		ter = new Territory(CONTINENT_ID_EUROPE);
+		territoryNodes.add(ter);
+	}
+	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE); i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA); ++i)
+	{
+		ter = new Territory(CONTINENT_ID_AFRICA);
+		territoryNodes.add(ter);
+	}
+	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA); i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA); ++i)
+	{
+		ter = new Territory(CONTINENT_ID_ASIA);
+		territoryNodes.add(ter);
+	}
+	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA); i < TERRITORIES_TOTAL; ++i)
+	{
+		ter = new Territory(CONTINENT_ID_OCEANIA);
+		territoryNodes.add(ter);
+	}
+
+	for(int i = 0; i < territoryNodes.size(); ++i)
+	{
+		printf("i == %d, cont == %d, owner == %d\n", i, territoryNodes.get(i)->getContinent(), territoryNodes.get(i)->getOwner());
+	}
+
+	//North America
 		//Alaska
 	territoryNodes.get(0)->setArea(V2DF(80,550),30);
 		//Alberta
@@ -74,7 +107,6 @@ void initTerritoryNodes()
 	//Africa
 	//Asia
 	//Oceania
-	printf("num_ter == %d\n", TERRITORIES_N_AMERICA);
 	printf("size == %d\n", territoryNodes.size());
 }
 #include "draw.h"
