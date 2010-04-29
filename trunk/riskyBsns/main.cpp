@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "glut.h"
+#include "random.h"
+#include "v2d.h"
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT);
