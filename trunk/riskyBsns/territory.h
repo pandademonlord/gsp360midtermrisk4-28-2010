@@ -56,5 +56,9 @@ public:
 	{
 		m_area.glDraw();
 	}
+	bool isWithin(V2DF click)
+	{
+		return m_area.isClickable(click);
+	}
 	~Territory(){}
 };
