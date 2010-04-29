@@ -11,11 +11,21 @@ void keyboard(unsigned char key, int x, int y)
 	switch(key)
 	{
 	case ' ':
-		printf("space was pressed\n");
+		//printf("space was pressed\n");
 		break;
 	}
 	glutPostRedisplay();
 }
+
+/** @param a_width/a_height new dimensions of the resized window */
+void reshape(int a_width, int a_height)
+{
+	// have the graphics context calculate the changes...
+	g_screen.reshape(a_width, a_height);
+	// now, lets see it!
+	glutPostRedisplay();
+}
+
 
 /** @param x/y the coordinate of where the mouse is */
 void passiveMotion(int x, int y)
@@ -33,6 +43,9 @@ void mouse(int button, int state, int x, int y)
 {
 	switch(button)
 	{
+		V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
+		printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
+		break;
 	}
 	glutPostRedisplay();
 }
