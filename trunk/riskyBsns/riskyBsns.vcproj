@@ -175,6 +175,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\drawing.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\glutrenderingcontext.cpp"
 				>
 			</File>
@@ -193,7 +197,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\circle.h"
+				>
+			</File>
+			<File
 				RelativePath=".\draw.h"
+				>
+			</File>
+			<File
+				RelativePath=".\drawing.h"
 				>
 			</File>
 			<File
@@ -209,11 +221,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\shape.h"
+				>
+			</File>
+			<File
 				RelativePath=".\templatearray.h"
 				>
 			</File>
 			<File
 				RelativePath=".\templatevector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\territory.h"
 				>
 			</File>
 			<File
