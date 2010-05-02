@@ -47,6 +47,8 @@ public:
 		m_troops_deployed += a_numTroops;
 		if(m_troops_deployed > 12)
 			m_troops_deployed = 12;
+		else if(m_troops_deployed < 1)
+			m_troops_deployed = 1;
 	}
 	//returns the # of existing connections
 	short getNumberConnections(){return this->m_connect.size();}
