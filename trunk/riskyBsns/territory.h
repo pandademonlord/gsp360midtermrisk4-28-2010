@@ -50,6 +50,16 @@ public:
 	}
 	//returns the # of existing connections
 	short getNumberConnections(){return this->m_connect.size();}
+	//checks if the passed territoryis connected to this territory	
+	bool isConnectedTo(Territory* a_territory)
+	{
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if(a_territory == this->m_connect.get(i))
+				return true;
+		}
+		return false;
+	}
 	//returns the territory's position as a V2D
 	V2DF getPosition() {return this->m_area.getCenter();}
 	//returns the continent to which the territory belongs to

@@ -55,32 +55,32 @@ void initTerritoryNodes()
 	Territory * ter;
 
 	//set continent ID
-	for(int i = 0; i < TERRITORIES_N_AMERICA; ++i)
+	for(int i = TERRITORIES_ST_N_AMERICA; i < TERRITORIES_ST_S_AMERICA; ++i)
 	{
 		ter = new Territory(CONTINENT_ID_N_AMERICA);
 		territoryNodes.add(ter);
 	}
-	for(int i = TERRITORIES_N_AMERICA; i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA); ++i)
+	for(int i = TERRITORIES_ST_S_AMERICA; i < TERRITORIES_ST_EUROPE; ++i)
 	{
 		ter = new Territory(CONTINENT_ID_S_AMERICA);
 		territoryNodes.add(ter);
 	}
-	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA); i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE); ++i)
+	for(int i = TERRITORIES_ST_EUROPE; i < TERRITORIES_ST_AFRICA; ++i)
 	{
 		ter = new Territory(CONTINENT_ID_EUROPE);
 		territoryNodes.add(ter);
 	}
-	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE); i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA); ++i)
+	for(int i = TERRITORIES_ST_AFRICA; i < TERRITORIES_ST_ASIA; ++i)
 	{
 		ter = new Territory(CONTINENT_ID_AFRICA);
 		territoryNodes.add(ter);
 	}
-	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA); i < (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA); ++i)
+	for(int i = TERRITORIES_ST_ASIA; i < TERRITORIES_ST_OCEANIA; ++i)
 	{
 		ter = new Territory(CONTINENT_ID_ASIA);
 		territoryNodes.add(ter);
 	}
-	for(int i = (TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA); i < TERRITORIES_TOTAL; ++i)
+	for(int i = TERRITORIES_ST_OCEANIA; i < TERRITORIES_TOTAL; ++i)
 	{
 		ter = new Territory(CONTINENT_ID_OCEANIA);
 		territoryNodes.add(ter);
@@ -91,28 +91,55 @@ void initTerritoryNodes()
 	territoryNodes.get(0)->setArea(V2DF(80,550),30);
 	territoryNodes.get(0)->addConnection(territoryNodes.get(1));
 	territoryNodes.get(0)->addConnection(territoryNodes.get(5));
+	//territoryNodes.get(0)->addConnection(territoryNodes.get(TERRITORIES_ST_ASIA+5));
 		//2. Alberta
 	territoryNodes.get(1)->setArea(V2DF(165,505),20);
-	//territoryNodes.get(1)->addConnection(territoryNodes.get(0));
-	//territoryNodes.get(1)->addConnection(territoryNodes.get(5));
-	//territoryNodes.get(1)->addConnection(territoryNodes.get(6));
-	//territoryNodes.get(1)->addConnection(territoryNodes.get(8));
+	territoryNodes.get(1)->addConnection(territoryNodes.get(0));
+	territoryNodes.get(1)->addConnection(territoryNodes.get(5));
+	territoryNodes.get(1)->addConnection(territoryNodes.get(6));
+	territoryNodes.get(1)->addConnection(territoryNodes.get(8));
 		//3. Central America
 	territoryNodes.get(2)->setArea(V2DF(190,360),45);
-	//territoryNodes.get(2)->addConnection(territoryNodes.get(3));
-	//territoryNodes.get(2)->addConnection(territoryNodes.get(8));
+	territoryNodes.get(2)->addConnection(territoryNodes.get(3));
+	territoryNodes.get(2)->addConnection(territoryNodes.get(8));
+	//territoryNodes.get(2)->addConnection(territoryNodes.get(TERRITORIES_ST_S_AMERICA+3));
 		//4. Eastern United States
 	territoryNodes.get(3)->setArea(V2DF(220,440),40);
+	territoryNodes.get(3)->addConnection(territoryNodes.get(2));
+	territoryNodes.get(3)->addConnection(territoryNodes.get(6));
+	territoryNodes.get(3)->addConnection(territoryNodes.get(7));
+	territoryNodes.get(3)->addConnection(territoryNodes.get(8));
 		//5. Greenland
 	territoryNodes.get(4)->setArea(V2DF(465,580),40);
+	territoryNodes.get(4)->addConnection(territoryNodes.get(5));
+	territoryNodes.get(4)->addConnection(territoryNodes.get(6));
+	territoryNodes.get(4)->addConnection(territoryNodes.get(7));
+	//territoryNodes.get(4)->addConnection(territoryNodes.get(TERRITORIES_ST_EUROPE+1));
 		//6. Northwest Territory
 	territoryNodes.get(5)->setArea(V2DF(215,565),30);
+	territoryNodes.get(5)->addConnection(territoryNodes.get(0));
+	territoryNodes.get(5)->addConnection(territoryNodes.get(1));
+	territoryNodes.get(5)->addConnection(territoryNodes.get(4));
+	territoryNodes.get(5)->addConnection(territoryNodes.get(6));
 		//7. Ontario
 	territoryNodes.get(6)->setArea(V2DF(245,505),25);
+	territoryNodes.get(6)->addConnection(territoryNodes.get(1));
+	territoryNodes.get(6)->addConnection(territoryNodes.get(3));
+	territoryNodes.get(6)->addConnection(territoryNodes.get(4));
+	territoryNodes.get(6)->addConnection(territoryNodes.get(5));
+	territoryNodes.get(6)->addConnection(territoryNodes.get(7));
+	territoryNodes.get(6)->addConnection(territoryNodes.get(8));
 		//8. Quebec
 	territoryNodes.get(7)->setArea(V2DF(310,500),40);
+	territoryNodes.get(7)->addConnection(territoryNodes.get(3));
+	territoryNodes.get(7)->addConnection(territoryNodes.get(4));
+	territoryNodes.get(7)->addConnection(territoryNodes.get(6));
 		//9. Western United States
 	territoryNodes.get(8)->setArea(V2DF(140,450),40);
+	territoryNodes.get(8)->addConnection(territoryNodes.get(1));
+	territoryNodes.get(8)->addConnection(territoryNodes.get(2));
+	territoryNodes.get(8)->addConnection(territoryNodes.get(3));
+	territoryNodes.get(8)->addConnection(territoryNodes.get(6));
 
 	//South America
 		//1. Argentina
