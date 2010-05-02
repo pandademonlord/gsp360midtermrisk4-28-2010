@@ -186,7 +186,7 @@ void initTerritoryNodes()
 
 	for(int i = 0; i < territoryNodes.size(); ++i)
 	{
-		printf("i == %d, cont == %d, #connect == %d\n", i, territoryNodes.get(i)->getContinent(), territoryNodes.get(i)->getNumberConnections());
+		printf("i == %d, contID == %d, #connect == %d, #troop == %d\n", i, territoryNodes.get(i)->getContinent(), territoryNodes.get(i)->getNumberConnections(), territoryNodes.get(i)->getTroops());
 	}
 	//printf("size == %d\n", territoryNodes.size());
 }

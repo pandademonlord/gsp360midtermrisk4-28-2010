@@ -8,8 +8,7 @@ void display()
 	g_screen.glDraw(DASH_SIZE);	// draw the cartisian plane in white
 
 	//draw code
-	//for(int i = 0; i < territoryNodes.size(); ++i)
-	for(int i = 0; i < TERRITORIES_N_AMERICA; ++i)
+	for(int i = 0; i < territoryNodes.size(); ++i)
 	{
 		territoryNodes.get(i)->glDraw();
 	}
