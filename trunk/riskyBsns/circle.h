@@ -40,6 +40,6 @@ public:
 		else
 			return false;
 	}
-	V2DF getCenter(int get){return center;}
+	V2DF getCenter(){return center;}
 	float getRadius(){return radius;}
 };

@@ -4,34 +4,43 @@
 #include "GLUTRenderingContext.h"
 #include "random.h"
 
-#define SCREEN_WIDTH			1230
-#define SCREEN_HEIGHT			630
-#define SCREEN_MAX_X			SCREEN_WIDTH
-#define SCREEN_MAX_Y			SCREEN_HEIGHT
-#define SCREEN_MIN_X			0
-#define SCREEN_MIN_Y			0
-#define	COLOR_ALPHA				1.0
-#define COLOR_BLACK				.0,.0,.0
-#define COLOR_CYAN				0xffff00
-#define COLOR_GREY				.5,.5,.5
-#define CONTINENT_ID_N_AMERICA	0
-#define CONTINENT_ID_S_AMERICA	1
-#define CONTINENT_ID_EUROPE		2
-#define CONTINENT_ID_AFRICA		3
-#define CONTINENT_ID_ASIA		4
-#define CONTINENT_ID_OCEANIA	5
-#define DASH_SIZE				.5
-#define INIT_WINDOW_X			10
-#define INIT_WINDOW_Y			50
-#define OWNER_NONE				-1
-#define TIMER_VALUE				20
-#define TERRITORIES_N_AMERICA	9
-#define TERRITORIES_S_AMERICA	4
-#define TERRITORIES_EUROPE		7
-#define TERRITORIES_AFRICA		6
-#define TERRITORIES_ASIA		12
-#define TERRITORIES_OCEANIA		4
-#define TERRITORIES_TOTAL		(TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA + TERRITORIES_OCEANIA)
+#define SCREEN_WIDTH				1230
+#define SCREEN_HEIGHT				630
+#define SCREEN_MAX_X				SCREEN_WIDTH
+#define SCREEN_MAX_Y				SCREEN_HEIGHT
+#define SCREEN_MIN_X				0
+#define SCREEN_MIN_Y				0
+#define	COLOR_ALPHA					1.0
+#define COLOR_BLACK					.0,.0,.0
+#define COLOR_CYAN					0xffff00
+#define COLOR_GREY					.5,.5,.5
+#define CONTINENT_ID_N_AMERICA		0
+#define CONTINENT_ID_S_AMERICA		1
+#define CONTINENT_ID_EUROPE			2
+#define CONTINENT_ID_AFRICA			3
+#define CONTINENT_ID_ASIA			4
+#define CONTINENT_ID_OCEANIA		5
+#define DASH_SIZE					.5
+#define INIT_WINDOW_X				10
+#define INIT_WINDOW_Y				50
+#define OWNER_NONE					-1
+#define TIMER_VALUE					20
+//number of territories in specified continent
+#define TERRITORIES_N_AMERICA		9
+#define TERRITORIES_S_AMERICA		4
+#define TERRITORIES_EUROPE			7
+#define TERRITORIES_AFRICA			6
+#define TERRITORIES_ASIA			12
+#define TERRITORIES_OCEANIA			4
+//total number of territories (42)
+#define TERRITORIES_TOTAL			(TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA + TERRITORIES_OCEANIA)
+//the element at which the territories for the specified continent start
+#define TERRITORIES_ST_N_AMERICA	0
+#define TERRITORIES_ST_S_AMERICA	(TERRITORIES_ST_N_AMERICA + TERRITORIES_N_AMERICA)
+#define TERRITORIES_ST_EUROPE		(TERRITORIES_ST_S_AMERICA + TERRITORIES_S_AMERICA)
+#define TERRITORIES_ST_AFRICA		(TERRITORIES_ST_EUROPE + TERRITORIES_EUROPE)
+#define TERRITORIES_ST_ASIA			(TERRITORIES_ST_AFRICA + TERRITORIES_AFRICA)
+#define TERRITORIES_ST_OCEANIA		(TERRITORIES_ST_ASIA + TERRITORIES_ASIA)
 
 #include "templatearray.h"
 #include "territory.h"
@@ -77,37 +86,82 @@ void initTerritoryNodes()
 		territoryNodes.add(ter);
 	}
 
-	for(int i = 0; i < territoryNodes.size(); ++i)
-	{
-		printf("i == %d, cont == %d, owner == %d\n", i, territoryNodes.get(i)->getContinent(), territoryNodes.get(i)->getOwner());
-	}
-
 	//North America
-		//Alaska
+		//1. Alaska
 	territoryNodes.get(0)->setArea(V2DF(80,550),30);
-		//Alberta
+	territoryNodes.get(0)->addConnection(territoryNodes.get(1));
+	territoryNodes.get(0)->addConnection(territoryNodes.get(5));
+		//2. Alberta
 	territoryNodes.get(1)->setArea(V2DF(165,505),20);
-		//Central America
+	//territoryNodes.get(1)->addConnection(territoryNodes.get(0));
+	//territoryNodes.get(1)->addConnection(territoryNodes.get(5));
+	//territoryNodes.get(1)->addConnection(territoryNodes.get(6));
+	//territoryNodes.get(1)->addConnection(territoryNodes.get(8));
+		//3. Central America
 	territoryNodes.get(2)->setArea(V2DF(190,360),45);
-		//Eastern United States
+	//territoryNodes.get(2)->addConnection(territoryNodes.get(3));
+	//territoryNodes.get(2)->addConnection(territoryNodes.get(8));
+		//4. Eastern United States
 	territoryNodes.get(3)->setArea(V2DF(220,440),40);
-		//Greenland
+		//5. Greenland
 	territoryNodes.get(4)->setArea(V2DF(465,580),40);
-		//Northwest Territory
+		//6. Northwest Territory
 	territoryNodes.get(5)->setArea(V2DF(215,565),30);
-		//Ontario
+		//7. Ontario
 	territoryNodes.get(6)->setArea(V2DF(245,505),25);
-		//Quebec
+		//8. Quebec
 	territoryNodes.get(7)->setArea(V2DF(310,500),40);
-		//Western United States
+		//9. Western United States
 	territoryNodes.get(8)->setArea(V2DF(140,450),40);
 
 	//South America
+		//1. Argentina
+		//2. Brazil
+		//3. Peru
+		//4. Venezuela
+
 	//Europe
+		//1. Great Britain
+		//2. Iceland
+		//3. Northern Europe
+		//4. Scandinavia
+		//5. Southern Europe
+		//6. Russia
+		//7. Western Europe
+
 	//Africa
+		//1. Congo
+		//2. East Africa
+		//3. Egypt
+		//4. Madagascar
+		//5. North Africa
+		//6. South Africa
+
 	//Asia
+		//1. Afghanistan
+		//2. China
+		//3. India
+		//4. Irkutsk
+		//5. Japan
+		//6. Kamchatka
+		//7. Middle East
+		//8. Mongolia
+		//9. Siam
+		//10. Siberia
+		//11. Ural
+		//12. Yakutsk
+
 	//Oceania
-	printf("size == %d\n", territoryNodes.size());
+		//1. Eastern Australia
+		//2. Indonesia
+		//3. New Guinea
+		//4. Western Australia
+
+	for(int i = 0; i < territoryNodes.size(); ++i)
+	{
+		printf("i == %d, cont == %d, #connect == %d\n", i, territoryNodes.get(i)->getContinent(), territoryNodes.get(i)->getNumberConnections());
+	}
+	//printf("size == %d\n", territoryNodes.size());
 }
 #include "draw.h"
 #include "eventhandlers.h"
