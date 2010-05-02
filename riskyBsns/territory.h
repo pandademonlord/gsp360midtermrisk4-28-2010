@@ -41,11 +41,17 @@ public:
 	{
 		m_ownerID = a_ownerID;
 	}
-	//sets how many troops are deployed
-	void setTroopsDeployed(short a_numTroops)
+	//adds troops to the current # deployed
+	void addTroopsDeployed(short a_numTroops)
 	{
-		m_troops_deployed = a_numTroops;
+		m_troops_deployed += a_numTroops;
+		if(m_troops_deployed > 12)
+			m_troops_deployed = 12;
 	}
+	//returns the # of existing connections
+	short getNumberConnections(){return this->m_connect.size();}
+	//returns the territory's position as a V2D
+	V2DF getPosition() {return this->m_area.getCenter();}
 	//returns the continent to which the territory belongs to
 	short getContinent(){return m_continentID;}
 	//returns the owner's ID
@@ -55,6 +61,13 @@ public:
 	void glDraw()
 	{
 		m_area.glDraw();
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			glBegin(GL_LINES);
+			this->getPosition().glVertex();
+			this->m_connect.get(i)->getPosition().glVertex();
+			glEnd();
+		}
 	}
 	bool isWithin(V2DF click)
 	{
