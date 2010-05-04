@@ -26,28 +26,61 @@ void reshape(int a_width, int a_height)
 	glutPostRedisplay();
 }
 
-
-/** @param x/y the coordinate of where the mouse is */
-void passiveMotion(int x, int y)
-{
-	//printf("mouse moved (pixel location: %d, %d)\n",x,y);
-}
-
 /** @param x/y the coordinate of where the mouse is being dragged */
 void draggedMotion(int x, int y)
 {
 	//printf("mouse dragged (pixel location: %d, %d)\n",x,y);
 }
 
+/** @param x/y the coordinate of where the mouse is */
+void passiveMotion(int x, int y)
+{
+	//printf("mouse moved (pixel location: %d, %d)\n",x,y);
+	flags[FLAG_WITHIN_AREA] = false;
+	static short prev_state = false;
+	V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
+	//for(int i = 0; i < territoryNodes.size(); ++i)
+	for(int i = 0; i < TERRITORIES_N_AMERICA; ++i)
+	{
+		if(territoryNodes.get(i)->isWithin(click))
+		{
+			flags[FLAG_WITHIN_AREA] = true;
+			flags[FLAG_CLICKED_TER] = i;
+			break;
+		}
+	}
+	if(flags[FLAG_WITHIN_AREA])
+		territoryNodes.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_Y);
+	else
+		territoryNodes.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_N);
+	if(prev_state != flags[FLAG_WITHIN_AREA])
+	{	
+		prev_state = flags[FLAG_WITHIN_AREA];
+		glutPostRedisplay();
+	}
+	//printf("flags[FLAG_WITHIN_AREA] == %d, flags[FLAG_CLICKED_TER] == %d\n", flags[FLAG_WITHIN_AREA], flags[FLAG_CLICKED_TER]);
+}
+
 void mouse(int button, int state, int x, int y)
 {
+	//printf("button %d, state %d,  x %d, y %d\n", button, state, x, y);
 	switch(button)
 	{
-		V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
-		printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
+	case GLUT_LEFT_BUTTON:
+		switch(state)
+		{
+		case STATE_MOUSE_BUTTON_DN:
+			if(flags[FLAG_WITHIN_AREA])
+				printf("clicked territory #%d\n", flags[FLAG_CLICKED_TER]);
+			break;
+		case STATE_MOUSE_BUTTON_UP:
+			break;
+		}
+		//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
+		//printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
 		break;
 	}
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
 
 /** @return true if the game changed state and should redraw */

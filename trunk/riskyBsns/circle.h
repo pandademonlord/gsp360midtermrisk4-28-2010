@@ -11,10 +11,10 @@ protected:
 	V2DF center;
 	float radius;
 public:
-	Circle(V2DF center, float radius)
+	Circle(V2DF a_center, float a_radius)
 	{
-		this->center = center;
-		this->radius = radius;
+		this->center = a_center;
+		this->radius = a_radius;
 	}
 	Circle()
 	{
@@ -31,14 +31,11 @@ public:
 	void glDraw()
 	{
 		glColor3ub(c_r, c_g, c_b);
-		glDrawCircle(center.getX(), center.getY(), radius);
+		glDrawCircle(this->center.getX(), this->center.getY(), this->radius);
 	}
 	bool isClickable(V2DF &click)
 	{
-		if(click.isWithin(radius, this->center))
-			return true;
-		else
-			return false;
+		return click.isWithin(this->radius, this->center);
 	}
 	V2DF getCenter(){return center;}
 	float getRadius(){return radius;}

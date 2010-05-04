@@ -9,6 +9,4 @@ public:
 	{
 		c_r = r;	c_g = g;	c_b = b;
 	}
-	virtual void glDraw(){};
-	virtual bool isClickable(V2DF &){return false;}
 };

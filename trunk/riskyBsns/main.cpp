@@ -14,6 +14,10 @@
 #define COLOR_BLACK					.0,.0,.0
 #define COLOR_CYAN					0xffff00
 #define COLOR_GREY					.5,.5,.5
+#define COLOR_RED					255,0,0
+#define COLOR_WHITE					255,255,255
+#define WITHIN_TER_Y				COLOR_RED
+#define WITHIN_TER_N				COLOR_WHITE
 #define CONTINENT_ID_N_AMERICA		0
 #define CONTINENT_ID_S_AMERICA		1
 #define CONTINENT_ID_EUROPE			2
@@ -23,7 +27,12 @@
 #define DASH_SIZE					.5
 #define INIT_WINDOW_X				10
 #define INIT_WINDOW_Y				50
+#define FLAGS_NUM					2
+#define FLAG_WITHIN_AREA			0
+#define FLAG_CLICKED_TER			1
 #define OWNER_NONE					-1
+#define	STATE_MOUSE_BUTTON_DN		0
+#define STATE_MOUSE_BUTTON_UP		1
 #define TIMER_VALUE					20
 //number of territories in specified continent
 #define TERRITORIES_N_AMERICA		9
@@ -49,6 +58,7 @@
 // GLUT will not give access to the main loop, some variables MUST be global. :(
 GLUTRenderingContext g_screen(V2DF(SCREEN_WIDTH,SCREEN_HEIGHT), V2DF(SCREEN_MIN_X,SCREEN_MIN_Y), V2DF(SCREEN_MAX_X,SCREEN_MAX_Y));
 TemplateArray<Territory *> territoryNodes;
+short flags[FLAGS_NUM];
 
 void initTerritoryNodes()
 {
