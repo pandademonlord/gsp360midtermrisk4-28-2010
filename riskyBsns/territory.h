@@ -50,6 +50,11 @@ public:
 		else if(m_troops_deployed < 1)
 			m_troops_deployed = 1;
 	}
+	//sets the color to display the area
+	void setColor(short a_r, short a_g, short a_b)
+	{
+		this->m_area.setColor(a_r, a_g, a_b);
+	}
 	//returns the # of existing connections
 	short getNumberConnections(){return this->m_connect.size();}
 	//checks if the passed territoryis connected to this territory	
@@ -81,7 +86,7 @@ public:
 			glEnd();
 		}
 	}
-	bool isWithin(V2DF click)
+	bool isWithin(V2DF &click)
 	{
 		return m_area.isClickable(click);
 	}
