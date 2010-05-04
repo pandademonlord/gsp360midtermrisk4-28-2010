@@ -10,6 +10,9 @@
 #define SCREEN_MAX_Y				SCREEN_HEIGHT
 #define SCREEN_MIN_X				0
 #define SCREEN_MIN_Y				0
+#define CLICK_TWO_TERRITORIES		2
+#define CLICK_TERRITORY_ONE			0
+#define CLICK_TERRITORY_TWO			1
 #define	COLOR_ALPHA					1.0
 #define COLOR_BLACK					.0,.0,.0
 #define COLOR_CYAN					0xffff00
@@ -195,10 +198,7 @@ void initTerritoryNodes()
 		//4. Western Australia
 
 	for(int i = 0; i < territoryNodes.size(); ++i)
-	{
 		printf("i == %d, contID == %d, #connect == %d, #troop == %d\n", i, territoryNodes.get(i)->getContinent(), territoryNodes.get(i)->getNumberConnections(), territoryNodes.get(i)->getTroops());
-	}
-	//printf("size == %d\n", territoryNodes.size());
 }
 #include "draw.h"
 #include "eventhandlers.h"
