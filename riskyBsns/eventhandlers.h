@@ -46,24 +46,22 @@ void passiveMotion(int x, int y)
 		{
 			flags[FLAG_WITHIN_AREA] = true;
 			flags[FLAG_CLICKED_TER] = i;
+			territoryNodes.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_Y);
 			break;
 		}
-	}
-	if(flags[FLAG_WITHIN_AREA])
-		territoryNodes.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_Y);
-	else
 		territoryNodes.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_N);
-	if(prev_state != flags[FLAG_WITHIN_AREA])
-	{	
-		prev_state = flags[FLAG_WITHIN_AREA];
-		glutPostRedisplay();
 	}
+	glutPostRedisplay();
 	//printf("flags[FLAG_WITHIN_AREA] == %d, flags[FLAG_CLICKED_TER] == %d\n", flags[FLAG_WITHIN_AREA], flags[FLAG_CLICKED_TER]);
 }
 
 void mouse(int button, int state, int x, int y)
 {
 	//printf("button %d, state %d,  x %d, y %d\n", button, state, x, y);
+	static short setting = 0;
+	static short set1;
+	static short set2;
+	//static bool set2 = false;
 	switch(button)
 	{
 	case GLUT_LEFT_BUTTON:
@@ -71,9 +69,17 @@ void mouse(int button, int state, int x, int y)
 		{
 		case STATE_MOUSE_BUTTON_DN:
 			if(flags[FLAG_WITHIN_AREA])
-				printf("clicked territory #%d\n", flags[FLAG_CLICKED_TER]);
-			break;
-		case STATE_MOUSE_BUTTON_UP:
+			{
+				if(setting == CLICK_TERRITORY_ONE)
+					set1 = flags[FLAG_CLICKED_TER];
+				else
+					set2 = flags[FLAG_CLICKED_TER];
+				setting++;
+				setting %= CLICK_TWO_TERRITORIES;
+				if(setting == CLICK_TERRITORY_ONE)
+					printf("clicked territories #%d & #%d\n", set1, set2);
+			}
+				//printf("clicked territory #%d\n", flags[FLAG_CLICKED_TER]);
 			break;
 		}
 		//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));

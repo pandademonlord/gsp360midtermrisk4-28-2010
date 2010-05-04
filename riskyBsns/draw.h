@@ -9,9 +9,7 @@ void display()
 
 	//draw code
 	for(int i = 0; i < territoryNodes.size(); ++i)
-	{
 		territoryNodes.get(i)->glDraw();
-	}
 
 	glFlush();			// print everything to the screen
 	glutSwapBuffers();	// swap the draw buffers
