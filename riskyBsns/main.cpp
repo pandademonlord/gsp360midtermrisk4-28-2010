@@ -4,39 +4,47 @@
 #include "GLUTRenderingContext.h"
 #include "random.h"
 
+//general screen & window info
 #define SCREEN_WIDTH				1230
 #define SCREEN_HEIGHT				630
 #define SCREEN_MAX_X				SCREEN_WIDTH
 #define SCREEN_MAX_Y				SCREEN_HEIGHT
 #define SCREEN_MIN_X				0
 #define SCREEN_MIN_Y				0
+#define DASH_SIZE					.5
+#define INIT_WINDOW_X				10
+#define INIT_WINDOW_Y				50
+#define TIMER_VALUE					20
+//mouse button states
+#define	STATE_MOUSE_BUTTON_DN		0
+#define STATE_MOUSE_BUTTON_UP		1
+//flags
+#define FLAGS_NUM					2
+#define FLAG_WITHIN_AREA			0
+#define FLAG_CLICKED_TER			1
+//input
 #define CLICK_TWO_TERRITORIES		2
 #define CLICK_TERRITORY_ONE			0
 #define CLICK_TERRITORY_TWO			1
+//colors
 #define	COLOR_ALPHA					1.0
 #define COLOR_BLACK					.0,.0,.0
 #define COLOR_CYAN					0xffff00
 #define COLOR_GREY					.5,.5,.5
 #define COLOR_RED					255,0,0
 #define COLOR_WHITE					255,255,255
+//which colors to use
 #define WITHIN_TER_Y				COLOR_RED
 #define WITHIN_TER_N				COLOR_WHITE
+//continent ID's
 #define CONTINENT_ID_N_AMERICA		0
 #define CONTINENT_ID_S_AMERICA		1
 #define CONTINENT_ID_EUROPE			2
 #define CONTINENT_ID_AFRICA			3
 #define CONTINENT_ID_ASIA			4
 #define CONTINENT_ID_OCEANIA		5
-#define DASH_SIZE					.5
-#define INIT_WINDOW_X				10
-#define INIT_WINDOW_Y				50
-#define FLAGS_NUM					2
-#define FLAG_WITHIN_AREA			0
-#define FLAG_CLICKED_TER			1
+//owner ID's
 #define OWNER_NONE					-1
-#define	STATE_MOUSE_BUTTON_DN		0
-#define STATE_MOUSE_BUTTON_UP		1
-#define TIMER_VALUE					20
 //number of territories in specified continent
 #define TERRITORIES_N_AMERICA		9
 #define TERRITORIES_S_AMERICA		4
