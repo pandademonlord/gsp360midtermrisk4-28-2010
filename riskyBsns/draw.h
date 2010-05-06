@@ -9,6 +9,8 @@ void display()
 
 	//draw code
 	for(int i = 0; i < board.size(); ++i)
+		board.get(i)->drawConnections();
+	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->glDraw();
 
 	glFlush();			// print everything to the screen

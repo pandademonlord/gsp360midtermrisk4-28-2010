@@ -13,13 +13,8 @@ private:
 	short m_ownerID;
 	short m_troops_deployed;
 public:
-	Territory(short a_ID, short a_continentID)
+	void useContinentColor()
 	{
-		m_area = Circle();
-		m_ID = a_ID;
-		m_continentID = a_continentID;
-		m_ownerID = OWNER_NONE;
-		m_troops_deployed = 0;
 		switch(this->m_continentID)
 		{
 		case CONTINENT_ID_N_AMERICA:
@@ -41,6 +36,15 @@ public:
 			this->setColor(COLOR_PURPLE);
 			break;
 		}
+	}
+	Territory(short a_ID, short a_continentID)
+	{
+		m_area = Circle();
+		m_ID = a_ID;
+		m_continentID = a_continentID;
+		m_ownerID = OWNER_NONE;
+		m_troops_deployed = 0;
+		this->useContinentColor();
 	}
 	//sets the clickable size of the territory
 	void setArea(V2DF a_pos, float a_radius)
@@ -84,30 +88,6 @@ public:
 	{
 		this->m_area.setColor(a_r, a_g, a_b);
 	}
-	void useContinentColor()
-	{
-		switch(this->m_continentID)
-		{
-		case CONTINENT_ID_N_AMERICA:
-			this->setColor(COLOR_YELLOW);
-			break;
-		case CONTINENT_ID_S_AMERICA:
-			this->setColor(COLOR_RED);
-			break;
-		case CONTINENT_ID_EUROPE:
-			this->setColor(COLOR_BLUE);
-			break;
-		case CONTINENT_ID_AFRICA:
-			this->setColor(COLOR_ORANGE);
-			break;
-		case CONTINENT_ID_ASIA:
-			this->setColor(COLOR_GREEN);
-			break;
-		case CONTINENT_ID_OCEANIA:
-			this->setColor(COLOR_PURPLE);
-			break;
-		}
-	}
 	//returns the # of existing connections
 	short getNumberConnections(){return this->m_connect.size();}
 	//checks if the passed territoryis connected to this territory	
@@ -120,6 +100,7 @@ public:
 		}
 		return false;
 	}
+	//draw the circular clickable area
 	void glDraw()
 	{
 		m_area.glDraw();
@@ -130,7 +111,10 @@ public:
 		(this->getPosition().sum(V2DF(-15,5))).glDrawString(buffer);
 		sprintf(buffer, "#T: %d\n", this->getTroops());
 		(this->getPosition().difference(V2DF(15,5))).glDrawString(buffer);
-
+	}
+	//draws the connections to adjacent territories
+	void drawConnections()
+	{
 		//draw connections toadjacent territories
 		glColor3f(COLOR_GREY);
 		for(int i = 0; i < this->m_connect.size(); ++i)
