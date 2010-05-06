@@ -69,6 +69,8 @@ public:
 	}
 	//returns the territory's position as a V2D
 	V2DF getPosition() {return this->m_area.getCenter();}
+	//returns the territory's clickable radius
+	short getRadius(){return this->m_area.getRadius();}
 	//returns the territory's unique ID
 	short getID(){return this->m_ID;}
 	//returns the continent to which the territory belongs to
@@ -121,6 +123,13 @@ public:
 	void glDraw()
 	{
 		m_area.glDraw();
+
+		//adding text to the drawing
+		char buffer[50];
+		sprintf(buffer, "ID: %d, #T: %d", this->getID(), this->getTroops());
+		(this->getPosition().difference(V2DF((this->getRadius())/2,0))).glDrawString(buffer);
+
+		//draw connections toadjacent territories
 		glColor3f(COLOR_GREY);
 		for(int i = 0; i < this->m_connect.size(); ++i)
 		{
