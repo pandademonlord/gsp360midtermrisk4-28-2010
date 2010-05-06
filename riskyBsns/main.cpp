@@ -1,6 +1,7 @@
 #include <stdio.h>	// for printf()
 #include <time.h>	// for clock()
 
+
 #include "GLUTRenderingContext.h"
 #include "random.h"
 
@@ -29,13 +30,17 @@
 //colors
 #define	COLOR_ALPHA					1.0
 #define COLOR_BLACK					.0,.0,.0
+#define COLOR_BLUE					0,0,255
 #define COLOR_CYAN					0xffff00
+#define COLOR_GREEN					0,255,0
 #define COLOR_GREY					.5,.5,.5
+#define COLOR_ORANGE				255,191,0
+#define COLOR_PURPLE				255,0,255
 #define COLOR_RED					255,0,0
 #define COLOR_WHITE					255,255,255
+#define COLOR_YELLOW				255,255,0
 //which colors to use
-#define WITHIN_TER_Y				COLOR_RED
-#define WITHIN_TER_N				COLOR_WHITE
+#define WITHIN_TER_Y				COLOR_WHITE
 //continent ID's
 #define CONTINENT_ID_N_AMERICA		0
 #define CONTINENT_ID_S_AMERICA		1
@@ -61,6 +66,58 @@
 #define TERRITORIES_ST_AFRICA		(TERRITORIES_ST_EUROPE + TERRITORIES_EUROPE)
 #define TERRITORIES_ST_ASIA			(TERRITORIES_ST_AFRICA + TERRITORIES_AFRICA)
 #define TERRITORIES_ST_OCEANIA		(TERRITORIES_ST_ASIA + TERRITORIES_ASIA)
+//define all territory ID's
+//NORTH AMERICA
+#define ID_ALASKA					(TERRITORIES_ST_N_AMERICA + 0)
+#define ID_ALBERTA					(TERRITORIES_ST_N_AMERICA + 1)
+#define ID_C_AMERICA				(TERRITORIES_ST_N_AMERICA + 2)
+#define ID_E_US						(TERRITORIES_ST_N_AMERICA + 3)
+#define ID_GREENLAND				(TERRITORIES_ST_N_AMERICA + 4)
+#define ID_NW_TERRITORY				(TERRITORIES_ST_N_AMERICA + 5)
+#define ID_ONTARIO					(TERRITORIES_ST_N_AMERICA + 6)
+#define ID_QUEBEC					(TERRITORIES_ST_N_AMERICA + 7)
+#define ID_W_US						(TERRITORIES_ST_N_AMERICA + 8)
+//SOUTH AMERICA
+#define ID_ARGENTINA				(TERRITORIES_ST_S_AMERICA + 0)
+#define ID_BRAZIL					(TERRITORIES_ST_S_AMERICA + 1)
+#define ID_PERU						(TERRITORIES_ST_S_AMERICA + 2)
+#define ID_VENEZUELA				(TERRITORIES_ST_S_AMERICA + 3)
+//EUROPE
+#define ID_GREAT_BRITIAN			(TERRITORIES_ST_EUROPE + 0)
+#define ID_ICELAND					(TERRITORIES_ST_EUROPE + 1)
+#define ID_N_EUROPE					(TERRITORIES_ST_EUROPE + 2)
+#define ID_SCANDINAVIA				(TERRITORIES_ST_EUROPE + 3)
+#define ID_S_EUROPE					(TERRITORIES_ST_EUROPE + 4)
+#define ID_RUSSIA					(TERRITORIES_ST_EUROPE + 5)
+#define ID_W_EUROPE					(TERRITORIES_ST_EUROPE + 6)
+//AFRICA
+#define ID_CONGO					(TERRITORIES_ST_AFRICA + 0)
+#define ID_E_AFRICA					(TERRITORIES_ST_AFRICA + 1)
+#define ID_EGYPT					(TERRITORIES_ST_AFRICA + 2)
+#define ID_MADAGASCAR				(TERRITORIES_ST_AFRICA + 3)
+#define ID_N_AFRICA					(TERRITORIES_ST_AFRICA + 4)
+#define ID_S_AFRICA					(TERRITORIES_ST_AFRICA + 5)
+//ASIA
+#define ID_AFGHANISTAN				(TERRITORIES_ST_ASIA + 0)
+#define ID_CHINA					(TERRITORIES_ST_ASIA + 1)
+#define ID_INDIA					(TERRITORIES_ST_ASIA + 2)
+#define ID_IRKUTSK					(TERRITORIES_ST_ASIA + 3)
+#define ID_JAPAN					(TERRITORIES_ST_ASIA + 4)
+#define ID_KAMCHATKA				(TERRITORIES_ST_ASIA + 5)
+#define ID_MIDDLE_EAST				(TERRITORIES_ST_ASIA + 6)
+#define ID_MONGOLIA					(TERRITORIES_ST_ASIA + 7)
+#define ID_SIAM						(TERRITORIES_ST_ASIA + 8)
+#define ID_SIBERIA					(TERRITORIES_ST_ASIA + 9)
+#define ID_URAL						(TERRITORIES_ST_ASIA + 10)
+#define ID_YAKUTSK					(TERRITORIES_ST_ASIA + 11)
+//OCEANIA
+#define ID_E_AUSTRALIA				(TERRITORIES_ST_OCEANIA + 0)
+#define ID_INDONESIA				(TERRITORIES_ST_OCEANIA + 1)
+#define ID_N_GUINEA					(TERRITORIES_ST_OCEANIA + 2)
+#define ID_W_AUSTRALIA				(TERRITORIES_ST_OCEANIA + 3)
+
+#define MAPWIDTH					1230
+#define MAPHEIGHT					630
 
 #include "templatearray.h"
 #include "territory.h"
@@ -68,145 +125,309 @@
 
 // GLUT will not give access to the main loop, some variables MUST be global. :(
 GLUTRenderingContext g_screen(V2DF(SCREEN_WIDTH,SCREEN_HEIGHT), V2DF(SCREEN_MIN_X,SCREEN_MIN_Y), V2DF(SCREEN_MAX_X,SCREEN_MAX_Y));
-TemplateArray<Territory *> territoryNodes;
+TemplateArray<Territory *> board;
 short flags[FLAGS_NUM];
 
-void initTerritoryNodes()
+void initboard()
 {
 	Territory * ter;
 
 	//set continent ID
 	for(int i = TERRITORIES_ST_N_AMERICA; i < TERRITORIES_ST_S_AMERICA; ++i)
 	{
-		ter = new Territory(CONTINENT_ID_N_AMERICA);
-		territoryNodes.add(ter);
+		ter = new Territory(board.size(), CONTINENT_ID_N_AMERICA);
+		board.add(ter);
 	}
 	for(int i = TERRITORIES_ST_S_AMERICA; i < TERRITORIES_ST_EUROPE; ++i)
 	{
-		ter = new Territory(CONTINENT_ID_S_AMERICA);
-		territoryNodes.add(ter);
+		ter = new Territory(board.size(), CONTINENT_ID_S_AMERICA);
+		board.add(ter);
 	}
 	for(int i = TERRITORIES_ST_EUROPE; i < TERRITORIES_ST_AFRICA; ++i)
 	{
-		ter = new Territory(CONTINENT_ID_EUROPE);
-		territoryNodes.add(ter);
+		ter = new Territory(board.size(), CONTINENT_ID_EUROPE);
+		board.add(ter);
 	}
 	for(int i = TERRITORIES_ST_AFRICA; i < TERRITORIES_ST_ASIA; ++i)
 	{
-		ter = new Territory(CONTINENT_ID_AFRICA);
-		territoryNodes.add(ter);
+		ter = new Territory(board.size(), CONTINENT_ID_AFRICA);
+		board.add(ter);
 	}
 	for(int i = TERRITORIES_ST_ASIA; i < TERRITORIES_ST_OCEANIA; ++i)
 	{
-		ter = new Territory(CONTINENT_ID_ASIA);
-		territoryNodes.add(ter);
+		ter = new Territory(board.size(), CONTINENT_ID_ASIA);
+		board.add(ter);
 	}
 	for(int i = TERRITORIES_ST_OCEANIA; i < TERRITORIES_TOTAL; ++i)
 	{
-		ter = new Territory(CONTINENT_ID_OCEANIA);
-		territoryNodes.add(ter);
+		ter = new Territory(board.size(), CONTINENT_ID_OCEANIA);
+		board.add(ter);
 	}
 
 	//North America
 		//1. Alaska
-	territoryNodes.get(0)->setArea(V2DF(80,550),30);
-	territoryNodes.get(0)->addConnection(territoryNodes.get(1));
-	territoryNodes.get(0)->addConnection(territoryNodes.get(5));
-	//territoryNodes.get(0)->addConnection(territoryNodes.get(TERRITORIES_ST_ASIA+5));
+	board.get(ID_ALASKA)->setArea(V2DF(80,550),30);
+	board.get(ID_ALASKA)->addConnection(board.get(ID_ALBERTA));
+	board.get(ID_ALASKA)->addConnection(board.get(ID_NW_TERRITORY));
+	board.get(ID_ALASKA)->addConnection(board.get(ID_KAMCHATKA));
 		//2. Alberta
-	territoryNodes.get(1)->setArea(V2DF(165,505),20);
-	territoryNodes.get(1)->addConnection(territoryNodes.get(0));
-	territoryNodes.get(1)->addConnection(territoryNodes.get(5));
-	territoryNodes.get(1)->addConnection(territoryNodes.get(6));
-	territoryNodes.get(1)->addConnection(territoryNodes.get(8));
+	board.get(ID_ALBERTA)->setArea(V2DF(165,505),20);
+	board.get(ID_ALBERTA)->addConnection(board.get(ID_ALASKA));
+	board.get(ID_ALBERTA)->addConnection(board.get(ID_NW_TERRITORY));
+	board.get(ID_ALBERTA)->addConnection(board.get(ID_ONTARIO));
+	board.get(ID_ALBERTA)->addConnection(board.get(ID_W_US));
 		//3. Central America
-	territoryNodes.get(2)->setArea(V2DF(190,360),45);
-	territoryNodes.get(2)->addConnection(territoryNodes.get(3));
-	territoryNodes.get(2)->addConnection(territoryNodes.get(8));
-	//territoryNodes.get(2)->addConnection(territoryNodes.get(TERRITORIES_ST_S_AMERICA+3));
+	board.get(ID_C_AMERICA)->setArea(V2DF(190,360),45);
+	board.get(ID_C_AMERICA)->addConnection(board.get(ID_E_US));
+	board.get(ID_C_AMERICA)->addConnection(board.get(ID_W_US));
+	board.get(ID_C_AMERICA)->addConnection(board.get(ID_VENEZUELA));
 		//4. Eastern United States
-	territoryNodes.get(3)->setArea(V2DF(220,440),40);
-	territoryNodes.get(3)->addConnection(territoryNodes.get(2));
-	territoryNodes.get(3)->addConnection(territoryNodes.get(6));
-	territoryNodes.get(3)->addConnection(territoryNodes.get(7));
-	territoryNodes.get(3)->addConnection(territoryNodes.get(8));
+	board.get(ID_E_US)->setArea(V2DF(220,440),40);
+	board.get(ID_E_US)->addConnection(board.get(ID_C_AMERICA));
+	board.get(ID_E_US)->addConnection(board.get(ID_ONTARIO));
+	board.get(ID_E_US)->addConnection(board.get(ID_QUEBEC));
+	board.get(ID_E_US)->addConnection(board.get(ID_W_US));
 		//5. Greenland
-	territoryNodes.get(4)->setArea(V2DF(465,580),40);
-	territoryNodes.get(4)->addConnection(territoryNodes.get(5));
-	territoryNodes.get(4)->addConnection(territoryNodes.get(6));
-	territoryNodes.get(4)->addConnection(territoryNodes.get(7));
-	//territoryNodes.get(4)->addConnection(territoryNodes.get(TERRITORIES_ST_EUROPE+1));
+	board.get(ID_GREENLAND)->setArea(V2DF(465,580),40);
+	board.get(ID_GREENLAND)->addConnection(board.get(ID_NW_TERRITORY));
+	board.get(ID_GREENLAND)->addConnection(board.get(ID_ONTARIO));
+	board.get(ID_GREENLAND)->addConnection(board.get(ID_QUEBEC));
+	board.get(ID_GREENLAND)->addConnection(board.get(ID_ICELAND));
 		//6. Northwest Territory
-	territoryNodes.get(5)->setArea(V2DF(215,565),30);
-	territoryNodes.get(5)->addConnection(territoryNodes.get(0));
-	territoryNodes.get(5)->addConnection(territoryNodes.get(1));
-	territoryNodes.get(5)->addConnection(territoryNodes.get(4));
-	territoryNodes.get(5)->addConnection(territoryNodes.get(6));
+	board.get(ID_NW_TERRITORY)->setArea(V2DF(215,565),30);
+	board.get(ID_NW_TERRITORY)->addConnection(board.get(ID_ALASKA));
+	board.get(ID_NW_TERRITORY)->addConnection(board.get(ID_ALBERTA));
+	board.get(ID_NW_TERRITORY)->addConnection(board.get(ID_GREENLAND));
+	board.get(ID_NW_TERRITORY)->addConnection(board.get(ID_ONTARIO));
 		//7. Ontario
-	territoryNodes.get(6)->setArea(V2DF(245,505),25);
-	territoryNodes.get(6)->addConnection(territoryNodes.get(1));
-	territoryNodes.get(6)->addConnection(territoryNodes.get(3));
-	territoryNodes.get(6)->addConnection(territoryNodes.get(4));
-	territoryNodes.get(6)->addConnection(territoryNodes.get(5));
-	territoryNodes.get(6)->addConnection(territoryNodes.get(7));
-	territoryNodes.get(6)->addConnection(territoryNodes.get(8));
+	board.get(ID_ONTARIO)->setArea(V2DF(245,505),25);
+	board.get(ID_ONTARIO)->addConnection(board.get(ID_ALBERTA));
+	board.get(ID_ONTARIO)->addConnection(board.get(ID_E_US));
+	board.get(ID_ONTARIO)->addConnection(board.get(ID_GREENLAND));
+	board.get(ID_ONTARIO)->addConnection(board.get(ID_NW_TERRITORY));
+	board.get(ID_ONTARIO)->addConnection(board.get(ID_QUEBEC));
+	board.get(ID_ONTARIO)->addConnection(board.get(ID_W_US));
 		//8. Quebec
-	territoryNodes.get(7)->setArea(V2DF(310,500),40);
-	territoryNodes.get(7)->addConnection(territoryNodes.get(3));
-	territoryNodes.get(7)->addConnection(territoryNodes.get(4));
-	territoryNodes.get(7)->addConnection(territoryNodes.get(6));
+	board.get(ID_QUEBEC)->setArea(V2DF(310,500),40);
+	board.get(ID_QUEBEC)->addConnection(board.get(ID_E_US));
+	board.get(ID_QUEBEC)->addConnection(board.get(ID_GREENLAND));
+	board.get(ID_QUEBEC)->addConnection(board.get(ID_ONTARIO));
 		//9. Western United States
-	territoryNodes.get(8)->setArea(V2DF(140,450),40);
-	territoryNodes.get(8)->addConnection(territoryNodes.get(1));
-	territoryNodes.get(8)->addConnection(territoryNodes.get(2));
-	territoryNodes.get(8)->addConnection(territoryNodes.get(3));
-	territoryNodes.get(8)->addConnection(territoryNodes.get(6));
+	board.get(ID_W_US)->setArea(V2DF(140,450),40);
+	board.get(ID_W_US)->addConnection(board.get(ID_ALBERTA));
+	board.get(ID_W_US)->addConnection(board.get(ID_C_AMERICA));
+	board.get(ID_W_US)->addConnection(board.get(ID_E_US));
+	board.get(ID_W_US)->addConnection(board.get(ID_ONTARIO));
 
 	//South America
 		//1. Argentina
+	board.get(ID_ARGENTINA)->setArea(g_screen.convertPixelsToCartesian(V2DF(300,514)),40);
+	board.get(ID_ARGENTINA)->addConnection(board.get(ID_PERU));
+	board.get(ID_ARGENTINA)->addConnection(board.get(ID_BRAZIL));
 		//2. Brazil
+	board.get(ID_BRAZIL)->setArea(g_screen.convertPixelsToCartesian(V2DF(344,411)),40);
+	board.get(ID_BRAZIL)->addConnection(board.get(ID_ARGENTINA));
+	board.get(ID_BRAZIL)->addConnection(board.get(ID_PERU));
+	board.get(ID_BRAZIL)->addConnection(board.get(ID_VENEZUELA));
+	board.get(ID_BRAZIL)->addConnection(board.get(ID_N_AFRICA));
 		//3. Peru
+	board.get(ID_PERU)->setArea(g_screen.convertPixelsToCartesian(V2DF(285,445)),25);
+	board.get(ID_PERU)->addConnection(board.get(ID_ARGENTINA));
+	board.get(ID_PERU)->addConnection(board.get(ID_BRAZIL));
+	board.get(ID_PERU)->addConnection(board.get(ID_VENEZUELA));
 		//4. Venezuela
+	board.get(ID_VENEZUELA)->setArea(g_screen.convertPixelsToCartesian(V2DF(265,345)),35);
+	board.get(ID_VENEZUELA)->addConnection(board.get(ID_BRAZIL));
+	board.get(ID_VENEZUELA)->addConnection(board.get(ID_PERU));
+	board.get(ID_VENEZUELA)->addConnection(board.get(ID_C_AMERICA));
 
 	//Europe
 		//1. Great Britain
+	board.get(ID_GREAT_BRITIAN)->setArea(g_screen.convertPixelsToCartesian(V2DF(544,123)),20);
+	board.get(ID_GREAT_BRITIAN)->addConnection(board.get(ID_ICELAND));
+	board.get(ID_GREAT_BRITIAN)->addConnection(board.get(ID_N_EUROPE));
+	board.get(ID_GREAT_BRITIAN)->addConnection(board.get(ID_SCANDINAVIA));
+	board.get(ID_GREAT_BRITIAN)->addConnection(board.get(ID_W_EUROPE));
 		//2. Iceland
+	board.get(ID_ICELAND)->setArea(g_screen.convertPixelsToCartesian(V2DF(525,78)),15);
+	board.get(ID_ICELAND)->addConnection(board.get(ID_GREENLAND));
+	board.get(ID_ICELAND)->addConnection(board.get(ID_GREAT_BRITIAN));
+	board.get(ID_ICELAND)->addConnection(board.get(ID_SCANDINAVIA));
 		//3. Northern Europe
+	board.get(ID_N_EUROPE)->setArea(g_screen.convertPixelsToCartesian(V2DF(613,134)),20);
+	board.get(ID_N_EUROPE)->addConnection(board.get(ID_GREAT_BRITIAN));
+	board.get(ID_N_EUROPE)->addConnection(board.get(ID_SCANDINAVIA));
+	board.get(ID_N_EUROPE)->addConnection(board.get(ID_S_EUROPE));
+	board.get(ID_N_EUROPE)->addConnection(board.get(ID_RUSSIA));
+	board.get(ID_N_EUROPE)->addConnection(board.get(ID_W_EUROPE));
 		//4. Scandinavia
+	board.get(ID_SCANDINAVIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(605,85)),20);
+	board.get(ID_SCANDINAVIA)->addConnection(board.get(ID_ICELAND));
+	board.get(ID_SCANDINAVIA)->addConnection(board.get(ID_RUSSIA));
+	board.get(ID_SCANDINAVIA)->addConnection(board.get(ID_N_EUROPE));
+	board.get(ID_SCANDINAVIA)->addConnection(board.get(ID_GREAT_BRITIAN));
 		//5. Southern Europe
+	board.get(ID_S_EUROPE)->setArea(g_screen.convertPixelsToCartesian(V2DF(642,167)),20);
+	board.get(ID_S_EUROPE)->addConnection(board.get(ID_EGYPT));
+	board.get(ID_S_EUROPE)->addConnection(board.get(ID_N_AFRICA));
+	board.get(ID_S_EUROPE)->addConnection(board.get(ID_MIDDLE_EAST));
+	board.get(ID_S_EUROPE)->addConnection(board.get(ID_RUSSIA));
+	board.get(ID_S_EUROPE)->addConnection(board.get(ID_N_EUROPE));
+	board.get(ID_S_EUROPE)->addConnection(board.get(ID_W_EUROPE));
 		//6. Russia
+	board.get(ID_RUSSIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(700,112)),35);
+	board.get(ID_RUSSIA)->addConnection(board.get(ID_URAL));
+	board.get(ID_RUSSIA)->addConnection(board.get(ID_AFGHANISTAN));
+	board.get(ID_RUSSIA)->addConnection(board.get(ID_MIDDLE_EAST));
+	board.get(ID_RUSSIA)->addConnection(board.get(ID_SCANDINAVIA));
+	board.get(ID_RUSSIA)->addConnection(board.get(ID_N_EUROPE));
+	board.get(ID_RUSSIA)->addConnection(board.get(ID_S_EUROPE));
 		//7. Western Europe
+	board.get(ID_W_EUROPE)->setArea(g_screen.convertPixelsToCartesian(V2DF(560,165)),20);
+	board.get(ID_W_EUROPE)->addConnection(board.get(ID_N_AFRICA));
+	board.get(ID_W_EUROPE)->addConnection(board.get(ID_N_EUROPE));
+	board.get(ID_W_EUROPE)->addConnection(board.get(ID_GREAT_BRITIAN));
+	board.get(ID_W_EUROPE)->addConnection(board.get(ID_S_EUROPE));
 
 	//Africa
 		//1. Congo
+	board.get(ID_CONGO)->setArea(g_screen.convertPixelsToCartesian(V2DF(649,366)),30);
+	board.get(ID_CONGO)->addConnection(board.get(ID_S_AFRICA));
+	board.get(ID_CONGO)->addConnection(board.get(ID_N_AFRICA));
+	board.get(ID_CONGO)->addConnection(board.get(ID_E_AFRICA));
 		//2. East Africa
+	board.get(ID_E_AFRICA)->setArea(g_screen.convertPixelsToCartesian(V2DF(704,318)),30);
+	board.get(ID_E_AFRICA)->addConnection(board.get(ID_MIDDLE_EAST));
+	board.get(ID_E_AFRICA)->addConnection(board.get(ID_EGYPT));
+	board.get(ID_E_AFRICA)->addConnection(board.get(ID_N_AFRICA));
+	board.get(ID_E_AFRICA)->addConnection(board.get(ID_MADAGASCAR));
+	board.get(ID_E_AFRICA)->addConnection(board.get(ID_CONGO));
+	board.get(ID_E_AFRICA)->addConnection(board.get(ID_S_AFRICA));
 		//3. Egypt
+	board.get(ID_EGYPT)->setArea(g_screen.convertPixelsToCartesian(V2DF(647,242)),30);
+	board.get(ID_EGYPT)->addConnection(board.get(ID_MIDDLE_EAST));
+	board.get(ID_EGYPT)->addConnection(board.get(ID_S_EUROPE));
+	board.get(ID_EGYPT)->addConnection(board.get(ID_E_AFRICA));
+	board.get(ID_EGYPT)->addConnection(board.get(ID_N_AFRICA));
 		//4. Madagascar
+	board.get(ID_MADAGASCAR)->setArea(g_screen.convertPixelsToCartesian(V2DF(748,448)),20);
+	board.get(ID_MADAGASCAR)->addConnection(board.get(ID_E_AFRICA));
+	board.get(ID_MADAGASCAR)->addConnection(board.get(ID_S_AFRICA));
 		//5. North Africa
+	board.get(ID_N_AFRICA)->setArea(g_screen.convertPixelsToCartesian(V2DF(566,290)),50);
+	board.get(ID_N_AFRICA)->addConnection(board.get(ID_BRAZIL));
+	board.get(ID_N_AFRICA)->addConnection(board.get(ID_S_EUROPE));
+	board.get(ID_N_AFRICA)->addConnection(board.get(ID_W_EUROPE));
+	board.get(ID_N_AFRICA)->addConnection(board.get(ID_EGYPT));
+	board.get(ID_N_AFRICA)->addConnection(board.get(ID_E_AFRICA));
+	board.get(ID_N_AFRICA)->addConnection(board.get(ID_CONGO));
 		//6. South Africa
+	board.get(ID_S_AFRICA)->setArea(g_screen.convertPixelsToCartesian(V2DF(652,455)),35);
+	board.get(ID_S_AFRICA)->addConnection(board.get(ID_E_AFRICA));
+	board.get(ID_S_AFRICA)->addConnection(board.get(ID_CONGO));
+	board.get(ID_S_AFRICA)->addConnection(board.get(ID_MADAGASCAR));
 
 	//Asia
 		//1. Afghanistan
+	board.get(ID_AFGHANISTAN)->setArea(g_screen.convertPixelsToCartesian(V2DF(806,162)),35);
+	board.get(ID_AFGHANISTAN)->addConnection(board.get(ID_RUSSIA));
+	board.get(ID_AFGHANISTAN)->addConnection(board.get(ID_URAL));
+	board.get(ID_AFGHANISTAN)->addConnection(board.get(ID_CHINA));
+	board.get(ID_AFGHANISTAN)->addConnection(board.get(ID_MIDDLE_EAST));
+	board.get(ID_AFGHANISTAN)->addConnection(board.get(ID_INDIA));
 		//2. China
+	board.get(ID_CHINA)->setArea(g_screen.convertPixelsToCartesian(V2DF(937,207)),35);
+	board.get(ID_CHINA)->addConnection(board.get(ID_SIAM));
+	board.get(ID_CHINA)->addConnection(board.get(ID_INDIA));
+	board.get(ID_CHINA)->addConnection(board.get(ID_AFGHANISTAN));
+	board.get(ID_CHINA)->addConnection(board.get(ID_URAL));
+	board.get(ID_CHINA)->addConnection(board.get(ID_SIBERIA));
+	board.get(ID_CHINA)->addConnection(board.get(ID_MONGOLIA));
 		//3. India
+	board.get(ID_INDIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(865,238)),35);
+	board.get(ID_INDIA)->addConnection(board.get(ID_AFGHANISTAN));
+	board.get(ID_INDIA)->addConnection(board.get(ID_CHINA));
+	board.get(ID_INDIA)->addConnection(board.get(ID_SIAM));
+	board.get(ID_INDIA)->addConnection(board.get(ID_MIDDLE_EAST));
 		//4. Irkutsk
+	board.get(ID_IRKUTSK)->setArea(g_screen.convertPixelsToCartesian(V2DF(940,122)),25);
+	board.get(ID_IRKUTSK)->addConnection(board.get(ID_MONGOLIA));
+	board.get(ID_IRKUTSK)->addConnection(board.get(ID_KAMCHATKA));
+	board.get(ID_IRKUTSK)->addConnection(board.get(ID_YAKUTSK));
+	board.get(ID_IRKUTSK)->addConnection(board.get(ID_SIBERIA));
 		//5. Japan
+	board.get(ID_JAPAN)->setArea(g_screen.convertPixelsToCartesian(V2DF(1099,201)),25);
+	board.get(ID_JAPAN)->addConnection(board.get(ID_KAMCHATKA));
+	board.get(ID_JAPAN)->addConnection(board.get(ID_MONGOLIA));
 		//6. Kamchatka
+	board.get(ID_KAMCHATKA)->setArea(g_screen.convertPixelsToCartesian(V2DF(1062,86)),30);
+	board.get(ID_KAMCHATKA)->addConnection(board.get(ID_IRKUTSK));
+	board.get(ID_KAMCHATKA)->addConnection(board.get(ID_MONGOLIA));
+	board.get(ID_KAMCHATKA)->addConnection(board.get(ID_JAPAN));
+	board.get(ID_KAMCHATKA)->addConnection(board.get(ID_YAKUTSK));
+	board.get(ID_KAMCHATKA)->addConnection(board.get(ID_ALASKA));
 		//7. Middle East
+	board.get(ID_MIDDLE_EAST)->setArea(g_screen.convertPixelsToCartesian(V2DF(726,228)),35);
+	board.get(ID_MIDDLE_EAST)->addConnection(board.get(ID_INDIA));
+	board.get(ID_MIDDLE_EAST)->addConnection(board.get(ID_AFGHANISTAN));
+	board.get(ID_MIDDLE_EAST)->addConnection(board.get(ID_RUSSIA));
+	board.get(ID_MIDDLE_EAST)->addConnection(board.get(ID_S_EUROPE));
+	board.get(ID_MIDDLE_EAST)->addConnection(board.get(ID_EGYPT));
+	board.get(ID_MIDDLE_EAST)->addConnection(board.get(ID_E_AFRICA));
 		//8. Mongolia
+	board.get(ID_MONGOLIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(985,160)),30);
+	board.get(ID_MONGOLIA)->addConnection(board.get(ID_CHINA));
+	board.get(ID_MONGOLIA)->addConnection(board.get(ID_JAPAN));
+	board.get(ID_MONGOLIA)->addConnection(board.get(ID_KAMCHATKA));
+	board.get(ID_MONGOLIA)->addConnection(board.get(ID_IRKUTSK));
+	board.get(ID_MONGOLIA)->addConnection(board.get(ID_SIBERIA));
 		//9. Siam
+	board.get(ID_SIAM)->setArea(g_screen.convertPixelsToCartesian(V2DF(973,284)),25);
+	board.get(ID_SIAM)->addConnection(board.get(ID_INDONESIA));
+	board.get(ID_SIAM)->addConnection(board.get(ID_CHINA));
+	board.get(ID_SIAM)->addConnection(board.get(ID_INDIA));
 		//10. Siberia
+	board.get(ID_SIBERIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(867,72)),35);
+	board.get(ID_SIBERIA)->addConnection(board.get(ID_URAL));
+	board.get(ID_SIBERIA)->addConnection(board.get(ID_CHINA));
+	board.get(ID_SIBERIA)->addConnection(board.get(ID_MONGOLIA));
+	board.get(ID_SIBERIA)->addConnection(board.get(ID_IRKUTSK));
+	board.get(ID_SIBERIA)->addConnection(board.get(ID_YAKUTSK));
 		//11. Ural
+	board.get(ID_URAL)->setArea(g_screen.convertPixelsToCartesian(V2DF(775,92)),35);
+	board.get(ID_URAL)->addConnection(board.get(ID_RUSSIA));
+	board.get(ID_URAL)->addConnection(board.get(ID_AFGHANISTAN));
+	board.get(ID_URAL)->addConnection(board.get(ID_CHINA));
+	board.get(ID_URAL)->addConnection(board.get(ID_SIBERIA));
 		//12. Yakutsk
+	board.get(ID_YAKUTSK)->setArea(g_screen.convertPixelsToCartesian(V2DF(974,71)),35);
+	board.get(ID_YAKUTSK)->addConnection(board.get(ID_KAMCHATKA));
+	board.get(ID_YAKUTSK)->addConnection(board.get(ID_IRKUTSK));
+	board.get(ID_YAKUTSK)->addConnection(board.get(ID_SIBERIA));
 
 	//Oceania
 		//1. Eastern Australia
+	board.get(ID_E_AUSTRALIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(1140, 475)),40);
+	board.get(ID_E_AUSTRALIA)->addConnection(board.get(ID_W_AUSTRALIA));
+	board.get(ID_E_AUSTRALIA)->addConnection(board.get(ID_N_GUINEA));
 		//2. Indonesia
+	board.get(ID_INDONESIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(1029,362)),30);
+	board.get(ID_INDONESIA)->addConnection(board.get(ID_SIAM));
+	board.get(ID_INDONESIA)->addConnection(board.get(ID_N_GUINEA));
+	board.get(ID_INDONESIA)->addConnection(board.get(ID_W_AUSTRALIA));
 		//3. New Guinea
+	board.get(ID_N_GUINEA)->setArea(g_screen.convertPixelsToCartesian(V2DF(1141,387)),30);
+	board.get(ID_N_GUINEA)->addConnection(board.get(ID_E_AUSTRALIA));
+	board.get(ID_N_GUINEA)->addConnection(board.get(ID_INDONESIA));
+	board.get(ID_N_GUINEA)->addConnection(board.get(ID_W_AUSTRALIA));
 		//4. Western Australia
+	board.get(ID_W_AUSTRALIA)->setArea(g_screen.convertPixelsToCartesian(V2DF(1050,480)),40);
+	board.get(ID_W_AUSTRALIA)->addConnection(board.get(ID_N_GUINEA));
+	board.get(ID_W_AUSTRALIA)->addConnection(board.get(ID_INDONESIA));
+	board.get(ID_W_AUSTRALIA)->addConnection(board.get(ID_E_AUSTRALIA));
 
-	for(int i = 0; i < territoryNodes.size(); ++i)
-		printf("i == %d, contID == %d, #connect == %d, #troop == %d\n", i, territoryNodes.get(i)->getContinent(), territoryNodes.get(i)->getNumberConnections(), territoryNodes.get(i)->getTroops());
+	//for(int i = 0; i < board.size(); ++i)
+	//	printf("i == %d, ID == %d, contID == %d, #connect == %d, #troop == %d\n", i, board.get(i)->getID(), board.get(i)->getContinent(), board.get(i)->getNumberConnections(), board.get(i)->getTroops());
 }
 #include "draw.h"
 #include "eventhandlers.h"
@@ -254,7 +475,7 @@ void init()
 	glutPassiveMotionFunc(passiveMotion);
 	glutMotionFunc(draggedMotion);
 	glutMouseFunc(mouse);
-	initTerritoryNodes();
+	initboard();
 }
 
 int main(int argc, char ** argv)
@@ -270,8 +491,8 @@ int main(int argc, char ** argv)
 	// abstracted game loop that we don't get to see!!!
     glutMainLoop();
 
-	for(int i = 0; i < territoryNodes.size(); ++i)
-		delete territoryNodes.get(i);
+	for(int i = 0; i < board.size(); ++i)
+		delete board.get(i);
 
 	return 0;
 }

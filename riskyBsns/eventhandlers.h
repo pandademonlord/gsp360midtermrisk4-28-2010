@@ -39,17 +39,16 @@ void passiveMotion(int x, int y)
 	flags[FLAG_WITHIN_AREA] = false;
 	static short prev_state = false;
 	V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
-	//for(int i = 0; i < territoryNodes.size(); ++i)
-	for(int i = 0; i < TERRITORIES_N_AMERICA; ++i)
+	for(int i = 0; i < board.size(); ++i)
 	{
-		if(territoryNodes.get(i)->isWithin(click))
+		if(board.get(i)->isWithin(click))
 		{
 			flags[FLAG_WITHIN_AREA] = true;
 			flags[FLAG_CLICKED_TER] = i;
-			territoryNodes.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_Y);
+			board.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_Y);
 			break;
 		}
-		territoryNodes.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_N);
+		board.get(flags[FLAG_CLICKED_TER])->useContinentColor();
 	}
 	glutPostRedisplay();
 	//printf("flags[FLAG_WITHIN_AREA] == %d, flags[FLAG_CLICKED_TER] == %d\n", flags[FLAG_WITHIN_AREA], flags[FLAG_CLICKED_TER]);
