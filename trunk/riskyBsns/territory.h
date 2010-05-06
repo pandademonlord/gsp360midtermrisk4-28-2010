@@ -126,8 +126,10 @@ public:
 
 		//adding text to the drawing
 		char buffer[50];
-		sprintf(buffer, "ID: %d, #T: %d", this->getID(), this->getTroops());
-		(this->getPosition().difference(V2DF((this->getRadius())/2,0))).glDrawString(buffer);
+		sprintf(buffer, "ID: %d\n", this->getID());
+		(this->getPosition().difference(V2DF(15,(-1*(this->getRadius())/4)))).glDrawString(buffer);
+		sprintf(buffer, "#T: %d\n", this->getTroops());
+		(this->getPosition().difference(V2DF(15,(this->getRadius())/4))).glDrawString(buffer);
 
 		//draw connections toadjacent territories
 		glColor3f(COLOR_GREY);
