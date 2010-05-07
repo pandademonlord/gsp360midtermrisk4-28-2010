@@ -69,8 +69,11 @@ void mouse(int button, int state, int x, int y)
 		case STATE_MOUSE_BUTTON_DN:
 			if(flags[FLAG_WITHIN_AREA])
 			{
-				if(setting == CLICK_TERRITORY_ONE)
+				if(setting == CLICK_TERRITORY_ONE){
 					set1 = flags[FLAG_CLICKED_TER];
+					doc.addlocal(board.get(set1));
+					
+				}
 				else
 					set2 = flags[FLAG_CLICKED_TER];
 				setting++;
