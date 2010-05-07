@@ -130,13 +130,13 @@ public:
 		return m_area.isClickable(click);
 	}
 	//moves a_numTroops amt of troops from this territory to territorywith ID a_ID
-	void moveTroopsTo(short a_ID, short a_numTroops)
+	/*void moveTroopsTo(short a_ID, short a_numTroops)
 	{
 		if(!(a_numTroops < this->m_troops_deployed))
 			a_numTroops = this->m_troops_deployed - 1;
 		
 		this->addTroopsDeployed(-1 * a_numTroops);
 		board.get(a_ID)->addTroopsDeployed(a_numTroops);
-	}
+	}*/
 	~Territory(){}
 };
