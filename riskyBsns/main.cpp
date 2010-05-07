@@ -125,11 +125,13 @@
 #include "templatearray.h"
 #include "territory.h"
 #include "circle.h"
+#include "player.h"
 
 // GLUT will not give access to the main loop, some variables MUST be global. :(
 GLUTRenderingContext g_screen(V2DF(SCREEN_WIDTH,SCREEN_HEIGHT), V2DF(SCREEN_MIN_X,SCREEN_MIN_Y), V2DF(SCREEN_MAX_X,SCREEN_MAX_Y));
 TemplateArray<Territory *> board;
 short flags[FLAGS_NUM];
+player doc(5,1);
 
 void initboard()
 {
