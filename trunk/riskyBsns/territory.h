@@ -43,7 +43,7 @@ public:
 		m_ID = a_ID;
 		m_continentID = a_continentID;
 		m_ownerID = OWNER_NONE;
-		m_troops_deployed = 0;
+		m_troops_deployed = 10;
 		this->useContinentColor();
 	}
 	//sets the clickable size of the territory
@@ -66,10 +66,8 @@ public:
 	void addTroopsDeployed(short a_numTroops)
 	{
 		m_troops_deployed += a_numTroops;
-		if(m_troops_deployed > 12)
-			m_troops_deployed = 12;
-		else if(m_troops_deployed < 1)
-			m_troops_deployed = 1;
+		if(m_troops_deployed < 0)
+			m_troops_deployed = 0;
 	}
 	//returns the territory's position as a V2D
 	V2DF getPosition() {return this->m_area.getCenter();}
@@ -129,14 +127,14 @@ public:
 	{
 		return m_area.isClickable(click);
 	}
-	//moves a_numTroops amt of troops from this territory to territorywith ID a_ID
-	/*void moveTroopsTo(short a_ID, short a_numTroops)
+	//moves a_numTroops amt of troops from this territory to a_territory
+	void moveTroopsTo(Territory* a_territory, short a_numTroops)
 	{
 		if(!(a_numTroops < this->m_troops_deployed))
 			a_numTroops = this->m_troops_deployed - 1;
 		
 		this->addTroopsDeployed(-1 * a_numTroops);
-		board.get(a_ID)->addTroopsDeployed(a_numTroops);
-	}*/
+		a_territory->addTroopsDeployed(a_numTroops);
+	}
 	~Territory(){}
 };

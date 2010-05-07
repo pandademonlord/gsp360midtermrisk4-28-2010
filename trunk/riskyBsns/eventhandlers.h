@@ -76,7 +76,10 @@ void mouse(int button, int state, int x, int y)
 				setting++;
 				setting %= CLICK_TWO_TERRITORIES;
 				if(setting == CLICK_TERRITORY_ONE)
+				{
 					printf("clicked territories #%d & #%d\n", set1, set2);
+					board.get(set1)->moveTroopsTo(board.get(set2), 5);
+				}
 			}
 				//printf("clicked territory #%d\n", flags[FLAG_CLICKED_TER]);
 			break;
