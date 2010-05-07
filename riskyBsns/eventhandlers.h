@@ -45,7 +45,7 @@ void passiveMotion(int x, int y)
 		{
 			flags[FLAG_WITHIN_AREA] = true;
 			flags[FLAG_CLICKED_TER] = i;
-			board.get(flags[FLAG_CLICKED_TER])->setColor(WITHIN_TER_Y);
+			board.get(flags[FLAG_CLICKED_TER])->setColor(HIGHLIGHT_COLOR);
 			break;
 		}
 		board.get(flags[FLAG_CLICKED_TER])->useContinentColor();

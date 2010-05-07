@@ -18,22 +18,22 @@ public:
 		switch(this->m_continentID)
 		{
 		case CONTINENT_ID_N_AMERICA:
-			this->setColor(COLOR_YELLOW);
+			this->setColor(CONTINENT_COLOR_NA);
 			break;
 		case CONTINENT_ID_S_AMERICA:
-			this->setColor(COLOR_RED);
+			this->setColor(CONTINENT_COLOR_SA);
 			break;
 		case CONTINENT_ID_EUROPE:
-			this->setColor(COLOR_BLUE);
+			this->setColor(CONTINENT_COLOR_EU);
 			break;
 		case CONTINENT_ID_AFRICA:
-			this->setColor(COLOR_ORANGE);
+			this->setColor(CONTINENT_COLOR_AF);
 			break;
 		case CONTINENT_ID_ASIA:
-			this->setColor(COLOR_GREEN);
+			this->setColor(CONTINENT_COLOR_AS);
 			break;
 		case CONTINENT_ID_OCEANIA:
-			this->setColor(COLOR_PURPLE);
+			this->setColor(CONTINENT_COLOR_OC);
 			break;
 		}
 	}
