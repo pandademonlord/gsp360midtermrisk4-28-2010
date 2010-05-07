@@ -130,11 +130,14 @@ public:
 	//moves a_numTroops amt of troops from this territory to a_territory
 	void moveTroopsTo(Territory* a_territory, short a_numTroops)
 	{
-		if(!(a_numTroops < this->m_troops_deployed))
-			a_numTroops = this->m_troops_deployed - 1;
+		if(this->isConnectedTo(a_territory))
+		{
+			if(!(a_numTroops < this->m_troops_deployed))
+				a_numTroops = this->m_troops_deployed - 1;
 		
-		this->addTroopsDeployed(-1 * a_numTroops);
-		a_territory->addTroopsDeployed(a_numTroops);
+			this->addTroopsDeployed(-1 * a_numTroops);
+			a_territory->addTroopsDeployed(a_numTroops);
+		}
 	}
 	~Territory(){}
 };
