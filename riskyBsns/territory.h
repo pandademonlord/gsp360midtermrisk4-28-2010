@@ -128,7 +128,7 @@ public:
 		return m_area.isClickable(click);
 	}
 	//moves a_numTroops amt of troops from this territory to a_territory
-	void moveTroopsTo(Territory* a_territory, short a_numTroops)
+	void moveTroopsTo(Territory * a_territory, short a_numTroops)
 	{
 		if(this->isConnectedTo(a_territory))
 		{
@@ -138,6 +138,10 @@ public:
 			this->addTroopsDeployed(-1 * a_numTroops);
 			a_territory->addTroopsDeployed(a_numTroops);
 		}
+	}
+	void moveTroopsTo(TemplateArray<Territory *> a_board, short a_ID, short a_numTroops)
+	{
+		this->moveTroopsTo(a_board.get(a_ID), a_numTroops);
 	}
 	~Territory(){}
 };
