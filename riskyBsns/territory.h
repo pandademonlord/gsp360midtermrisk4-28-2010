@@ -69,6 +69,11 @@ public:
 		if(m_troops_deployed < 0)
 			m_troops_deployed = 0;
 	}
+	//subtracts troops deployed from the current # deployed
+	void subtractTroopsDeployed(short a_numTroops)
+	{
+		this->addTroopsDeployed(-1 * a_numTroops);
+	}
 	//returns the territory's position as a V2D
 	V2DF getPosition() {return this->m_area.getCenter();}
 	//returns the territory's clickable radius
@@ -135,7 +140,7 @@ public:
 			if(!(a_numTroops < this->m_troops_deployed))
 				a_numTroops = this->m_troops_deployed - 1;
 		
-			this->addTroopsDeployed(-1 * a_numTroops);
+			this->subtractTroopsDeployed(a_numTroops);
 			a_territory->addTroopsDeployed(a_numTroops);
 		}
 	}
