@@ -377,7 +377,7 @@ void init()
 	flags[FLAG_GAME_STATE] = 0;
 	flags[FLAG_UPDATE_GAME_STATE] = false;
 	flags[FLAG_PARAMS_SET] = false;
-	flags[FLAG_PLAYERS] = 6;
+	flags[FLAG_PLAYERS] = 3;
 }
 
 int main(int argc, char ** argv)
