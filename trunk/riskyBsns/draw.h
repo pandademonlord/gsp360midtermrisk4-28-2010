@@ -4,11 +4,11 @@
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);//Clear the screen
-	glColor3f(COLOR_GREY);
-	g_screen.glDraw(DASH_SIZE);	// draw the cartisian plane in white
+	//glColor3f(COLOR_GREY);
+	//g_screen.glDraw(DASH_SIZE);	// draw the cartisian plane in white
 
 	//draw code
-	char buffer[50];
+	char buffer[BUFFER_SIZE];
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->drawConnections();
 	for(int i = 0; i < board.size(); ++i)
