@@ -65,6 +65,13 @@
 #define TERRITORIES_OCEANIA			4
 //total number of territories (42)
 #define TERRITORIES_TOTAL			(TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA + TERRITORIES_OCEANIA)
+//bonus troops for owning continents
+#define BONUS_NA					5
+#define BONUS_SA					2
+#define BONUS_EU					5
+#define BONUS_AF					3
+#define BONUS_AS					7
+#define BONUS_OC					2
 //the element at which the territories for the specified continent start
 #define TERRITORIES_ST_N_AMERICA	0
 #define TERRITORIES_ST_S_AMERICA	(TERRITORIES_ST_N_AMERICA + TERRITORIES_N_AMERICA)
@@ -131,9 +138,9 @@
 GLUTRenderingContext g_screen(V2DF(SCREEN_WIDTH,SCREEN_HEIGHT), V2DF(SCREEN_MIN_X,SCREEN_MIN_Y), V2DF(SCREEN_MAX_X,SCREEN_MAX_Y));
 TemplateArray<Territory *> board;
 short flags[FLAGS_NUM];
-player doc(5,1);
+Player doc(5,1);
 
-void initboard()
+void initBoard()
 {
 	Territory * ter;
 
@@ -480,7 +487,7 @@ void init()
 	glutPassiveMotionFunc(passiveMotion);
 	glutMotionFunc(draggedMotion);
 	glutMouseFunc(mouse);
-	initboard();
+	initBoard();
 }
 
 int main(int argc, char ** argv)
