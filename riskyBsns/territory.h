@@ -104,17 +104,7 @@ public:
 		return false;
 	}
 	//draw the circular clickable area
-	void glDraw()
-	{
-		m_area.glDraw();
-
-		//adding text to the drawing
-		char buffer[50];
-		sprintf(buffer, "ID: %d\n", this->getID());
-		(this->getPosition().sum(V2DF(-15,5))).glDrawString(buffer);
-		sprintf(buffer, "#T: %d\n", this->getTroops());
-		(this->getPosition().difference(V2DF(15,5))).glDrawString(buffer);
-	}
+	void glDraw(){m_area.glDraw();}
 	//draws the connections to adjacent territories
 	void drawConnections()
 	{
