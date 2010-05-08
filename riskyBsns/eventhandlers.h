@@ -79,9 +79,29 @@ void mouse(int button, int state, int x, int y)
 		//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
 		//printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
 		break;
+	case GLUT_RIGHT_BUTTON:
+		switch(state)
+		{
+		case STATE_MOUSE_BUTTON_DN:
+			if(flags[FLAG_WITHIN_AREA])
+			{
+				if(setting == CLICK_TERRITORY_ONE){
+					set1 = flags[FLAG_CLICKED_TER];
+					jill.addlocal(board.get(set1));
+					
+				}
+				else
+					set2 = flags[FLAG_CLICKED_TER];
+				setting++;
+				setting %= CLICK_TWO_TERRITORIES;
+			}
+			break;
+		}
+		break;
+	
 	}
-	//glutPostRedisplay();
 }
+	
 
 /** @return true if the game changed state and should redraw */
 bool update(int a_ms)
