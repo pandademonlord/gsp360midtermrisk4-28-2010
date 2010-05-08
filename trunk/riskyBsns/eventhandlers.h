@@ -101,9 +101,9 @@ bool update(int a_ms)
 				{
 					players.get(flags[FLAG_CURRENT_PLAYER])->addlocal(board.get(flags[FLAG_PARAM_ONE]));
 					players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+					flags[FLAG_UPDATE_PLAYER] = true;
 				}
 				flags[FLAG_PARAMS_SET] = false;
-				flags[FLAG_UPDATE_PLAYER] = true;
 			}
 			break;
 		/*case STATE_GET_AND_PLACE_TROOPS:
