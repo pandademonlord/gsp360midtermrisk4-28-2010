@@ -99,10 +99,11 @@ bool update(int a_ms)
 			{
 				if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == OWNER_NONE)
 				{
-					doc.addlocal(board.get(flags[FLAG_PARAM_ONE]));
-					doc.addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+					players.get(flags[FLAG_CURRENT_PLAYER])->addlocal(board.get(flags[FLAG_PARAM_ONE]));
+					players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
 				}
 				flags[FLAG_PARAMS_SET] = false;
+				flags[FLAG_UPDATE_PLAYER] = true;
 			}
 			break;
 		/*case STATE_GET_AND_PLACE_TROOPS:
@@ -113,6 +114,12 @@ bool update(int a_ms)
 			break;
 		case STATE_WINNING:
 			break;*/
+	}
+	if(flags[FLAG_UPDATE_PLAYER])
+	{
+		flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] + 1;
+		flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] % flags[FLAG_PLAYERS];
+		flags[FLAG_UPDATE_PLAYER] = false;
 	}
 	if(flags[FLAG_UPDATE_GAME_STATE])
 	{

@@ -26,15 +26,30 @@
 #define STATE_FORTIFY				3
 #define STATE_WINNING				4
 #define STATES_TOTAL				5
-//flags
-#define FLAGS_NUM					7
+//flags (array of "short" numbers, either used as "short" or "bool" value)
+	//#defined numbers represent that flag's element in the array
+//# of total flags within array
+#define FLAGS_NUM					10
+//(bool) determine if hover is within a territory
 #define FLAG_WITHIN_AREA			0
+//(short) index of which territory was clicked on
 #define FLAG_CLICKED_TER			1
+//(short) game's current state
 #define FLAG_GAME_STATE				2
+//(bool) should the state change?
 #define FLAG_UPDATE_GAME_STATE		3
+//(short) which index to use for 1st territory
 #define FLAG_PARAM_ONE				4
+//(short) which index to use for 2nd territory
 #define FLAG_PARAM_TWO				5
+//(bool) are all needed parameters set?
 #define FLAG_PARAMS_SET				6
+//(short) number of active players
+#define FLAG_PLAYERS				7
+//(short) ID of current player
+#define FLAG_CURRENT_PLAYER			8
+//(bool) should the player change?
+#define FLAG_UPDATE_PLAYER			9
 //input
 #define CLICK_TWO_TERRITORIES		2
 #define CLICK_TERRITORY_ONE			0
@@ -43,7 +58,7 @@
 #define	COLOR_ALPHA					1.0
 #define COLOR_BLACK					.0,.0,.0
 #define COLOR_BLUE					0,0,255
-#define COLOR_CYAN					0xffff00
+#define COLOR_CYAN					0,255,255
 #define COLOR_GREEN					0,255,0
 #define COLOR_GREY					.5,.5,.5
 #define COLOR_ORANGE				255,191,0
@@ -51,14 +66,27 @@
 #define COLOR_RED					255,0,0
 #define COLOR_WHITE					255,255,255
 #define COLOR_YELLOW				255,255,0
+
+#define COLOR_BLUE_DARK				0,0,200
+#define COLOR_GREEN_DARK			0,200,0
+#define COLOR_ORANGE_DARK			200,150,0
+#define COLOR_PURPLE_DARK			200,0,200
+#define COLOR_RED_DARK				200,0,0
+#define COLOR_YELLOW_DARK			200,200,0
 //which colors to use
 #define HIGHLIGHT_COLOR				COLOR_WHITE
-#define CONTINENT_COLOR_NA			COLOR_YELLOW
-#define CONTINENT_COLOR_SA			COLOR_RED
-#define CONTINENT_COLOR_EU			COLOR_BLUE
-#define CONTINENT_COLOR_AF			COLOR_ORANGE
-#define CONTINENT_COLOR_AS			COLOR_GREEN
-#define CONTINENT_COLOR_OC			COLOR_PURPLE
+#define CONTINENT_COLOR_NA			COLOR_YELLOW_DARK
+#define CONTINENT_COLOR_SA			COLOR_RED_DARK
+#define CONTINENT_COLOR_EU			COLOR_BLUE_DARK
+#define CONTINENT_COLOR_AF			COLOR_ORANGE_DARK
+#define CONTINENT_COLOR_AS			COLOR_GREEN_DARK
+#define CONTINENT_COLOR_OC			COLOR_PURPLE_DARK
+#define PLAYER_ONE_COLOR			COLOR_YELLOW
+#define PLAYER_TWO_COLOR			COLOR_RED
+#define PLAYER_THREE_COLOR			COLOR_BLUE	
+#define PLAYER_FOUR_COLOR			COLOR_ORANGE
+#define PLAYER_FIVE_COLOR			COLOR_GREEN
+#define PLAYER_SIX_COLOR			COLOR_PURPLE
 //continent ID's
 #define CONTINENT_ID_N_AMERICA		0
 #define CONTINENT_ID_S_AMERICA		1
@@ -68,6 +96,13 @@
 #define CONTINENT_ID_OCEANIA		5
 //owner ID's
 #define OWNER_NONE					-1
+#define PLAYER_ONE					0
+#define PLAYER_TWO					1
+#define PLAYER_THREE				2
+#define PLAYER_FOUR					3
+#define PLAYER_FIVE					4
+#define PLAYER_SIX					5
+#define PLAYERS_MAX					6
 //number of territories in specified continent
 #define TERRITORIES_N_AMERICA		9
 #define TERRITORIES_S_AMERICA		4
@@ -149,8 +184,8 @@
 // GLUT will not give access to the main loop, some variables MUST be global. :(
 GLUTRenderingContext g_screen(V2DF(SCREEN_WIDTH,SCREEN_HEIGHT), V2DF(SCREEN_MIN_X,SCREEN_MIN_Y), V2DF(SCREEN_MAX_X,SCREEN_MAX_Y));
 TemplateArray<Territory *> board;
+TemplateArray<Player *> players;
 short flags[FLAGS_NUM];
-Player doc(5,1);
 
 void initBoard()
 {
@@ -453,6 +488,16 @@ void initBoard()
 	//for(int i = 0; i < board.size(); ++i)
 	//	printf("i == %d, ID == %d, contID == %d, #connect == %d, #troop == %d\n", i, board.get(i)->getID(), board.get(i)->getContinent(), board.get(i)->getNumberConnections(), board.get(i)->getTroops());
 }
+void initPlayers()
+{
+	Player * ply;
+	flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
+	for(int i = 0; i < PLAYERS_MAX; ++i)
+	{
+		ply = new Player(30,players.size());
+		players.add(ply);
+	}
+}
 #include "draw.h"
 #include "eventhandlers.h"
 
@@ -500,9 +545,11 @@ void init()
 	glutMotionFunc(draggedMotion);
 	glutMouseFunc(mouse);
 	initBoard();
+	initPlayers();
 	flags[FLAG_GAME_STATE] = 0;
 	flags[FLAG_UPDATE_GAME_STATE] = false;
 	flags[FLAG_PARAMS_SET] = false;
+	flags[FLAG_PLAYERS] = 3;
 }
 
 int main(int argc, char ** argv)
@@ -520,6 +567,8 @@ int main(int argc, char ** argv)
 
 	for(int i = 0; i < board.size(); ++i)
 		delete board.get(i);
+	for(int i = 0; i < players.size(); ++i)
+		delete players.get(i);
 
 	return 0;
 }

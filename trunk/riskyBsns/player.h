@@ -26,6 +26,7 @@ public:
 	Player():m_troops(0),m_ID(0),m_conqueredT(0){}
 	//take into account that the starting number of units is depends on players
 	Player(short t,short id):m_troops(t),m_ID(id),m_conqueredT(0){}
+	short getID(){return this->m_ID;}
 	//inserts territory into conquered list
 	void addlocal(Territory * added)
 	{
@@ -211,5 +212,47 @@ public:
 			bonus += BONUS_OC;
 
 		return bonus;
+	}
+	void usePlayerColor()
+	{
+		switch(this->m_ID)
+		{
+		case PLAYER_ONE:
+			glColor3ub(PLAYER_ONE_COLOR);
+			break;
+		case PLAYER_TWO:
+			glColor3ub(PLAYER_TWO_COLOR);
+			break;
+		case PLAYER_THREE:
+			glColor3ub(PLAYER_THREE_COLOR);
+			break;
+		case PLAYER_FOUR:
+			glColor3ub(PLAYER_FOUR_COLOR);
+			break;
+		case PLAYER_FIVE:
+			glColor3ub(PLAYER_FIVE_COLOR);
+			break;
+		case PLAYER_SIX:
+			glColor3ub(PLAYER_SIX_COLOR);
+			break;
+		}
+	}
+	void drawStats(TemplateArray<Territory *> a_board)
+	{
+		this->usePlayerColor();
+		//adding text to the drawing
+		char buffer[50];
+		for(int i = 0; i < a_board.size(); ++i)
+		{
+			if(a_board.get(i)->getOwner() == this->m_ID)
+			{
+				//displays ID of Territory, NOT player
+				sprintf(buffer, "ID: %d\n", a_board.get(i)->getID());
+				(a_board.get(i)->getPosition().sum(V2DF(-15,5))).glDrawString(buffer);
+				//displays # of troops within territory
+				sprintf(buffer, "#T: %d\n", a_board.get(i)->getTroops());
+				(a_board.get(i)->getPosition().difference(V2DF(15,5))).glDrawString(buffer);
+			}
+		}
 	}
 };
