@@ -19,10 +19,22 @@
 //mouse button states
 #define	STATE_MOUSE_BUTTON_DN		0
 #define STATE_MOUSE_BUTTON_UP		1
+//state machine
+#define STATE_INIT_PLACEMENT		0
+#define STATE_GET_AND_PLACE_TROOPS	1
+#define STATE_ATTACK				2
+#define STATE_FORTIFY				3
+#define STATE_WINNING				4
+#define STATES_TOTAL				5
 //flags
-#define FLAGS_NUM					2
+#define FLAGS_NUM					7
 #define FLAG_WITHIN_AREA			0
 #define FLAG_CLICKED_TER			1
+#define FLAG_GAME_STATE				2
+#define FLAG_UPDATE_GAME_STATE		3
+#define FLAG_PARAM_ONE				4
+#define FLAG_PARAM_TWO				5
+#define FLAG_PARAMS_SET				6
 //input
 #define CLICK_TWO_TERRITORIES		2
 #define CLICK_TERRITORY_ONE			0
@@ -488,6 +500,9 @@ void init()
 	glutMotionFunc(draggedMotion);
 	glutMouseFunc(mouse);
 	initBoard();
+	flags[FLAG_GAME_STATE] = 0;
+	flags[FLAG_UPDATE_GAME_STATE] = false;
+	flags[FLAG_PARAMS_SET] = false;
 }
 
 int main(int argc, char ** argv)

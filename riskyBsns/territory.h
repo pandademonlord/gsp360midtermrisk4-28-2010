@@ -43,7 +43,7 @@ public:
 		m_ID = a_ID;
 		m_continentID = a_continentID;
 		m_ownerID = OWNER_NONE;
-		m_troops_deployed = 10;
+		m_troops_deployed = 0;
 		this->useContinentColor();
 	}
 	//sets the clickable size of the territory

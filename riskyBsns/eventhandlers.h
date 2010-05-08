@@ -57,10 +57,6 @@ void passiveMotion(int x, int y)
 void mouse(int button, int state, int x, int y)
 {
 	//printf("button %d, state %d,  x %d, y %d\n", button, state, x, y);
-	static short setting = 0;
-	static short set1;
-	static short set2;
-	//static bool set2 = false;
 	switch(button)
 	{
 	case GLUT_LEFT_BUTTON:
@@ -69,23 +65,15 @@ void mouse(int button, int state, int x, int y)
 		case STATE_MOUSE_BUTTON_DN:
 			if(flags[FLAG_WITHIN_AREA])
 			{
-				if(setting == CLICK_TERRITORY_ONE)
+				switch(flags[FLAG_GAME_STATE])
 				{
-					set1 = flags[FLAG_CLICKED_TER];
-					doc.addlocal(board.get(set1));
-					//printf("cont bonus == %d\n", doc.getContinentBonus(board));
+					case STATE_INIT_PLACEMENT:
+						flags[FLAG_PARAM_ONE] = flags[FLAG_CLICKED_TER];
+						flags[FLAG_PARAMS_SET] = true;
+						break;
 				}
-				else
-					set2 = flags[FLAG_CLICKED_TER];
-				setting++;
-				setting %= CLICK_TWO_TERRITORIES;
-				if(setting == CLICK_TERRITORY_ONE)
-				{
-					printf("clicked territories #%d & #%d\n", set1, set2);
-					board.get(set1)->moveTroopsTo(board.get(set2), 1);
-				}
+				printf("state == %d\n", flags[FLAG_GAME_STATE]);
 			}
-				//printf("clicked territory #%d\n", flags[FLAG_CLICKED_TER]);
 			break;
 		}
 		//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
@@ -98,5 +86,41 @@ void mouse(int button, int state, int x, int y)
 /** @return true if the game changed state and should redraw */
 bool update(int a_ms)
 {
-	return false;
+	switch(flags[FLAG_GAME_STATE])
+	{
+		case STATE_INIT_PLACEMENT:
+			flags[FLAG_UPDATE_GAME_STATE] = true;
+			for(int i = 0; i < board.size(); ++i)
+			{
+				if(board.get(i)->getOwner() == OWNER_NONE)
+					flags[FLAG_UPDATE_GAME_STATE] = false;
+			}
+			if(flags[FLAG_PARAMS_SET])
+			{
+				if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == OWNER_NONE)
+				{
+					doc.addlocal(board.get(flags[FLAG_PARAM_ONE]));
+					doc.addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+				}
+				flags[FLAG_PARAMS_SET] = false;
+			}
+			break;
+		/*case STATE_GET_AND_PLACE_TROOPS:
+			break;
+		case STATE_ATTACK:
+			break;
+		case STATE_FORTIFY:
+			break;
+		case STATE_WINNING:
+			break;*/
+	}
+	if(flags[FLAG_UPDATE_GAME_STATE])
+	{
+		flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
+		flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] % STATES_TOTAL;
+		flags[FLAG_UPDATE_GAME_STATE] = false;
+		return true;
+	}
+	else
+		return false;
 }
