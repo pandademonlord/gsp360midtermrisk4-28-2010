@@ -13,15 +13,12 @@
 #define maxdefD 2
 #define minArmys 3
 #define minTerri 11
-////psudo random number generator
-////simulates dice roll
 class Player
 {
 private:
 	short m_troops;//holds amount of units the player gets
 	short m_ID; //reflection in order to know what player he is
 	short m_conqueredT; //int to tell how many territorys the player has
-	//TemplateVector<Territory *> conquered; //list of conquered territories
 public:
 	Player():m_troops(0),m_ID(0),m_conqueredT(0){}
 	//take into account that the starting number of units is depends on players
@@ -36,15 +33,16 @@ public:
 		else
 			return false;
 	}
-	//inserts territory into conquered list
+	//gives player the territory
 	void addLocal(Territory * added)
 	{
 		if(ifOwns(added))
 			printf("player already owns territory\n");
+		else if(added->getOwner()>0)
+			printf("another player owns this territory\n");
 		else{
 			added->setOwner(m_ID);
-			//conqueredT++;
-			//conquered.add(added);
+			m_conqueredT++;
 			printf("player owns location\n");
 		}
 	}
@@ -52,28 +50,16 @@ public:
 	void removeLocal(Territory *removed, short enemy)
 	{
 		removed->setOwner(enemy);
-		//conqueredT--;
+		m_conqueredT--;
 	}	
-	//will act as telling the player how many territorys he has	
-	//int getListSize(){return conquered.size();}
-	//determines how many troops the player has
-	void setTroops(int count)
-	{
-		//check how many countys the player has
-		/*if(conqueredT<=minTerri)
-			m_troops=minArmys; 
-		else
-			m_troops=conqueredT/minArmys;*/
-		//check if the player controls any continents
-		
-		//maybe check if the player turns in cards no say ATM
-		
-	}
+	//set amount of reinforcement the player gets gives it to troops
+	
 	//add troop to a territory (used to init board with players & troops)
 	void addToTerritory(Territory *here)
 	{
-		if(here->getOwner() == m_ID){
-			here->addTroopsDeployed(1);
+		const int addtroop = 1;
+		if(ifOwns(here)){
+			here->addTroopsDeployed(addtroop);
 			m_troops--;
 		}
 	}
@@ -89,62 +75,6 @@ public:
 			printf("there aren't anymore troops");
 		else
 			printf("can't add to a territory you don't control");
-	}
-	//rolls the dice for combat
-	void rollDice(int die[],int armys){
-		for(int g=0;g<armys;g++){
-			int check= random()%dicesides;
-			if(check>0)
-				die[g]=check;
-			else
-				die[g]=epicfail;
-			}
-	}
-	//sorts the dice from largest to smallest for combat
-	void sortDice(int die[],int numof){
-		for(int v=numof;v>0;v--){
-			for(int g=numof;g>0;g--){
-				if(die[g]>die[g-1]){
-					int temp= die[g-1];
-					die[g-1]=die[g];
-					die[g]=temp;
-				}
-			}
-		}
-	}
-
-	//is a gameplay state which does the combat
-	void combat(int DefArmys,int AtkArmys)
-	{
-		while(DefArmys>0&&AtkArmys>1){
-			//holds dice rolls
-			int atk[maxatkD];
-			int def[maxdefD];
-			//rolls dice
-			if(DefArmys>=maxdefD)
-				rollDice(def,maxdefD);
-			else
-				rollDice(def,DefArmys);
-
-			if(AtkArmys>=maxatkD)
-				rollDice(atk,maxatkD);
-			else
-				rollDice(atk,AtkArmys);
-			//sorts the die from largest to smallest
-			sortDice(atk,maxatkD);
-			sortDice(def,maxdefD);		
-			//compare the dice rolls subtracts the armys
-			if(def[0]>=atk[0])
-				AtkArmys--;
-			else
-				DefArmys--;
-			if(AtkArmys>1&&DefArmys>1){
-				if(def[1]>=atk[1])
-					AtkArmys--;
-				else
-					DefArmys--;
-			}
-		}
 	}
 	//checks if the player owns 1 or more continents, & returns the total bonus
 	short getContinentBonus(TemplateArray<Territory *> a_board)
@@ -207,6 +137,25 @@ public:
 
 		return bonus;
 	}
+	//gives player troops depending on the amount of territory controlled
+	short getlocalTroops()
+	{
+		if(m_conqueredT<=minTerri)
+			return minArmys; 
+		else
+			return m_conqueredT/minArmys;
+	}
+	void Reinforcements(TemplateArray<Territory *> a_board)
+	{
+
+		//check how many territorys the player has
+		m_troops+=getlocalTroops();
+		//check if the player controls any continents
+		m_troops+=getContinentBonus(a_board);
+		
+		//check if the player turns in cards no say ATM
+		
+	}
 	//fortifies troops from territory 1 to territory 2
 	void fortify(Territory* a_ter1, Territory* a_ter2, short a_numTroops)
 	{
@@ -254,6 +203,62 @@ public:
 				//displays # of troops within territory
 				sprintf(buffer, "#T: %d\n", a_board.get(i)->getTroops());
 				(a_board.get(i)->getPosition().difference(V2DF(15,5))).glDrawString(buffer);
+			}
+		}
+	}
+	//rolls the dice for combat
+	void rollDice(int die[],int armys){
+		for(int g=0;g<armys;g++){
+			int check= random()%dicesides;
+			if(check>0)
+				die[g]=check;
+			else
+				die[g]=epicfail;
+			}
+	}
+	//sorts the dice from largest to smallest for combat
+	void sortDice(int die[],int numof){
+		for(int v=numof;v>0;v--){
+			for(int g=numof;g>0;g--){
+				if(die[g]>die[g-1]){
+					int temp= die[g-1];
+					die[g-1]=die[g];
+					die[g]=temp;
+				}
+			}
+		}
+	}
+
+	//is a gameplay state which does the combat
+	void combat(int DefArmys,int AtkArmys)
+	{
+		while(DefArmys>0&&AtkArmys>1){
+			//holds dice rolls
+			int atk[maxatkD];
+			int def[maxdefD];
+			//rolls dice
+			if(DefArmys>=maxdefD)
+				rollDice(def,maxdefD);
+			else
+				rollDice(def,DefArmys);
+
+			if(AtkArmys>=maxatkD)
+				rollDice(atk,maxatkD);
+			else
+				rollDice(atk,AtkArmys);
+			//sorts the die from largest to smallest
+			sortDice(atk,maxatkD);
+			sortDice(def,maxdefD);		
+			//compare the dice rolls subtracts the armys
+			if(def[0]>=atk[0])
+				AtkArmys--;
+			else
+				DefArmys--;
+			if(AtkArmys>1&&DefArmys>1){
+				if(def[1]>=atk[1])
+					AtkArmys--;
+				else
+					DefArmys--;
 			}
 		}
 	}
