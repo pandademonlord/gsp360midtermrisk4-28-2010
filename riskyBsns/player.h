@@ -27,8 +27,17 @@ public:
 	//take into account that the starting number of units is depends on players
 	Player(short t,short id):m_troops(t),m_ID(id),m_conqueredT(0){}
 	short getID(){return this->m_ID;}
+	short getTroops(){return this->m_troops;}
+	//checks if the player owns the territory
+	bool ifOwns(Territory* thatone)
+	{
+		if(thatone->getOwner()== this->m_ID)
+			return true;
+		else
+			return false;
+	}
 	//inserts territory into conquered list
-	void addlocal(Territory * added)
+	void addLocal(Territory * added)
 	{
 		if(ifOwns(added))
 			printf("player already owns territory\n");
@@ -38,14 +47,6 @@ public:
 			//conquered.add(added);
 			printf("player owns location\n");
 		}
-	}
-	//checks if the player owns the territory
-	bool ifOwns(Territory* thatone)
-	{
-		if(thatone->getOwner()== m_ID)
-			return true;
-		else
-			return false;
 	}
 	//set the territory to the enemy players territory
 	void removeLocal(Territory *removed, short enemy)
@@ -68,7 +69,14 @@ public:
 		//maybe check if the player turns in cards no say ATM
 		
 	}
-	short getTroops(){return m_troops;}
+	//add troop to a territory (used to init board with players & troops)
+	void addToTerritory(Territory *here)
+	{
+		if(here->getOwner() == m_ID){
+			here->addTroopsDeployed(1);
+			m_troops--;
+		}
+	}
 	//adds a troop to a territory
 	void addTroop(Territory *here)
 	{
@@ -91,14 +99,6 @@ public:
 			else
 				die[g]=epicfail;
 			}
-	}
-	//add troop to a territory 
-	void addToTerritory(Territory *here)
-	{
-		if(here->getOwner() == m_ID){
-			here->addTroopsDeployed(1);
-			m_troops--;
-		}
 	}
 	//sorts the dice from largest to smallest for combat
 	void sortDice(int die[],int numof){
@@ -145,12 +145,6 @@ public:
 					DefArmys--;
 			}
 		}
-	}
-	//fortifies troops from territory 1 to territory 2
-	void fortify(Territory* a_ter1, Territory* a_ter2, short a_numTroops)
-	{
-		if(a_ter1->getOwner() == this->m_ID && a_ter2->getOwner() == this->m_ID)
-			a_ter1->moveTroopsTo(a_ter2, a_numTroops);
 	}
 	//checks if the player owns 1 or more continents, & returns the total bonus
 	short getContinentBonus(TemplateArray<Territory *> a_board)
@@ -213,6 +207,13 @@ public:
 
 		return bonus;
 	}
+	//fortifies troops from territory 1 to territory 2
+	void fortify(Territory* a_ter1, Territory* a_ter2, short a_numTroops)
+	{
+		if(a_ter1->getOwner() == this->m_ID && a_ter2->getOwner() == this->m_ID)
+			a_ter1->moveTroopsTo(a_ter2, a_numTroops);
+	}
+	//give each player a unique identifying color
 	void usePlayerColor()
 	{
 		switch(this->m_ID)
@@ -237,11 +238,12 @@ public:
 			break;
 		}
 	}
+	//draws the ID's & # of troops within "owned" territories, in Player's unique color
 	void drawStats(TemplateArray<Territory *> a_board)
 	{
 		this->usePlayerColor();
 		//adding text to the drawing
-		char buffer[50];
+		char buffer[BUFFER_SIZE];
 		for(int i = 0; i < a_board.size(); ++i)
 		{
 			if(a_board.get(i)->getOwner() == this->m_ID)

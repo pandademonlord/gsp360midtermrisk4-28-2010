@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\defines.h"
+				>
+			</File>
+			<File
 				RelativePath=".\draw.h"
 				>
 			</File>

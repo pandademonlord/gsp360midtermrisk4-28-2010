@@ -99,7 +99,7 @@ bool update(int a_ms)
 			{
 				if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == OWNER_NONE)
 				{
-					players.get(flags[FLAG_CURRENT_PLAYER])->addlocal(board.get(flags[FLAG_PARAM_ONE]));
+					players.get(flags[FLAG_CURRENT_PLAYER])->addLocal(board.get(flags[FLAG_PARAM_ONE]));
 					players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
 					flags[FLAG_UPDATE_PLAYER] = true;
 				}
