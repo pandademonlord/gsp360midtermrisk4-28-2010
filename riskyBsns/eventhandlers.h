@@ -67,11 +67,12 @@ void mouse(int button, int state, int x, int y)
 			{
 				switch(flags[FLAG_GAME_STATE])
 				{
-					case STATE_INIT_PLACEMENT:
-					case STATE_GET_AND_PLACE_TROOPS:
-						flags[FLAG_PARAM_ONE] = flags[FLAG_CLICKED_TER];
-						flags[FLAG_PARAMS_SET] = true;
-						break;
+				case STATE_INIT_PLACEMENT_CLAIM:
+				case STATE_INIT_PLACEMENT_PLACE:
+				case STATE_GET_AND_PLACE_TROOPS:
+					flags[FLAG_PARAM_ONE] = flags[FLAG_CLICKED_TER];
+					flags[FLAG_PARAMS_SET] = true;
+					break;
 				}
 				//printf("state == %d\n", flags[FLAG_GAME_STATE]);
 			}
@@ -109,45 +110,61 @@ bool update(int a_ms)
 {
 	switch(flags[FLAG_GAME_STATE])
 	{
-		case STATE_INIT_PLACEMENT:
-			flags[FLAG_UPDATE_GAME_STATE] = true;
-			for(int i = 0; i < board.size(); ++i)
+	case STATE_INIT_PLACEMENT_CLAIM:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		for(int i = 0; i < board.size(); ++i)
+		{
+			if(board.get(i)->getOwner() == OWNER_NONE)
+				flags[FLAG_UPDATE_GAME_STATE] = false;
+		}
+		if(flags[FLAG_PARAMS_SET])
+		{
+			if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == OWNER_NONE)
 			{
-				if(board.get(i)->getOwner() == OWNER_NONE)
-					flags[FLAG_UPDATE_GAME_STATE] = false;
+				players.get(flags[FLAG_CURRENT_PLAYER])->addLocal(board.get(flags[FLAG_PARAM_ONE]));
+				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+				flags[FLAG_UPDATE_PLAYER] = true;
 			}
-			if(flags[FLAG_PARAMS_SET])
-			{
-				if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == OWNER_NONE)
-				{
-					players.get(flags[FLAG_CURRENT_PLAYER])->addLocal(board.get(flags[FLAG_PARAM_ONE]));
-					players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
-					flags[FLAG_UPDATE_PLAYER] = true;
-				}
-				flags[FLAG_PARAMS_SET] = false;
-			}
-			break;
-		case STATE_GET_AND_PLACE_TROOPS:
-			flags[FLAG_UPDATE_PLAYER] = false;
-			flags[FLAG_UPDATE_GAME_STATE] = true;
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	case STATE_INIT_PLACEMENT_PLACE:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		for(int i = 0; i < players.size(); ++i)
+		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->getTroops() > 0)
 				flags[FLAG_UPDATE_GAME_STATE] = false;
-			if(flags[FLAG_STATE_CUR_TURN_ENTER])
-				players.get(flags[FLAG_CURRENT_PLAYER])->Reinforcements(board);
-			if(flags[FLAG_PARAMS_SET])
+		}
+		if(flags[FLAG_PARAMS_SET])
+		{
+			if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
 			{
-				if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
-					players.get(flags[FLAG_CURRENT_PLAYER])->addTroop(board.get(flags[FLAG_PARAM_ONE]));
-				flags[FLAG_PARAMS_SET] = false;
+				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+				flags[FLAG_UPDATE_PLAYER] = true;
 			}
-
-			break;
-		/*case STATE_ATTACK:
-			break;
-		case STATE_FORTIFY:
-			break;
-		case STATE_WINNING:
-			break;*/
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	case STATE_GET_AND_PLACE_TROOPS:
+		flags[FLAG_UPDATE_PLAYER] = false;
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		if(flags[FLAG_STATE_CUR_TURN_ENTER])
+			players.get(flags[FLAG_CURRENT_PLAYER])->Reinforcements(board);
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->getTroops() > 0)
+			flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(flags[FLAG_PARAMS_SET])
+		{
+			if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	/*case STATE_ATTACK:
+		break;
+	case STATE_FORTIFY:
+		break;
+	case STATE_WINNING:
+		break;*/
 	}
 	if(flags[FLAG_UPDATE_PLAYER])
 	{
@@ -159,7 +176,7 @@ bool update(int a_ms)
 		flags[FLAG_STATE_CUR_TURN_ENTER] = false;
 	if(flags[FLAG_UPDATE_GAME_STATE])
 	{
-		if(flags[FLAG_GAME_STATE] == STATE_INIT_PLACEMENT)
+		if(flags[FLAG_GAME_STATE] == STATE_INIT_PLACEMENT_PLACE)
 			flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 		flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
 		flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] % STATES_TOTAL;

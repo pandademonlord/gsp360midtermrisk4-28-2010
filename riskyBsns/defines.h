@@ -16,12 +16,13 @@
 #define	STATE_MOUSE_BUTTON_DN		0
 #define STATE_MOUSE_BUTTON_UP		1
 //state machine
-#define STATE_INIT_PLACEMENT		0
-#define STATE_GET_AND_PLACE_TROOPS	1
-#define STATE_ATTACK				2
-#define STATE_FORTIFY				3
-#define STATE_WINNING				4
-#define STATES_TOTAL				5
+#define STATE_INIT_PLACEMENT_CLAIM	0
+#define STATE_INIT_PLACEMENT_PLACE	1
+#define STATE_GET_AND_PLACE_TROOPS	2
+#define STATE_ATTACK				3
+#define STATE_FORTIFY				4
+#define STATE_WINNING				5
+#define STATES_TOTAL				6
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array

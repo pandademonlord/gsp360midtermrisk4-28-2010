@@ -20,8 +20,11 @@ void display()
 		{
 			switch(flags[FLAG_GAME_STATE])
 			{
-			case STATE_INIT_PLACEMENT:
+			case STATE_INIT_PLACEMENT_CLAIM:
 				sprintf(buffer, "Player %d's turn: Claim a Territory\n", (players.get(i)->getID() + 1));
+				break;
+			case STATE_INIT_PLACEMENT_PLACE:
+				sprintf(buffer, "Player %d's turn: Add 1 Army (%d Left)\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			case STATE_GET_AND_PLACE_TROOPS:
 				sprintf(buffer, "Player %d's turn: Deploy %d Troops\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
