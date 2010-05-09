@@ -68,11 +68,12 @@ void mouse(int button, int state, int x, int y)
 				switch(flags[FLAG_GAME_STATE])
 				{
 					case STATE_INIT_PLACEMENT:
+					case STATE_GET_AND_PLACE_TROOPS:
 						flags[FLAG_PARAM_ONE] = flags[FLAG_CLICKED_TER];
 						flags[FLAG_PARAMS_SET] = true;
 						break;
 				}
-				printf("state == %d\n", flags[FLAG_GAME_STATE]);
+				//printf("state == %d\n", flags[FLAG_GAME_STATE]);
 			}
 			break;
 		}
@@ -80,12 +81,12 @@ void mouse(int button, int state, int x, int y)
 		//printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
 		break;
 	case GLUT_RIGHT_BUTTON:
-		switch(state)
+		/*switch(state)
 		{
 		case STATE_MOUSE_BUTTON_DN:
 			if(flags[FLAG_WITHIN_AREA])
 			{
-				if(setting == CLICK_TERRITORY_ONE){
+-				if(setting == CLICK_TERRITORY_ONE){
 					set1 = flags[FLAG_CLICKED_TER];
 					jill.addlocal(board.get(set1));
 					
@@ -96,7 +97,7 @@ void mouse(int button, int state, int x, int y)
 				setting %= CLICK_TWO_TERRITORIES;
 			}
 			break;
-		}
+		}*/
 		break;
 	
 	}
@@ -126,9 +127,22 @@ bool update(int a_ms)
 				flags[FLAG_PARAMS_SET] = false;
 			}
 			break;
-		/*case STATE_GET_AND_PLACE_TROOPS:
+		case STATE_GET_AND_PLACE_TROOPS:
+			flags[FLAG_UPDATE_PLAYER] = false;
+			flags[FLAG_UPDATE_GAME_STATE] = true;
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->getTroops() > 0)
+				flags[FLAG_UPDATE_GAME_STATE] = false;
+			if(flags[FLAG_STATE_CUR_TURN_ENTER])
+				players.get(flags[FLAG_CURRENT_PLAYER])->Reinforcements(board);
+			if(flags[FLAG_PARAMS_SET])
+			{
+				if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+					players.get(flags[FLAG_CURRENT_PLAYER])->addTroop(board.get(flags[FLAG_PARAM_ONE]));
+				flags[FLAG_PARAMS_SET] = false;
+			}
+
 			break;
-		case STATE_ATTACK:
+		/*case STATE_ATTACK:
 			break;
 		case STATE_FORTIFY:
 			break;
@@ -141,11 +155,17 @@ bool update(int a_ms)
 		flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] % flags[FLAG_PLAYERS];
 		flags[FLAG_UPDATE_PLAYER] = false;
 	}
+	if(flags[FLAG_STATE_CUR_TURN_ENTER])
+		flags[FLAG_STATE_CUR_TURN_ENTER] = false;
 	if(flags[FLAG_UPDATE_GAME_STATE])
 	{
+		if(flags[FLAG_GAME_STATE] == STATE_INIT_PLACEMENT)
+			flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 		flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
 		flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] % STATES_TOTAL;
 		flags[FLAG_UPDATE_GAME_STATE] = false;
+		flags[FLAG_STATE_CUR_TURN_ENTER] = true;
+		printf("state == %d\n", flags[FLAG_GAME_STATE]);
 		return true;
 	}
 	else

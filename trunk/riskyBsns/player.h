@@ -43,7 +43,7 @@ public:
 		else{
 			added->setOwner(m_ID);
 			m_conqueredT++;
-			printf("player owns location\n");
+			//printf("player owns location\n");
 		}
 	}
 	//set the territory to the enemy players territory
@@ -66,15 +66,12 @@ public:
 	//adds a troop to a territory
 	void addTroop(Territory *here)
 	{
-		if(ifOwns(here))
+		const int addtroop = 1;
+		if(ifOwns(here) && m_troops>0)
 		{
-			here->addTroopsDeployed(m_troops);
-			m_troops=0;
+			here->addTroopsDeployed(addtroop);
+			m_troops--;
 		}
-		else if(m_troops==0)
-			printf("there aren't anymore troops");
-		else
-			printf("can't add to a territory you don't control");
 	}
 	//checks if the player owns 1 or more continents, & returns the total bonus
 	short getContinentBonus(TemplateArray<Territory *> a_board)
