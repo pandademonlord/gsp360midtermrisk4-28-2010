@@ -18,7 +18,21 @@ void display()
 		players.get(i)->drawStats(board);
 		if(flags[FLAG_CURRENT_PLAYER] == players.get(i)->getID())
 		{
-			sprintf(buffer, "Player %d's turn\n", (players.get(i)->getID() + 1));
+			switch(flags[FLAG_GAME_STATE])
+			{
+			case STATE_INIT_PLACEMENT:
+				sprintf(buffer, "Player %d's turn: Claim a Territory\n", (players.get(i)->getID() + 1));
+				break;
+			case STATE_GET_AND_PLACE_TROOPS:
+				sprintf(buffer, "Player %d's turn: Deploy %d Troops\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
+				break;
+			/*case STATE_ATTACK:
+				break;
+			case STATE_FORTIFY:
+				break;
+			case STATE_WINNING:
+				break;*/
+			}
 			(V2DF(0,0)).glDrawString(buffer);
 		}
 	}

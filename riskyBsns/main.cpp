@@ -1,6 +1,9 @@
 #include <stdio.h>	// for printf()
 #include <time.h>	// for clock()
 
+#include <iostream>
+using namespace std;
+
 #include "GLUTRenderingContext.h"
 #include "random.h"
 #include "templatearray.h"
@@ -319,12 +322,31 @@ void initBoard()
 void initPlayers()
 {
 	Player * ply;
-	flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
-	for(int i = 0; i < PLAYERS_MAX; ++i)
+	short startWithTroops;
+	switch(flags[FLAG_PLAYERS])
 	{
-		ply = new Player(30,players.size());
+	case 2:
+		startWithTroops = 40;
+		break;
+	case 3:
+		startWithTroops = 35;
+		break;
+	case 4:
+		startWithTroops = 30;
+		break;
+	case 5:
+		startWithTroops = 25;
+		break;
+	case 6:
+		startWithTroops = 20;
+		break;
+	}
+	for(int i = 0; i < flags[FLAG_PLAYERS]; ++i)
+	{
+		ply = new Player(startWithTroops,players.size());
 		players.add(ply);
 	}
+	flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 }
 #include "draw.h"
 #include "eventhandlers.h"
@@ -373,11 +395,16 @@ void init()
 	glutMotionFunc(draggedMotion);
 	glutMouseFunc(mouse);
 	initBoard();
+	do
+	{
+		cout << "How many players (2-6)?" << endl;
+		cin >> flags[FLAG_PLAYERS];
+	}while(flags[FLAG_PLAYERS] < 2 || flags[FLAG_PLAYERS] > 6);
+	printf("players == %d\n", flags[FLAG_PLAYERS]);
 	initPlayers();
 	flags[FLAG_GAME_STATE] = 0;
 	flags[FLAG_UPDATE_GAME_STATE] = false;
 	flags[FLAG_PARAMS_SET] = false;
-	flags[FLAG_PLAYERS] = 3;
 }
 
 int main(int argc, char ** argv)

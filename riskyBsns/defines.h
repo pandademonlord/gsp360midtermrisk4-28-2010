@@ -25,7 +25,7 @@
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array
-#define FLAGS_NUM					10
+#define FLAGS_NUM					11
 //(bool) determine if hover is within a territory
 #define FLAG_WITHIN_AREA			0
 //(short) index of which territory was clicked on
@@ -46,6 +46,8 @@
 #define FLAG_CURRENT_PLAYER			8
 //(bool) should the player change?
 #define FLAG_UPDATE_PLAYER			9
+//(bool) has the player entered the state for the 1st time that turn?
+#define FLAG_STATE_CUR_TURN_ENTER	10
 //input
 #define CLICK_TWO_TERRITORIES		2
 #define CLICK_TERRITORY_ONE			0
