@@ -11,13 +11,58 @@ using namespace std;
 #include "territory.h"
 #include "circle.h"
 #include "player.h"
+#include "card.h"
 
 // GLUT will not give access to the main loop, some variables MUST be global. :(
 GLUTRenderingContext g_screen(V2DF(SCREEN_WIDTH,SCREEN_HEIGHT), V2DF(SCREEN_MIN_X,SCREEN_MIN_Y), V2DF(SCREEN_MAX_X,SCREEN_MAX_Y));
 TemplateArray<Territory *> board;
 TemplateArray<Player *> players;
+TemplateArray<Card *> deck;
 short flags[FLAGS_NUM];
 
+/*void useCards(Card * a_Card1, Card * a_Card2, Card * a_Card3) //going to want to argue a player here for error checking
+{
+	//if(a_Card1->getOwnerID() == a_Player->getPlayerID() && a_Card2->getOwnerID() == a_Player->getPlayerID() 
+	//&& a_Card3->getOwnerID() == a_Player->getPlayerID())
+//		{
+	short card1, card2, card3;
+	card1 = a_Card1->isWhat();
+	card2 = a_Card2->isWhat();
+	card3 = a_Card3->isWhat();
+	//handle the wilds (very poorly)
+	if(card1 == 0 && !card2 == 0)
+	{
+		card1 = card2;
+	}
+	else if(card1 == 0 && !card3 == 0)
+	{
+		card1 = card3;
+	}
+	if(card2 == 0 && !card3 == 0)
+	{
+		card2 = card3;
+	}
+	else if(card2 == 0 && !card1 == 0)
+	{
+		card2 = card1;
+	}
+	if(card3 == 0 && !card1 == 0)
+	{
+		card3 = card1;
+	}
+	else if(card3 == 0 && !card2 == 0)
+	{
+		card3 = card2;
+	}
+	if(card1 == card2 && card1 == card3)
+	{
+		//a_Player->(give troops based on the card ID)
+		a_Card1->reshuffle();
+		a_Card2->reshuffle();
+		a_Card3->reshuffle();
+	}
+//		}
+}*/
 void initBoard()
 {
 	Territory * ter;
@@ -348,6 +393,22 @@ void initPlayers()
 	}
 	flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 }
+void initDeck()
+{
+	Card * crd;
+	for(int i = 0; i < 42; ++i)
+	{
+		crd = new Card((i % 3), i, i);
+		deck.add(crd);
+	}
+	for(int i = 42; i < 44; ++i)
+	{
+		crd = new Card(3, i, i);
+		deck.add(crd);
+	}
+	//for(int i = 0; i < deck.size(); ++i)
+	//	printf("id == %d, ter == %d, unit == %d\n", deck.get(i)->getCardID(), deck.get(i)->getTerritoryID(), deck.get(i)->getUnit());
+}
 #include "draw.h"
 #include "eventhandlers.h"
 
@@ -402,6 +463,7 @@ void init()
 	}while(flags[FLAG_PLAYERS] < 2 || flags[FLAG_PLAYERS] > 6);
 	printf("players == %d\n", flags[FLAG_PLAYERS]);
 	initPlayers();
+	initDeck();
 	flags[FLAG_GAME_STATE] = 0;
 	flags[FLAG_UPDATE_GAME_STATE] = false;
 	flags[FLAG_PARAMS_SET] = false;
@@ -424,6 +486,8 @@ int main(int argc, char ** argv)
 		delete board.get(i);
 	for(int i = 0; i < players.size(); ++i)
 		delete players.get(i);
+	for(int i = 0; i < deck.size(); ++i)
+		delete deck.get(i);
 
 	return 0;
 }

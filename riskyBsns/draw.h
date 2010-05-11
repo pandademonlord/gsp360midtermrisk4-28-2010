@@ -26,15 +26,18 @@ void display()
 			case STATE_INIT_PLACEMENT_PLACE:
 				sprintf(buffer, "Player %d's turn: Add 1 Army (%d Left)\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
-			case STATE_GET_AND_PLACE_TROOPS:
+			case STATE_PLACE_BONUS_TROOPS:
 				sprintf(buffer, "Player %d's turn: Deploy %d Troops\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
-			/*case STATE_ATTACK:
+			case STATE_ATTACK:
+				sprintf(buffer, "Player %d's turn: Attack a Territory\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			case STATE_FORTIFY:
+				sprintf(buffer, "Player %d's turn: Fortify a Territory\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			case STATE_WINNING:
-				break;*/
+				sprintf(buffer, "Player %d WINS!\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
+				break;
 			}
 			(V2DF(0,0)).glDrawString(buffer);
 		}

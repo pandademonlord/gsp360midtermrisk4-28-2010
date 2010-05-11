@@ -18,11 +18,13 @@
 //state machine
 #define STATE_INIT_PLACEMENT_CLAIM	0
 #define STATE_INIT_PLACEMENT_PLACE	1
-#define STATE_GET_AND_PLACE_TROOPS	2
-#define STATE_ATTACK				3
-#define STATE_FORTIFY				4
-#define STATE_WINNING				5
-#define STATES_TOTAL				6
+#define STATE_GET_TROOPS_TERRITORY	2
+#define STATE_GET_TROOPS_CARDS		3
+#define STATE_PLACE_BONUS_TROOPS	4
+#define STATE_ATTACK				5
+#define STATE_FORTIFY				6
+#define STATE_WINNING				7
+#define STATES_TOTAL				8
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array
@@ -179,3 +181,8 @@
 #define ID_INDONESIA				(TERRITORIES_ST_OCEANIA + 1)
 #define ID_N_GUINEA					(TERRITORIES_ST_OCEANIA + 2)
 #define ID_W_AUSTRALIA				(TERRITORIES_ST_OCEANIA + 3)
+//card stuff
+#define CARD_ID_SOLDIER				0
+#define CARD_ID_HORSEMAN			1
+#define CARD_ID_CANNON				2
+#define CARD_ID_WILD				3
