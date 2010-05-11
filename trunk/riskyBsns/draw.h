@@ -30,12 +30,12 @@ void display()
 				sprintf(buffer, "Player %d's turn: Deploy %d Troops\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			case STATE_ATTACK:
-				sprintf(buffer, "Player %d's turn: Attack a Territory\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
+				sprintf(buffer, "Player %d's turn: ATK (Use Console for #Dice)\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			case STATE_FORTIFY:
-				sprintf(buffer, "Player %d's turn: Fortify a Territory\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
+				sprintf(buffer, "Player %d's turn: Fortify (Use Console for #Troops)\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
-			case STATE_WINNING:
+			case STATE_WIN:
 				sprintf(buffer, "Player %d WINS!\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			}

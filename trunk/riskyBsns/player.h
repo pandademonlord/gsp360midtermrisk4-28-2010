@@ -25,6 +25,7 @@ public:
 	Player(short t,short id):m_troops(t),m_ID(id),m_conqueredT(0){}
 	short getID(){return this->m_ID;}
 	short getTroops(){return this->m_troops;}
+	short getConqueredT(){return this->m_conqueredT;}
 	//checks if the player owns the territory
 	bool ifOwns(Territory* thatone)
 	{
@@ -36,15 +37,9 @@ public:
 	//gives player the territory
 	void addLocal(Territory * added)
 	{
-		if(ifOwns(added))
-			printf("player already owns territory\n");
-		else if(added->getOwner()>0)
-			printf("another player owns this territory\n");
-		else{
-			added->setOwner(m_ID);
-			m_conqueredT++;
-			//printf("player owns location\n");
-		}
+		added->setOwner(m_ID);
+		m_conqueredT++;
+		//printf("player owns location\n");
 	}
 	//set the territory to the enemy players territory
 	void removeLocal(Territory *removed, short enemy)

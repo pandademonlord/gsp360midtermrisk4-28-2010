@@ -20,49 +20,6 @@ TemplateArray<Player *> players;
 TemplateArray<Card *> deck;
 short flags[FLAGS_NUM];
 
-/*void useCards(Card * a_Card1, Card * a_Card2, Card * a_Card3) //going to want to argue a player here for error checking
-{
-	//if(a_Card1->getOwnerID() == a_Player->getPlayerID() && a_Card2->getOwnerID() == a_Player->getPlayerID() 
-	//&& a_Card3->getOwnerID() == a_Player->getPlayerID())
-//		{
-	short card1, card2, card3;
-	card1 = a_Card1->isWhat();
-	card2 = a_Card2->isWhat();
-	card3 = a_Card3->isWhat();
-	//handle the wilds (very poorly)
-	if(card1 == 0 && !card2 == 0)
-	{
-		card1 = card2;
-	}
-	else if(card1 == 0 && !card3 == 0)
-	{
-		card1 = card3;
-	}
-	if(card2 == 0 && !card3 == 0)
-	{
-		card2 = card3;
-	}
-	else if(card2 == 0 && !card1 == 0)
-	{
-		card2 = card1;
-	}
-	if(card3 == 0 && !card1 == 0)
-	{
-		card3 = card1;
-	}
-	else if(card3 == 0 && !card2 == 0)
-	{
-		card3 = card2;
-	}
-	if(card1 == card2 && card1 == card3)
-	{
-		//a_Player->(give troops based on the card ID)
-		a_Card1->reshuffle();
-		a_Card2->reshuffle();
-		a_Card3->reshuffle();
-	}
-//		}
-}*/
 void initBoard()
 {
 	Territory * ter;
@@ -403,7 +360,7 @@ void initDeck()
 	}
 	for(int i = 42; i < 44; ++i)
 	{
-		crd = new Card(3, i, i);
+		crd = new Card(3, CARD_TERRITORY_NONE, i);
 		deck.add(crd);
 	}
 	//for(int i = 0; i < deck.size(); ++i)
@@ -458,7 +415,7 @@ void init()
 	initBoard();
 	do
 	{
-		cout << "How many players (2-6)?" << endl;
+		printf("How many players (2-6)?\n");
 		cin >> flags[FLAG_PLAYERS];
 	}while(flags[FLAG_PLAYERS] < 2 || flags[FLAG_PLAYERS] > 6);
 	printf("players == %d\n", flags[FLAG_PLAYERS]);
