@@ -11,20 +11,31 @@
 #define INIT_WINDOW_X				10
 #define INIT_WINDOW_Y				50
 #define TIMER_VALUE					20
-#define BUFFER_SIZE					50
+#define BUFFER_SIZE					100
 //mouse button states
 #define	STATE_MOUSE_BUTTON_DN		0
 #define STATE_MOUSE_BUTTON_UP		1
 //state machine
+	//total number of states
+#define STATES_TOTAL				9
+	//allow each player to claim 1 territory
 #define STATE_INIT_PLACEMENT_CLAIM	0
+	//allow player to reinforce 1 territory they claimed
 #define STATE_INIT_PLACEMENT_PLACE	1
+	//give current playr bonus troops from total # territories owned & continents conquered
 #define STATE_GET_TROOPS_TERRITORY	2
+	//allow current playr to turn in card sets & get bonus troops
 #define STATE_GET_TROOPS_CARDS		3
+	//allow current player to deploy all bonus troops
 #define STATE_PLACE_BONUS_TROOPS	4
+	//allow current player to attack adjacent enemy territory
 #define STATE_ATTACK				5
-#define STATE_FORTIFY				6
-#define STATE_WINNING				7
-#define STATES_TOTAL				8
+	//don't bother fortifying if current player has conquered everything
+#define STATE_CHECK_IF_WON			6
+	//allow current player to reinforce adjacent territory
+#define STATE_FORTIFY				7
+	//go this state ONLY if current player owns all 42 territories
+#define STATE_WIN					8
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array
@@ -33,24 +44,24 @@
 #define FLAG_WITHIN_AREA			0
 //(short) index of which territory was clicked on
 #define FLAG_CLICKED_TER			1
-//(short) game's current state
-#define FLAG_GAME_STATE				2
-//(bool) should the state change?
-#define FLAG_UPDATE_GAME_STATE		3
 //(short) which index to use for 1st territory
-#define FLAG_PARAM_ONE				4
+#define FLAG_PARAM_ONE				2
 //(short) which index to use for 2nd territory
-#define FLAG_PARAM_TWO				5
+#define FLAG_PARAM_TWO				3
 //(bool) are all needed parameters set?
-#define FLAG_PARAMS_SET				6
-//(short) number of active players
+#define FLAG_PARAMS_SET				4
+//(short) game's current state
+#define FLAG_GAME_STATE				5
+//(bool) should the state change?
+#define FLAG_UPDATE_GAME_STATE		6
+//(short) number of players @ start of game
 #define FLAG_PLAYERS				7
 //(short) ID of current player
 #define FLAG_CURRENT_PLAYER			8
 //(bool) should the player change?
 #define FLAG_UPDATE_PLAYER			9
-//(bool) has the player entered the state for the 1st time that turn?
-#define FLAG_STATE_CUR_TURN_ENTER	10
+//(short) # of card sets that have been turned in
+#define FLAG_CARD_SET				10
 //input
 #define CLICK_TWO_TERRITORIES		2
 #define CLICK_TERRITORY_ONE			0
@@ -186,3 +197,5 @@
 #define CARD_ID_HORSEMAN			1
 #define CARD_ID_CANNON				2
 #define CARD_ID_WILD				3
+#define CARD_TERRITORY_NONE			OWNER_NONE
+#define CARD_DISCARDED				-1
