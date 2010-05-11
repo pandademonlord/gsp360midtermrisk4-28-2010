@@ -176,6 +176,56 @@ bool update(int a_ms)
 		break;
 	case STATE_GET_TROOPS_CARDS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
+		{
+			//TODO allow user to "turn-in" 3 cards of their choise
+			short selectC1, selectC2, selectC3;
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3)))
+			{
+				//TODO allow user to turn in cards ONLY if they want to,
+				//unless they have 5 or more cards
+				do{
+					flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
+					switch(flags[FLAG_CARD_SET])
+					{
+					case 1:
+						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(4);
+						break;
+					case 2:
+						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(6);
+						break;
+					case 3:
+						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(8);
+						break;
+					case 4:
+						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(10);
+						break;
+					case 5:
+						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(12);
+						break;
+					case 6:
+						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15);
+						break;
+					default:
+						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15 + ((flags[FLAG_CARD_SET] - 6) * 5));
+					}
+					if(flags[FLAG_FIRST_SET_IN_TURN])
+					{
+						if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC1),board))
+							flags[FLAG_FIRST_SET_IN_TURN] = false;
+						else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC2),board))
+							flags[FLAG_FIRST_SET_IN_TURN] = false;
+						else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC3),board))
+							flags[FLAG_FIRST_SET_IN_TURN] = false;
+					}
+					deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
+					deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
+					deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
+				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5);
+			}
+		}
+		else
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 		break;
 	case STATE_PLACE_BONUS_TROOPS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -235,6 +285,7 @@ bool update(int a_ms)
 		if(flags[FLAG_GAME_STATE] == STATE_FORTIFY)
 		{
 			flags[FLAG_GAME_STATE] = STATE_GET_TROOPS_TERRITORY;
+			flags[FLAG_FIRST_SET_IN_TURN] = true;
 			do{
 				goToNextPlayer();
 			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() == 0);

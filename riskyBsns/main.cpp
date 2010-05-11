@@ -363,6 +363,8 @@ void initDeck()
 		crd = new Card(3, CARD_TERRITORY_NONE, i);
 		deck.add(crd);
 	}
+	flags[FLAG_CARD_SET] = 0;
+	flags[FLAG_FIRST_SET_IN_TURN] = true;
 	//for(int i = 0; i < deck.size(); ++i)
 	//	printf("id == %d, ter == %d, unit == %d\n", deck.get(i)->getCardID(), deck.get(i)->getTerritoryID(), deck.get(i)->getUnit());
 }
