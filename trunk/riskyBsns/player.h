@@ -6,13 +6,13 @@
 #include "territory.h"
 #include "templatevector.h"
 
-
 #define dicesides 6
 #define epicfail 1
 #define maxatkD 3
 #define maxdefD 2
 #define minArmys 3
 #define minTerri 11
+
 class Player
 {
 private:
@@ -57,18 +57,8 @@ public:
 	//add troop to a territory (used to init board with players & troops)
 	void addToTerritory(Territory *here)
 	{
-		const int addtroop = 1;
+		const short addtroop = 1;
 		if(ifOwns(here)){
-			here->addTroopsDeployed(addtroop);
-			m_troops--;
-		}
-	}
-	//adds a troop to a territory
-	void addTroop(Territory *here)
-	{
-		const int addtroop = 1;
-		if(ifOwns(here) && m_troops>0)
-		{
 			here->addTroopsDeployed(addtroop);
 			m_troops--;
 		}
@@ -150,8 +140,7 @@ public:
 		//check if the player controls any continents
 		m_troops+=getContinentBonus(a_board);
 		
-		//check if the player turns in cards no say ATM
-		
+		//check if the player turns in cards no say ATM	
 	}
 	//fortifies troops from territory 1 to territory 2
 	void fortify(Territory* a_ter1, Territory* a_ter2, short a_numTroops)
@@ -204,9 +193,9 @@ public:
 		}
 	}
 	//rolls the dice for combat
-	void rollDice(int die[],int armys){
+	void rollDice(short die[],short armys){
 		for(int g=0;g<armys;g++){
-			int check= random()%dicesides;
+			short check= random()%dicesides;
 			if(check>0)
 				die[g]=check;
 			else
@@ -214,7 +203,7 @@ public:
 			}
 	}
 	//sorts the dice from largest to smallest for combat
-	void sortDice(int die[],int numof){
+	void sortDice(short die[],short numof){
 		for(int v=numof;v>0;v--){
 			for(int g=numof;g>0;g--){
 				if(die[g]>die[g-1]){
@@ -227,12 +216,12 @@ public:
 	}
 
 	//is a gameplay state which does the combat
-	void combat(int DefArmys,int AtkArmys)
+	void combat(short DefArmys,short AtkArmys)
 	{
 		while(DefArmys>0&&AtkArmys>1){
 			//holds dice rolls
-			int atk[maxatkD];
-			int def[maxdefD];
+			short atk[maxatkD];
+			short def[maxdefD];
 			//rolls dice
 			if(DefArmys>=maxdefD)
 				rollDice(def,maxdefD);
