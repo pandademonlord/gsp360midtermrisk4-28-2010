@@ -39,7 +39,7 @@
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array
-#define FLAGS_NUM					11
+#define FLAGS_NUM					12
 //(bool) determine if hover is within a territory
 #define FLAG_WITHIN_AREA			0
 //(short) index of which territory was clicked on
@@ -62,6 +62,8 @@
 #define FLAG_UPDATE_PLAYER			9
 //(short) # of card sets that have been turned in
 #define FLAG_CARD_SET				10
+//(bool) is this the 1st set turned in this turn?
+#define FLAG_FIRST_SET_IN_TURN		11
 //input
 #define CLICK_TWO_TERRITORIES		2
 #define CLICK_TERRITORY_ONE			0
@@ -199,3 +201,4 @@
 #define CARD_ID_WILD				3
 #define CARD_TERRITORY_NONE			OWNER_NONE
 #define CARD_DISCARDED				-1
+#define CARD_NUM_IN_SET				3

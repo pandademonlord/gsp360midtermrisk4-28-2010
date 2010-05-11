@@ -4,6 +4,7 @@
 #pragma once
 
 #include "territory.h"
+#include "card.h"
 #include "templatevector.h"
 
 #define dicesides 6
@@ -19,13 +20,15 @@ private:
 	short m_troops;//holds amount of units the player gets
 	short m_ID; //reflection in order to know what player he is
 	short m_conqueredT; //int to tell how many territorys the player has
+	short m_holdCards;//# of cards player is currently holding
 public:
-	Player():m_troops(0),m_ID(0),m_conqueredT(0){}
+	Player():m_troops(0),m_ID(0),m_conqueredT(0), m_holdCards(0){}
 	//take into account that the starting number of units is depends on players
 	Player(short t,short id):m_troops(t),m_ID(id),m_conqueredT(0){}
 	short getID(){return this->m_ID;}
 	short getTroops(){return this->m_troops;}
 	short getConqueredT(){return this->m_conqueredT;}
+	short getNumCards(){return this->m_holdCards;}
 	//checks if the player owns the territory
 	bool ifOwns(Territory* thatone)
 	{
@@ -242,5 +245,86 @@ public:
 					DefArmys--;
 			}
 		}
+	}
+	bool isCardSet(Card * a_Card1, Card * a_Card2, Card * a_Card3)
+	{
+		if(a_Card1->getOwnerID() == this->m_ID &&
+		a_Card2->getOwnerID() == this->m_ID &&
+		a_Card3->getOwnerID() == this->m_ID)
+		{
+			short card1, card2, card3;
+			card1 = a_Card1->getUnit();
+			card2 = a_Card2->getUnit();
+			card3 = a_Card3->getUnit();
+
+			//handle the wilds
+			if(card1 == CARD_ID_WILD || card2 == CARD_ID_WILD || card3 == CARD_ID_WILD)
+				return true;
+			//if all cards have same unit
+			if(card1 == card2 && card2 == card3)
+				return true;
+			//if 1 card of each unit
+			if(card1 == CARD_ID_SOLDIER || card2 == CARD_ID_SOLDIER || card3 == CARD_ID_SOLDIER)
+			{
+				if(card1 == CARD_ID_HORSEMAN || card2 == CARD_ID_HORSEMAN || card3 == CARD_ID_HORSEMAN)
+				{
+					if(card1 == CARD_ID_CANNON || card2 == CARD_ID_CANNON || card3 == CARD_ID_CANNON)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+	bool terCard(Card * a_card, TemplateArray<Territory *> a_board)
+	{
+		bool extraTroops = false;
+		if(a_card->getOwnerID() == a_board.get(a_card->getCardID())->getOwner())
+		{
+			a_board.get(a_card->getCardID())->addTroopsDeployed(2);
+			extraTroops = true;
+		}
+		return extraTroops;
+	}
+	void addBonusTroops(short a_bonus)
+	{
+		if(a_bonus > 0)
+			this->m_troops += a_bonus;
+	}
+	//checks if player owns a set
+	bool ownSet(TemplateArray<Card *> a_deck)
+	{
+		//no set is possible without at least 3 cards
+		if(this->m_holdCards < CARD_NUM_IN_SET)
+			return false;
+
+		//save array of all owned cards for testing
+		TemplateArray<Card *> ownedCrds;
+		for(int i = 0; i < a_deck.size(); ++i)
+		{
+			if(a_deck.get(i)->getOwnerID() == this->m_ID)
+				ownedCrds.add(a_deck.get(i));
+		}
+
+		//double check that they are equal
+		if(ownedCrds.size() == this->m_holdCards)
+		{
+			//if own 3 cards, check if they make a valid set
+			if(this->m_holdCards == CARD_NUM_IN_SET)
+				return this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2));
+			else if (this->m_holdCards = CARD_NUM_IN_SET + 1)
+			{
+				for(int i = 0; i < CARD_NUM_IN_SET; ++i)
+				{
+					//0,1,2
+					//1,2,3
+					//2,3,0
+					if(this->isCardSet(a_deck.get((i)%this->m_holdCards), a_deck.get((i+1)%this->m_holdCards), a_deck.get((i+2)%this->m_holdCards)))
+						return true;
+				}
+				return false;
+			}
+		}
+		//if holding 5 or more cards, set EXISTS
+		return true;
 	}
 };
