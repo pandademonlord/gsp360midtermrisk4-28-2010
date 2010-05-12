@@ -297,18 +297,18 @@ public:
 		if(this->m_holdCards < CARD_NUM_IN_SET)
 			return false;
 
+		//save array of all owned cards for testing
+		TemplateArray<Card *> ownedCrds;
+		for(int i = 0; i < a_deck.size(); ++i)
+		{
+			if(a_deck.get(i)->getOwnerID() == this->m_ID)
+				ownedCrds.add(a_deck.get(i));
+		}
 		//if own 3 cards, check if they make a valid set
 		if(this->m_holdCards == CARD_NUM_IN_SET)
 			return this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2));
 		else if (this->m_holdCards = CARD_NUM_IN_SET + 1)
 		{
-			//save array of all owned cards for testing
-			TemplateArray<Card *> ownedCrds;
-			for(int i = 0; i < a_deck.size(); ++i)
-			{
-				if(a_deck.get(i)->getOwnerID() == this->m_ID)
-					ownedCrds.add(a_deck.get(i));
-			}
 			for(int i = 0; i < CARD_NUM_IN_SET; ++i)
 			{
 				//0,1,2

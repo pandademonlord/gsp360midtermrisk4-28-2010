@@ -8,10 +8,23 @@ if (state & GLUT_ACTIVE_SHIFT)	// shift is pressed</code>
  */
 void keyboard(unsigned char key, int x, int y)
 {
-	switch(key)
+	switch(flags[FLAG_GAME_STATE])
 	{
-	case ' ':
-		//printf("space was pressed\n");
+	case STATE_FORTIFY_TROOPS:
+		switch(key)
+		{
+		case 'w'://increase # of troops to move
+			flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
+			break;
+		case 's'://decrease # of troops to move
+			flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
+			if(flags[FLAG_PARAM_NUM] < 0)
+				flags[FLAG_PARAM_NUM] = 0;
+			break;
+		case ' '://"enter" your final decision
+			flags[FLAG_PARAMS_SET] = true;
+			break;
+		}
 		break;
 	}
 	glutPostRedisplay();
@@ -57,7 +70,6 @@ void passiveMotion(int x, int y)
 void mouse(int button, int state, int x, int y)
 {
 	//printf("button %d, state %d,  x %d, y %d\n", button, state, x, y);
-	static short setParam = 0;
 	switch(button)
 	{
 	case GLUT_LEFT_BUTTON:
@@ -71,32 +83,24 @@ void mouse(int button, int state, int x, int y)
 				case STATE_INIT_PLACEMENT_CLAIM:
 				case STATE_INIT_PLACEMENT_PLACE:
 				case STATE_PLACE_BONUS_TROOPS:
-					flags[FLAG_PARAM_ONE] = flags[FLAG_CLICKED_TER];
+				case STATE_FORTIFY_FROM:
+					flags[FLAG_PARAM_TER_ONE] = flags[FLAG_CLICKED_TER];
 					flags[FLAG_PARAMS_SET] = true;
 					break;
-				case STATE_FORTIFY:
-					if(setParam == CLICK_TERRITORY_ONE)
-					{
-						printf("Param #1 Set\n");
-						flags[FLAG_PARAM_ONE] = flags[FLAG_CLICKED_TER];
-					}
-					else
-					{
-						printf("Param #2 Set\n");
-						flags[FLAG_PARAM_TWO] = flags[FLAG_CLICKED_TER];
-						flags[FLAG_PARAMS_SET] = true;
-					}
-					setParam++;
-					setParam %= CLICK_TWO_TERRITORIES;
+				case STATE_FORTIFY_TO:
+					flags[FLAG_PARAM_TER_TWO] = flags[FLAG_CLICKED_TER];
+					flags[FLAG_PARAMS_SET] = true;
+					break;
 				}
-				//printf("state == %d\n", flags[FLAG_GAME_STATE]);
 			}
-			else
+			else//go to the next playing state if player doesn't want to attack or fortify
 			{
 				switch(flags[FLAG_GAME_STATE])
 				{
+				case STATE_FORTIFY_FROM:
+					flags[FLAG_GAME_STATE] = STATE_FORTIFY_TROOPS;
+					flags[FLAG_PARAM_NUM] = 0;
 				case STATE_ATTACK:
-				case STATE_FORTIFY:
 					flags[FLAG_UPDATE_GAME_STATE] = true;
 				}
 			}
@@ -111,11 +115,11 @@ void mouse(int button, int state, int x, int y)
 		case STATE_MOUSE_BUTTON_DN:
 			switch(flags[FLAG_GAME_STATE])
 				{
+				case STATE_FORTIFY_TO://un-do which territory player is getting troops from
+					flags[FLAG_GAME_STATE] = STATE_FORTIFY_FROM;
 				case STATE_ATTACK:
-				case STATE_FORTIFY:
-					printf("Re-setting Params\n");
-					setParam = 0;
 					flags[FLAG_PARAMS_SET] = false;
+					break;
 				}
 			break;
 		}
@@ -143,10 +147,10 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == OWNER_NONE)
+			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == OWNER_NONE)
 			{
-				players.get(flags[FLAG_CURRENT_PLAYER])->addLocal(board.get(flags[FLAG_PARAM_ONE]));
-				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+				players.get(flags[FLAG_CURRENT_PLAYER])->addLocal(board.get(flags[FLAG_PARAM_TER_ONE]));
+				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
 				flags[FLAG_UPDATE_PLAYER] = true;
 			}
 			flags[FLAG_PARAMS_SET] = false;
@@ -161,9 +165,9 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
 			{
-				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
 				flags[FLAG_UPDATE_PLAYER] = true;
 			}
 			flags[FLAG_PARAMS_SET] = false;
@@ -233,8 +237,8 @@ bool update(int a_ms)
 			flags[FLAG_UPDATE_GAME_STATE] = false;
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(board.get(flags[FLAG_PARAM_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
-				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_ONE]));
+			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
@@ -246,22 +250,32 @@ bool update(int a_ms)
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() == TERRITORIES_TOTAL)
 			flags[FLAG_GAME_STATE] = STATE_WIN;
 		break;
-	case STATE_FORTIFY:
+	case STATE_FORTIFY_FROM:
 		//flags[FLAG_UPDATE_GAME_STATE] = false;
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_ONE]))
-				&& players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TWO]))
-				&& board.get(flags[FLAG_PARAM_ONE])->isConnectedTo(board.get(flags[FLAG_PARAM_TWO])))
-			{
-				short a_num;
-				do{
-					printf("How many Troops to move?\n");
-					cin >> a_num;
-				}while(a_num < -1);
-				players.get(flags[FLAG_CURRENT_PLAYER])->fortify(board.get(flags[FLAG_PARAM_ONE]), board.get(flags[FLAG_PARAM_TWO]), a_num);
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])))
 				flags[FLAG_UPDATE_GAME_STATE] = true;
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	case STATE_FORTIFY_TO:
+		if(flags[FLAG_PARAMS_SET])
+		{
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO]))
+				&& board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+			{
+				flags[FLAG_UPDATE_GAME_STATE] = true;
+				flags[FLAG_PARAM_NUM] = 0;
 			}
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	case STATE_FORTIFY_TROOPS:
+		if(flags[FLAG_PARAMS_SET])
+		{
+			players.get(flags[FLAG_CURRENT_PLAYER])->fortify(board.get(flags[FLAG_PARAM_TER_ONE]), board.get(flags[FLAG_PARAM_TER_TWO]), flags[FLAG_PARAM_NUM]);
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
@@ -282,7 +296,7 @@ bool update(int a_ms)
 			flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 
 		//handles special cases of how to update
-		if(flags[FLAG_GAME_STATE] == STATE_FORTIFY)
+		if(flags[FLAG_GAME_STATE] == STATE_FORTIFY_TROOPS)
 		{
 			flags[FLAG_GAME_STATE] = STATE_GET_TROOPS_TERRITORY;
 			flags[FLAG_FIRST_SET_IN_TURN] = true;
@@ -294,7 +308,7 @@ bool update(int a_ms)
 			flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
 
 		flags[FLAG_UPDATE_GAME_STATE] = false;
-		printf("state == %d\n", flags[FLAG_GAME_STATE]);
+		//printf("state == %d\n", flags[FLAG_GAME_STATE]);
 		return true;
 	}
 	else
