@@ -12,12 +12,12 @@
 #define INIT_WINDOW_Y				50
 #define TIMER_VALUE					20
 #define BUFFER_SIZE					100
+
 //mouse button states
 #define	STATE_MOUSE_BUTTON_DN		0
 #define STATE_MOUSE_BUTTON_UP		1
+
 //state machine
-	//total number of states
-#define STATES_TOTAL				9
 	//allow each player to claim 1 territory
 #define STATE_INIT_PLACEMENT_CLAIM	0
 	//allow player to reinforce 1 territory they claimed
@@ -32,48 +32,62 @@
 #define STATE_ATTACK				5
 	//don't bother fortifying if current player has conquered everything
 #define STATE_CHECK_IF_WON			6
-	//allow current player to reinforce adjacent territory
-#define STATE_FORTIFY				7
+	//allow current player to choose which territory to reinforce from
+#define STATE_FORTIFY_FROM			7
+	//allow current player to choose which territory to reinforce to
+#define STATE_FORTIFY_TO			8
+	//how many troops to move
+#define STATE_FORTIFY_TROOPS		9
 	//go this state ONLY if current player owns all 42 territories
-#define STATE_WIN					8
+#define STATE_WIN					10
+
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array
-#define FLAGS_NUM					12
+#define FLAGS_NUM					15
 //(bool) determine if hover is within a territory
 #define FLAG_WITHIN_AREA			0
 //(short) index of which territory was clicked on
 #define FLAG_CLICKED_TER			1
 //(short) which index to use for 1st territory
-#define FLAG_PARAM_ONE				2
+#define FLAG_PARAM_TER_ONE				2
 //(short) which index to use for 2nd territory
-#define FLAG_PARAM_TWO				3
+#define FLAG_PARAM_TER_TWO			3
+//(short) how many troops to move/fortify
+#define FLAG_PARAM_NUM				4
+//(short) how many dice to for to attack
+#define FLAG_PARAM_ROLL_ATK			5
+//(short) how many dice to for to defend
+#define FLAG_PARAM_ROLL_DEF			6
 //(bool) are all needed parameters set?
-#define FLAG_PARAMS_SET				4
+#define FLAG_PARAMS_SET				7
 //(short) game's current state
-#define FLAG_GAME_STATE				5
+#define FLAG_GAME_STATE				8
 //(bool) should the state change?
-#define FLAG_UPDATE_GAME_STATE		6
+#define FLAG_UPDATE_GAME_STATE		9
 //(short) number of players @ start of game
-#define FLAG_PLAYERS				7
+#define FLAG_PLAYERS				10
 //(short) ID of current player
-#define FLAG_CURRENT_PLAYER			8
+#define FLAG_CURRENT_PLAYER			11
 //(bool) should the player change?
-#define FLAG_UPDATE_PLAYER			9
+#define FLAG_UPDATE_PLAYER			12
 //(short) # of card sets that have been turned in
-#define FLAG_CARD_SET				10
+#define FLAG_CARD_SET				13
 //(bool) is this the 1st set turned in this turn?
-#define FLAG_FIRST_SET_IN_TURN		11
+#define FLAG_FIRST_SET_IN_TURN		14
+
 //input
 #define CLICK_TWO_TERRITORIES		2
 #define CLICK_TERRITORY_ONE			0
 #define CLICK_TERRITORY_TWO			1
+
 //colors
 #define COLOR_DARK_VALUE			150
 #define COLOR_MAX_VALUE				255
 #define COLOR_ORANGE_RATIO			.75
 #define	COLOR_ALPHA					1.0
 #define COLOR_GREY					.5,.5,.5
+
 	//regular colors
 #define COLOR_BLUE					0,0,COLOR_MAX_VALUE
 #define COLOR_CYAN					0,COLOR_MAX_VALUE,COLOR_MAX_VALUE
@@ -83,6 +97,7 @@
 #define COLOR_RED					COLOR_MAX_VALUE,0,0
 #define COLOR_WHITE					COLOR_MAX_VALUE,COLOR_MAX_VALUE,COLOR_MAX_VALUE
 #define COLOR_YELLOW				COLOR_MAX_VALUE,COLOR_MAX_VALUE,0
+
 	//darker variants of above colors
 #define COLOR_BLUE_DARK				0,0,COLOR_DARK_VALUE
 #define COLOR_GREEN_DARK			0,COLOR_DARK_VALUE,0
@@ -90,6 +105,7 @@
 #define COLOR_PURPLE_DARK			COLOR_DARK_VALUE,0,COLOR_DARK_VALUE
 #define COLOR_RED_DARK				COLOR_DARK_VALUE,0,0
 #define COLOR_YELLOW_DARK			COLOR_DARK_VALUE,COLOR_DARK_VALUE,0
+
 //which colors to use
 	//for hovering & continents
 #define HIGHLIGHT_COLOR				COLOR_WHITE
@@ -106,6 +122,7 @@
 #define PLAYER_FOUR_COLOR			COLOR_ORANGE
 #define PLAYER_FIVE_COLOR			COLOR_GREEN
 #define PLAYER_SIX_COLOR			COLOR_PURPLE
+
 //continent ID's
 #define CONTINENT_ID_N_AMERICA		0
 #define CONTINENT_ID_S_AMERICA		1
@@ -113,6 +130,7 @@
 #define CONTINENT_ID_AFRICA			3
 #define CONTINENT_ID_ASIA			4
 #define CONTINENT_ID_OCEANIA		5
+
 //owner ID's
 #define OWNER_NONE					-1
 #define PLAYER_ONE					0
@@ -122,6 +140,7 @@
 #define PLAYER_FIVE					4
 #define PLAYER_SIX					5
 #define PLAYERS_MAX					6
+
 //number of territories in specified continent
 #define TERRITORIES_N_AMERICA		9
 #define TERRITORIES_S_AMERICA		4
@@ -131,6 +150,7 @@
 #define TERRITORIES_OCEANIA			4
 //total number of territories (42)
 #define TERRITORIES_TOTAL			(TERRITORIES_N_AMERICA + TERRITORIES_S_AMERICA + TERRITORIES_EUROPE + TERRITORIES_AFRICA + TERRITORIES_ASIA + TERRITORIES_OCEANIA)
+
 //bonus troops for owning continents
 #define BONUS_NA					5
 #define BONUS_SA					2
@@ -138,6 +158,7 @@
 #define BONUS_AF					3
 #define BONUS_AS					7
 #define BONUS_OC					2
+
 //the element at which the territories for the specified continent start
 #define TERRITORIES_ST_N_AMERICA	0
 #define TERRITORIES_ST_S_AMERICA	(TERRITORIES_ST_N_AMERICA + TERRITORIES_N_AMERICA)
@@ -145,6 +166,7 @@
 #define TERRITORIES_ST_AFRICA		(TERRITORIES_ST_EUROPE + TERRITORIES_EUROPE)
 #define TERRITORIES_ST_ASIA			(TERRITORIES_ST_AFRICA + TERRITORIES_AFRICA)
 #define TERRITORIES_ST_OCEANIA		(TERRITORIES_ST_ASIA + TERRITORIES_ASIA)
+
 //define all territory ID's
 //NORTH AMERICA
 #define ID_ALASKA					(TERRITORIES_ST_N_AMERICA + 0)
