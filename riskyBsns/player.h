@@ -18,15 +18,14 @@ private:
 	short m_troops;//holds amount of units the player gets
 	short m_ID; //reflection in order to know what player he is
 	short m_conqueredT; //int to tell how many territorys the player has
-	short m_holdCards;//# of cards player is currently holding
+	short m_holdCards; //# of cards player is currently holding
 public:
-	Player():m_troops(0),m_ID(0),m_conqueredT(0), m_holdCards(0){}
 	//take into account that the starting number of units is depends on players
-	Player(short t,short id):m_troops(t),m_ID(id),m_conqueredT(0){}
+	Player(short t,short id):m_troops(t),m_ID(id),m_conqueredT(0),m_holdCards(0){}
 	short getID(){return this->m_ID;}
 	short getTroops(){return this->m_troops;}
 	short getConqueredT(){return this->m_conqueredT;}
-	short getNumCards(){return this->m_holdCards;}
+	//short getNumCards(){return this->m_holdCards;}
 	//checks if the player owns the territory
 	bool ifOwns(Territory* thatone)
 	{
@@ -390,6 +389,7 @@ public:
 	{
 		m_holdCards++;
 	}
+	//call if an opponent player is elimunated (current player inherits cards)
 	void exchangeCards(Player * a_plyr, TemplateArray<Card *> a_deck)
 	{
 		//give all cards previously owned by a_plyr to this player

@@ -147,6 +147,75 @@ void goToNextPlayer()
 	flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] + 1;
 	flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] % flags[FLAG_PLAYERS];
 }
+void turnInCards()
+{
+	printf("\n\n");
+	//TODO allow user to "turn-in" 3 cards of their choise
+	short selectC1, selectC2, selectC3;
+	for(int i = 0; i < deck.size(); ++i)
+	{
+		if(deck.get(i)->getOwnerID() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+		{
+			printf("cardID == %d, unitType == %d, territoryID == %d\n", deck.get(i)->getCardID(), deck.get(i)->getUnit(), deck.get(i)->getTerritoryID());
+		}
+	}
+	printf("\n");
+	do{
+		printf("Enter ID of 1st card you wish to turn-in\n");
+		cin >> selectC1;
+	}while(deck.get(selectC1)->getOwnerID() != players.get(flags[FLAG_CURRENT_PLAYER])->getID());
+	do{
+		printf("Enter ID of 2nd card you wish to turn-in\n");
+		cin >> selectC2;
+	}while(deck.get(selectC1)->getOwnerID() != players.get(flags[FLAG_CURRENT_PLAYER])->getID());
+	do{
+		printf("Enter ID of 3rd card you wish to turn-in\n");
+		cin >> selectC3;
+	}while(deck.get(selectC1)->getOwnerID() != players.get(flags[FLAG_CURRENT_PLAYER])->getID());
+
+	if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3)))
+	{
+		flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
+		switch(flags[FLAG_CARD_SET])
+		{
+		case 1:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(4);
+			break;
+		case 2:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(6);
+			break;
+		case 3:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(8);
+			break;
+		case 4:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(10);
+			break;
+		case 5:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(12);
+			break;
+		case 6:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15);
+			break;
+		default:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15 + ((flags[FLAG_CARD_SET] - 6) * 5));
+		}
+		if(flags[FLAG_FIRST_SET_IN_TURN])
+		{
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC1),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC2),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC3),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+		}
+		deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+		deck.get(selectC2)->setOwnerID(CARD_DISCARDED);
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+		deck.get(selectC3)->setOwnerID(CARD_DISCARDED);
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+	}
+}
 /** @return true if the game changed state and should redraw */
 bool update(int a_ms)
 {
@@ -193,57 +262,34 @@ bool update(int a_ms)
 		players.get(flags[FLAG_CURRENT_PLAYER])->Reinforcements(board);
 		break;
 	case STATE_GET_TROOPS_CARDS:
-		flags[FLAG_UPDATE_GAME_STATE] = true;
-		/*if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
+		/*flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
 		{
-			//TODO allow user to "turn-in" 3 cards of their choise
-			short selectC1, selectC2, selectC3;
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3)))
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5)
 			{
-				//TODO allow user to turn in cards ONLY if they want to,
-				//unless they have 5 or more cards
 				do{
-					flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
-					switch(flags[FLAG_CARD_SET])
-					{
-					case 1:
-						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(4);
-						break;
-					case 2:
-						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(6);
-						break;
-					case 3:
-						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(8);
-						break;
-					case 4:
-						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(10);
-						break;
-					case 5:
-						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(12);
-						break;
-					case 6:
-						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15);
-						break;
-					default:
-						players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15 + ((flags[FLAG_CARD_SET] - 6) * 5));
-					}
-					if(flags[FLAG_FIRST_SET_IN_TURN])
-					{
-						if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC1),board))
-							flags[FLAG_FIRST_SET_IN_TURN] = false;
-						else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC2),board))
-							flags[FLAG_FIRST_SET_IN_TURN] = false;
-						else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC3),board))
-							flags[FLAG_FIRST_SET_IN_TURN] = false;
-					}
-					deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
-					deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
-					deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
+					turnInCards();
 				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5);
+				printf("Go back to Game Window\n");
+				flags[FLAG_UPDATE_GAME_STATE] = true;
+			}
+			else
+			{
+				char ans;
+				do{
+					printf("Do you want to turn-in cards for Troops(Y/N)?\n");
+					cin >> ans;
+				}while(ans != 'y' && ans != 'Y' && ans != 'n' && ans != 'N');
+				if(ans == 'y' || ans == 'Y')
+				{
+					turnInCards();
+					printf("Go back to Game Window\n");
+				}
+				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
 		}
-		else
-			flags[FLAG_UPDATE_GAME_STATE] = true;*/
+		else*/
+		flags[FLAG_UPDATE_GAME_STATE] = true;
 		break;
 	case STATE_PLACE_BONUS_TROOPS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -252,7 +298,7 @@ bool update(int a_ms)
 		if(flags[FLAG_UPDATE_GAME_STATE])
 		{
 			//save the current # owned territory, to check if playe gains new territory(s) from attacking
-			printf("Storing #Territories Conquered B4 Attacking.\n");
+			//printf("Storing #Territories Conquered B4 Attacking.\n");
 			flags[FLAG_PARAM_NUM] = players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT();
 		}
 		if(flags[FLAG_PARAMS_SET])
@@ -382,7 +428,7 @@ bool update(int a_ms)
 		}
 
 		flags[FLAG_UPDATE_GAME_STATE] = false;
-		//printf("state == %d\n", flags[FLAG_GAME_STATE]);
+		printf("state == %d\n", flags[FLAG_GAME_STATE]);
 		return true;
 	}
 	else
