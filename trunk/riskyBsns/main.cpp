@@ -347,6 +347,7 @@ void initPlayers()
 	{
 		ply = new Player(startWithTroops,players.size());
 		players.add(ply);
+		printf("numCards == %d\n", players.get(i)->getNumCards());
 	}
 	flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 }
