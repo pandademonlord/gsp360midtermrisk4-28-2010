@@ -262,7 +262,7 @@ bool update(int a_ms)
 		players.get(flags[FLAG_CURRENT_PLAYER])->Reinforcements(board);
 		break;
 	case STATE_GET_TROOPS_CARDS:
-		/*flags[FLAG_UPDATE_GAME_STATE] = false;
+		flags[FLAG_UPDATE_GAME_STATE] = false;
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
 		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5)
@@ -288,8 +288,8 @@ bool update(int a_ms)
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
 		}
-		else*/
-		flags[FLAG_UPDATE_GAME_STATE] = true;
+		else
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 		break;
 	case STATE_PLACE_BONUS_TROOPS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
