@@ -11,7 +11,7 @@
 #define INIT_WINDOW_X				10
 #define INIT_WINDOW_Y				50
 #define TIMER_VALUE					20
-#define BUFFER_SIZE					100
+#define BUFFER_SIZE					150
 
 //mouse button states
 #define	STATE_MOUSE_BUTTON_DN		0
