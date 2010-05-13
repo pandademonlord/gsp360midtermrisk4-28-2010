@@ -18,28 +18,20 @@
 #define STATE_MOUSE_BUTTON_UP		1
 
 //state machine
-	//allow each player to claim 1 territory
 #define STATE_INIT_PLACEMENT_CLAIM	0
-	//allow player to reinforce 1 territory they claimed
 #define STATE_INIT_PLACEMENT_PLACE	1
-	//give current playr bonus troops from total # territories owned & continents conquered
 #define STATE_GET_TROOPS_TERRITORY	2
-	//allow current playr to turn in card sets & get bonus troops
 #define STATE_GET_TROOPS_CARDS		3
-	//allow current player to deploy all bonus troops
 #define STATE_PLACE_BONUS_TROOPS	4
-	//allow current player to attack adjacent enemy territory
-#define STATE_ATTACK				5
-	//don't bother fortifying if current player has conquered everything
-#define STATE_CHECK_IF_WON			6
-	//allow current player to choose which territory to reinforce from
-#define STATE_FORTIFY_FROM			7
-	//allow current player to choose which territory to reinforce to
-#define STATE_FORTIFY_TO			8
-	//how many troops to move
-#define STATE_FORTIFY_TROOPS		9
+#define STATE_ATTACK_FROM			5
+#define STATE_ATTACK_TO				6
+#define STATE_ATTACK_BATTLE			7
+#define STATE_CHECK_IF_WON			8
+#define STATE_FORTIFY_FROM			9
+#define STATE_FORTIFY_TO			10
+#define STATE_FORTIFY_TROOPS		11
 	//go this state ONLY if current player owns all 42 territories
-#define STATE_WIN					10
+#define STATE_WIN					12
 
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
@@ -50,7 +42,7 @@
 //(short) index of which territory was clicked on
 #define FLAG_CLICKED_TER			1
 //(short) which index to use for 1st territory
-#define FLAG_PARAM_TER_ONE				2
+#define FLAG_PARAM_TER_ONE			2
 //(short) which index to use for 2nd territory
 #define FLAG_PARAM_TER_TWO			3
 //(short) how many troops to move/fortify

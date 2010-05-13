@@ -15,6 +15,8 @@ void keyboard(unsigned char key, int x, int y)
 		{
 		case 'w'://increase # of troops to move
 			flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
+			if(flags[FLAG_PARAM_NUM] > (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1))
+				flags[FLAG_PARAM_NUM] = (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1);
 			break;
 		case 's'://decrease # of troops to move
 			flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
@@ -83,10 +85,12 @@ void mouse(int button, int state, int x, int y)
 				case STATE_INIT_PLACEMENT_CLAIM:
 				case STATE_INIT_PLACEMENT_PLACE:
 				case STATE_PLACE_BONUS_TROOPS:
+				case STATE_ATTACK_FROM:
 				case STATE_FORTIFY_FROM:
 					flags[FLAG_PARAM_TER_ONE] = flags[FLAG_CLICKED_TER];
 					flags[FLAG_PARAMS_SET] = true;
 					break;
+				case STATE_ATTACK_TO:
 				case STATE_FORTIFY_TO:
 					flags[FLAG_PARAM_TER_TWO] = flags[FLAG_CLICKED_TER];
 					flags[FLAG_PARAMS_SET] = true;
@@ -100,8 +104,12 @@ void mouse(int button, int state, int x, int y)
 				case STATE_FORTIFY_FROM:
 					flags[FLAG_GAME_STATE] = STATE_FORTIFY_TROOPS;
 					flags[FLAG_PARAM_NUM] = 0;
-				case STATE_ATTACK:
 					flags[FLAG_UPDATE_GAME_STATE] = true;
+					break;
+				case STATE_ATTACK_FROM:
+					flags[FLAG_GAME_STATE] = STATE_CHECK_IF_WON;
+					flags[FLAG_UPDATE_GAME_STATE] = true;
+					break;
 				}
 			}
 			break;
@@ -114,13 +122,18 @@ void mouse(int button, int state, int x, int y)
 		{
 		case STATE_MOUSE_BUTTON_DN:
 			switch(flags[FLAG_GAME_STATE])
-				{
-				case STATE_FORTIFY_TO://un-do which territory player is getting troops from
-					flags[FLAG_GAME_STATE] = STATE_FORTIFY_FROM;
-				case STATE_ATTACK:
-					flags[FLAG_PARAMS_SET] = false;
-					break;
-				}
+			{
+			case STATE_ATTACK_TO:
+				flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
+			case STATE_ATTACK_FROM:
+				flags[FLAG_PARAMS_SET] = false;
+				break;
+			case STATE_FORTIFY_TO://un-do which territory player is getting troops from
+				flags[FLAG_GAME_STATE] = STATE_FORTIFY_FROM;
+			case STATE_FORTIFY_FROM:
+				flags[STATE_FORTIFY_FROM] = false;
+				break;
+			}
 			break;
 		}
 		break;
@@ -242,8 +255,25 @@ bool update(int a_ms)
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
-	case STATE_ATTACK:
-		//flags[FLAG_UPDATE_GAME_STATE] = false;
+	case STATE_ATTACK_FROM:
+		if(flags[FLAG_PARAMS_SET])
+		{
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])) && (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= 2))
+				flags[FLAG_UPDATE_GAME_STATE] = true;
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	case STATE_ATTACK_TO:
+		if(flags[FLAG_PARAMS_SET])
+		{
+			if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO]))) && board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+				flags[FLAG_UPDATE_GAME_STATE] = true;
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	case STATE_ATTACK_BATTLE:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		players.get(flags[FLAG_CURRENT_PLAYER])->combat(board.get(flags[FLAG_PARAM_TER_ONE]), board.get(flags[FLAG_PARAM_TER_TWO]));
 		break;
 	case STATE_CHECK_IF_WON:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -251,7 +281,6 @@ bool update(int a_ms)
 			flags[FLAG_GAME_STATE] = STATE_WIN;
 		break;
 	case STATE_FORTIFY_FROM:
-		//flags[FLAG_UPDATE_GAME_STATE] = false;
 		if(flags[FLAG_PARAMS_SET])
 		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])))
@@ -305,7 +334,12 @@ bool update(int a_ms)
 			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() == 0);
 		}
 		else if(flags[FLAG_GAME_STATE] != STATE_WIN)
-			flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
+		{
+			if(flags[FLAG_GAME_STATE] != STATE_ATTACK_BATTLE)
+				flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
+			else
+				flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
+		}
 
 		flags[FLAG_UPDATE_GAME_STATE] = false;
 		//printf("state == %d\n", flags[FLAG_GAME_STATE]);

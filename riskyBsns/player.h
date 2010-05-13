@@ -9,8 +9,6 @@
 
 #define dicesides 6
 #define epicfail 1
-#define maxatkD 3
-#define maxdefD 2
 #define minArmys 3
 #define minTerri 11
 
@@ -190,21 +188,15 @@ public:
 			}
 		}
 	}
-	//rolls the dice for combat
-	void rollDice(short die[],short armys){
-		for(int g=0;g<armys;g++){
-			short check= random()%dicesides;
-			if(check>0)
-				die[g]=check;
-			else
-				die[g]=epicfail;
-			}
-	}
 	//sorts the dice from largest to smallest for combat
-	void sortDice(short die[],short numof){
-		for(int v=numof;v>0;v--){
-			for(int g=numof;g>0;g--){
-				if(die[g]>die[g-1]){
+	void sortDice(short die[],short numof)
+	{
+		for(int v=numof;v>0;v--)
+		{
+			for(int g=numof;g>0;g--)
+			{
+				if(die[g]>die[g-1])
+				{
 					int temp= die[g-1];
 					die[g-1]=die[g];
 					die[g]=temp;
@@ -214,37 +206,50 @@ public:
 	}
 
 	//is a gameplay state which does the combat
-	void combat(short DefArmys,short AtkArmys)
+	void combat(Territory * a_ter1, Territory * a_ter2)
 	{
-		while(DefArmys>0&&AtkArmys>1){
-			//holds dice rolls
-			short atk[maxatkD];
-			short def[maxdefD];
-			//rolls dice
-			if(DefArmys>=maxdefD)
-				rollDice(def,maxdefD);
-			else
-				rollDice(def,DefArmys);
+		short maxatkD = 3, maxdefD = 2;
+		if(a_ter1->getTroops() <= 3)
+			maxatkD = a_ter1->getTroops() - 1;
+		if(a_ter2->getTroops() < 2)
+			maxdefD = 1;
 
-			if(AtkArmys>=maxatkD)
-				rollDice(atk,maxatkD);
+		//holds dice rolls
+		short * atk;
+		atk = new short[maxatkD];
+		short * def;
+		def = new short[maxdefD];
+
+		for(int i = 0; i < maxatkD; ++i)
+			atk[i] = random() % dicesides;
+		for(int i = 0; i < maxdefD; ++i)
+			def[i] = random() % dicesides;
+		//sorts the die from largest to smallest
+		sortDice(atk,maxatkD);
+		sortDice(def,maxdefD);
+
+		//compare the dice rolls subtracts the armys
+		if(def[0]>=atk[0])
+			a_ter1->subtractTroopsDeployed(1);
+		else
+			a_ter2->subtractTroopsDeployed(1);
+
+		if(maxdefD > 1)
+		{
+			if(def[1]>=atk[1])
+				a_ter1->subtractTroopsDeployed(1);
 			else
-				rollDice(atk,AtkArmys);
-			//sorts the die from largest to smallest
-			sortDice(atk,maxatkD);
-			sortDice(def,maxdefD);		
-			//compare the dice rolls subtracts the armys
-			if(def[0]>=atk[0])
-				AtkArmys--;
-			else
-				DefArmys--;
-			if(AtkArmys>1&&DefArmys>1){
-				if(def[1]>=atk[1])
-					AtkArmys--;
-				else
-					DefArmys--;
-			}
+				a_ter2->subtractTroopsDeployed(1);
 		}
+
+		if(a_ter2->getTroops() == 0)
+		{
+			a_ter2->setOwner(a_ter1->getOwner());
+			a_ter1->moveTroopsTo(a_ter2, maxatkD);
+		}
+
+		delete [] atk;
+		delete [] def;
 	}
 	bool isCardSet(Card * a_Card1, Card * a_Card2, Card * a_Card3)
 	{
@@ -297,29 +302,31 @@ public:
 		if(this->m_holdCards < CARD_NUM_IN_SET)
 			return false;
 
-		//save array of all owned cards for testing
-		TemplateArray<Card *> ownedCrds;
-		for(int i = 0; i < a_deck.size(); ++i)
+		//if own 5+ cards, set exists
+		if(this->m_holdCards > CARD_NUM_IN_SET + 1)
+			return true;
+		else//holding 3 or 4 cards
 		{
-			if(a_deck.get(i)->getOwnerID() == this->m_ID)
-				ownedCrds.add(a_deck.get(i));
-		}
-		//if own 3 cards, check if they make a valid set
-		if(this->m_holdCards == CARD_NUM_IN_SET)
-			return this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2));
-		else if (this->m_holdCards = CARD_NUM_IN_SET + 1)
-		{
-			for(int i = 0; i < CARD_NUM_IN_SET; ++i)
+			//save array of all owned cards for testing
+			TemplateArray<Card *> ownedCrds;
+			for(int i = 0; i < a_deck.size(); ++i)
 			{
-				//0,1,2
-				//1,2,3
-				//2,3,0
-				if(this->isCardSet(a_deck.get((i)%this->m_holdCards), a_deck.get((i+1)%this->m_holdCards), a_deck.get((i+2)%this->m_holdCards)))
-					return true;
+				if(a_deck.get(i)->getOwnerID() == this->m_ID)
+					ownedCrds.add(a_deck.get(i));
 			}
-			return false;
+
+			if(this->m_holdCards == CARD_NUM_IN_SET)
+				return this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2));
 		}
-		//if holding 5 or more cards, set EXISTS
-		return true;
+
+		for(int i = 0; i < CARD_NUM_IN_SET; ++i)
+		{
+			//0,1,2
+			//1,2,3
+			//2,3,0
+			if(this->isCardSet(a_deck.get((i)%this->m_holdCards), a_deck.get((i+1)%this->m_holdCards), a_deck.get((i+2)%this->m_holdCards)))
+				return true;
+		}
+		return false;
 	}
 };
