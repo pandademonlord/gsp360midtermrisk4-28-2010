@@ -87,6 +87,7 @@ void mouse(int button, int state, int x, int y)
 				case STATE_PLACE_BONUS_TROOPS:
 				case STATE_ATTACK_FROM:
 				case STATE_FORTIFY_FROM:
+				case STATE_PLACE_EXCESS_TROOPS:
 					flags[FLAG_PARAM_TER_ONE] = flags[FLAG_CLICKED_TER];
 					flags[FLAG_PARAMS_SET] = true;
 					break;
@@ -107,7 +108,7 @@ void mouse(int button, int state, int x, int y)
 					flags[FLAG_UPDATE_GAME_STATE] = true;
 					break;
 				case STATE_ATTACK_FROM:
-					flags[FLAG_GAME_STATE] = STATE_CHECK_IF_WON;
+					flags[FLAG_GAME_STATE] = STATE_CAPTURE_TERRITORY;
 					flags[FLAG_UPDATE_GAME_STATE] = true;
 					break;
 				}
@@ -193,7 +194,7 @@ bool update(int a_ms)
 		break;
 	case STATE_GET_TROOPS_CARDS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
-		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
+		/*if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
 		{
 			//TODO allow user to "turn-in" 3 cards of their choise
 			short selectC1, selectC2, selectC3;
@@ -242,12 +243,18 @@ bool update(int a_ms)
 			}
 		}
 		else
-			flags[FLAG_UPDATE_GAME_STATE] = true;
+			flags[FLAG_UPDATE_GAME_STATE] = true;*/
 		break;
 	case STATE_PLACE_BONUS_TROOPS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->getTroops() > 0)
 			flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(flags[FLAG_UPDATE_GAME_STATE])
+		{
+			//save the current # owned territory, to check if playe gains new territory(s) from attacking
+			printf("Storing #Territories Conquered B4 Attacking.\n");
+			flags[FLAG_PARAM_NUM] = players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT();
+		}
 		if(flags[FLAG_PARAMS_SET])
 		{
 			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
@@ -273,12 +280,41 @@ bool update(int a_ms)
 		break;
 	case STATE_ATTACK_BATTLE:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
-		players.get(flags[FLAG_CURRENT_PLAYER])->combat(board.get(flags[FLAG_PARAM_TER_ONE]), board.get(flags[FLAG_PARAM_TER_TWO]));
+		players.get(flags[FLAG_CURRENT_PLAYER])->combat(board.get(flags[FLAG_PARAM_TER_ONE]), board.get(flags[FLAG_PARAM_TER_TWO]), players.get(board.get(flags[FLAG_PARAM_TER_TWO])->getOwner()));
+		break;
+	case STATE_ELIMINATE_ENEMY:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		if(players.get(board.get(flags[FLAG_PARAM_TER_TWO])->getOwner())->getConqueredT() == 0)
+			players.get(flags[FLAG_CURRENT_PLAYER])->exchangeCards(players.get(board.get(flags[FLAG_PARAM_TER_TWO])->getOwner()), deck);
 		break;
 	case STATE_CHECK_IF_WON:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() == TERRITORIES_TOTAL)
 			flags[FLAG_GAME_STATE] = STATE_WIN;
+		break;
+	case STATE_EXCESS_CARDS:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		break;
+	case STATE_PLACE_EXCESS_TROOPS:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->getTroops() > 0)
+			flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(flags[FLAG_PARAMS_SET])
+		{
+			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
+			flags[FLAG_PARAMS_SET] = false;
+		}
+		break;
+	case STATE_CAPTURE_TERRITORY:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		//should be given a card?
+		//(if #ter after attacking is MORE than #ter b4 attacking)
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() > flags[FLAG_PARAM_NUM])
+		{
+			printf("Drawing a card from Deck.\n");
+			players.get(flags[FLAG_CURRENT_PLAYER])->drawCardFromDeck(deck);
+		}
 		break;
 	case STATE_FORTIFY_FROM:
 		if(flags[FLAG_PARAMS_SET])
@@ -335,10 +371,14 @@ bool update(int a_ms)
 		}
 		else if(flags[FLAG_GAME_STATE] != STATE_WIN)
 		{
-			if(flags[FLAG_GAME_STATE] != STATE_ATTACK_BATTLE)
-				flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
-			else
+			switch(flags[FLAG_GAME_STATE])
+			{
+			case STATE_PLACE_EXCESS_TROOPS:
 				flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
+				break;
+			default:
+				flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
+			}
 		}
 
 		flags[FLAG_UPDATE_GAME_STATE] = false;
@@ -348,3 +388,4 @@ bool update(int a_ms)
 	else
 		return false;
 }
+

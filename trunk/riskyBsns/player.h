@@ -206,7 +206,7 @@ public:
 	}
 
 	//is a gameplay state which does the combat
-	void combat(Territory * a_ter1, Territory * a_ter2)
+	void combat(Territory * a_ter1, Territory * a_ter2, Player * a_plyr)
 	{
 		short maxatkD = 3, maxdefD = 2;
 		if(a_ter1->getTroops() <= 3)
@@ -234,7 +234,7 @@ public:
 		else
 			a_ter2->subtractTroopsDeployed(1);
 
-		if(maxdefD > 1)
+		if(maxatkD > 1 && maxdefD > 1)
 		{
 			if(def[1]>=atk[1])
 				a_ter1->subtractTroopsDeployed(1);
@@ -244,7 +244,11 @@ public:
 
 		if(a_ter2->getTroops() == 0)
 		{
-			a_ter2->setOwner(a_ter1->getOwner());
+			//enemy lost a territory
+			a_plyr->removeLocal(a_ter2, a_ter1->getOwner());
+			//current player gets new territory
+			this->addLocal(a_ter2);
+			//current player moves troopsinto territory
 			a_ter1->moveTroopsTo(a_ter2, maxatkD);
 		}
 
@@ -328,5 +332,75 @@ public:
 				return true;
 		}
 		return false;
+	}
+	void drawCardFromDeck(TemplateArray<Card *> a_deck)
+	{
+		//calc #cards still  in deck
+		short allowedToDraw = 0;
+		for(int i = 0; i < a_deck.size(); ++i)
+		{
+			//printf("cardID == %d, owner == %d\n", i, a_deck.get(i)->getOwnerID());
+			if(a_deck.get(i)->getOwnerID() == OWNER_NONE)
+				allowedToDraw++;
+		}
+		//if no cards in deck, re-shuffle all discarded cards
+		//& re-calc #cards in deck
+		if(allowedToDraw == 0)
+		{
+			for(int i = 0; i < a_deck.size(); ++i)
+			{
+				if(a_deck.get(i)->getOwnerID() == CARD_DISCARDED)
+					a_deck.get(i)->reshuffle();
+			}
+			allowedToDraw = 0;
+			for(int i = 0; i < a_deck.size(); ++i)
+			{
+				if(a_deck.get(i)->getOwnerID() == OWNER_NONE)
+					allowedToDraw++;
+			}
+		}
+		//draw a random card from cards in deck
+		//printf("allowedToDraw == %d\n", allowedToDraw);
+		short a_card = random() % allowedToDraw;
+		//printf("drew card # == %d\n", a_card);
+		short a_cardInDeck = 0;
+		for(int i = 0; i < a_deck.size(); ++i)
+		{
+			if(a_deck.get(i)->getOwnerID() == OWNER_NONE)
+			{
+				if(a_cardInDeck == a_card)
+				{
+					//printf("drew card had ID == %d\n", i);
+					a_deck.get(i)->setOwnerID(this->m_ID);
+					m_holdCards++; 
+					break;
+				}
+				else
+					a_cardInDeck++;
+			}
+		}
+	}
+	void removeCard()
+	{
+		m_holdCards--;
+		if(m_holdCards < 0)
+			m_holdCards = 0;
+	}
+	void addCard()
+	{
+		m_holdCards++;
+	}
+	void exchangeCards(Player * a_plyr, TemplateArray<Card *> a_deck)
+	{
+		//give all cards previously owned by a_plyr to this player
+		for(int i = 0; i < a_deck.size(); ++i)
+		{
+			if(a_deck.get(i)->getOwnerID() == a_plyr->getID())
+			{
+				a_plyr->removeCard();
+				a_deck.get(i)->setOwnerID(this->m_ID);
+				this->addCard();
+			}
+		}
 	}
 };

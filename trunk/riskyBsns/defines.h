@@ -26,12 +26,16 @@
 #define STATE_ATTACK_FROM			5
 #define STATE_ATTACK_TO				6
 #define STATE_ATTACK_BATTLE			7
-#define STATE_CHECK_IF_WON			8
-#define STATE_FORTIFY_FROM			9
-#define STATE_FORTIFY_TO			10
-#define STATE_FORTIFY_TROOPS		11
+#define STATE_ELIMINATE_ENEMY		8
+#define STATE_CHECK_IF_WON			9
+#define STATE_EXCESS_CARDS			10
+#define STATE_PLACE_EXCESS_TROOPS	11
+#define STATE_CAPTURE_TERRITORY		12
+#define STATE_FORTIFY_FROM			13
+#define STATE_FORTIFY_TO			14
+#define STATE_FORTIFY_TROOPS		15
 	//go this state ONLY if current player owns all 42 territories
-#define STATE_WIN					12
+#define STATE_WIN					16
 
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
