@@ -35,8 +35,8 @@ void display()
 			case STATE_ATTACK_TO:
 				sprintf(buffer, "Player %d's turn: Attack (Which Enemy Territory?)\n", (players.get(i)->getID() + 1));
 				break;
-			case STATE_ATTACK_BATTLE:
-				sprintf(buffer, "Player %d's turn: Attack & Battle\n", (players.get(i)->getID() + 1));
+			case STATE_PLACE_EXCESS_TROOPS:
+				sprintf(buffer, "Player %d's turn: Deploy %d Extra Troops\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			case STATE_FORTIFY_FROM:
 				sprintf(buffer, "Player %d's turn: Fortify (Get Troops from Where?)\n", (players.get(i)->getID() + 1));

@@ -420,7 +420,7 @@ void init()
 		printf("How many players (2-6)?\n");
 		cin >> flags[FLAG_PLAYERS];
 	}while(flags[FLAG_PLAYERS] < 2 || flags[FLAG_PLAYERS] > 6);
-	printf("players == %d\n", flags[FLAG_PLAYERS]);
+	//printf("players == %d\n", flags[FLAG_PLAYERS]);
 	initPlayers();
 	initDeck();
 	flags[FLAG_GAME_STATE] = 0;
