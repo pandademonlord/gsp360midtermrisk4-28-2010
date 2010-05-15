@@ -28,7 +28,7 @@ void display()
 				break;
 			case STATE_GET_TROOPS_CARDS:
 			case STATE_EXCESS_CARDS:
-				sprintf(buffer, "Player %d's turn: Turn in cards (use Console)\n", (players.get(i)->getID() + 1));
+				sprintf(buffer, "Player %d's turn: Turn-in cards for Troops\n", (players.get(i)->getID() + 1));
 				break;
 			case STATE_PLACE_BONUS_TROOPS:
 			case STATE_PLACE_EXCESS_TROOPS:
@@ -65,6 +65,10 @@ void display()
 			case STATE_PLACE_BONUS_TROOPS:
 			case STATE_PLACE_EXCESS_TROOPS:
 				sprintf(buffer, "Left-Click on a territory you occupy.\n");
+				break;
+			case STATE_GET_TROOPS_CARDS:
+			case STATE_EXCESS_CARDS:
+				sprintf(buffer, "Use the Console when using Cards\n");
 				break;
 			case STATE_ATTACK_FROM:
 				sprintf(buffer, "Left-Click on a territory you occupy (2+ troops), OR Left-Click outside a territory to end attack.\n");

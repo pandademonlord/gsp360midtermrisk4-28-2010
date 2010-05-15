@@ -149,33 +149,56 @@ void goToNextPlayer()
 }
 void turnInCards()
 {
-	printf("\n\n");
-	//TODO allow user to "turn-in" 3 cards of their choise
+	printf("A SET consists of:\n");
+	printf("1. 3 cards with the SAME unit, OR\n");
+	printf("2. 1 card of each unit (Soldier, Horseman, Cannon), OR\n");
+	printf("3. 1 WILD card & any 2 other cards\n\n");
+	//variables to hold card ID's
 	short selectC1, selectC2, selectC3;
+	//display # of cards player is holding
+	printf("You have %d cards.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
+	//display all cards held by player, & display stats
 	for(int i = 0; i < deck.size(); ++i)
 	{
 		if(deck.get(i)->getOwnerID() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
 		{
-			printf("cardID == %d, unitType == %d, territoryID == %d\n", deck.get(i)->getCardID(), deck.get(i)->getUnit(), deck.get(i)->getTerritoryID());
+			switch(deck.get(i)->getUnit())
+			{
+			case CARD_ID_SOLDIER:
+				printf("cardID == %d, unitType == Soldier, territoryID == %d\n", deck.get(i)->getCardID(), deck.get(i)->getTerritoryID());
+				break;
+			case CARD_ID_HORSEMAN:
+				printf("cardID == %d, unitType == Horseman, territoryID == %d\n", deck.get(i)->getCardID(), deck.get(i)->getTerritoryID());
+				break;
+			case CARD_ID_CANNON:
+				printf("cardID == %d, unitType == Cannon, territoryID == %d\n", deck.get(i)->getCardID(), deck.get(i)->getTerritoryID());
+				break;
+			case CARD_ID_WILD:
+				printf("cardID == %d, unitType == WILD\n", deck.get(i)->getCardID(), deck.get(i)->getTerritoryID());
+				break;
+			}
 		}
 	}
 	printf("\n");
 	do{
-		printf("Enter ID of 1st card you wish to turn-in\n");
+		printf("Enter ID of 1st card to turn-in\n");
 		cin >> selectC1;
 	}while(deck.get(selectC1)->getOwnerID() != players.get(flags[FLAG_CURRENT_PLAYER])->getID());
 	do{
-		printf("Enter ID of 2nd card you wish to turn-in\n");
+		printf("Enter ID of 2nd card to turn-in\n");
 		cin >> selectC2;
 	}while(deck.get(selectC1)->getOwnerID() != players.get(flags[FLAG_CURRENT_PLAYER])->getID());
 	do{
-		printf("Enter ID of 3rd card you wish to turn-in\n");
+		printf("Enter ID of 3rd card to turn-in\n");
 		cin >> selectC3;
 	}while(deck.get(selectC1)->getOwnerID() != players.get(flags[FLAG_CURRENT_PLAYER])->getID());
-
+	printf("\n");
+	//only give troops if 3 cards make a set
 	if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3)))
 	{
+		//increase # of sets turned-in by 1
 		flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
+		//give player troops according to what this set's # is
 		switch(flags[FLAG_CARD_SET])
 		{
 		case 1:
@@ -199,6 +222,9 @@ void turnInCards()
 		default:
 			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15 + ((flags[FLAG_CARD_SET] - 6) * 5));
 		}
+		//if this is the 1st set the player has turned-in this turn,
+		//give the player 2 bonus troops if 1 of the card's territory
+		//is owned by this player on the board
 		if(flags[FLAG_FIRST_SET_IN_TURN])
 		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC1),board))
@@ -208,6 +234,8 @@ void turnInCards()
 			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC3),board))
 				flags[FLAG_FIRST_SET_IN_TURN] = false;
 		}
+		//now that the cards have been discarded,
+		//remove them from the player's hand
 		deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
 		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
 		deck.get(selectC2)->setOwnerID(CARD_DISCARDED);
@@ -265,16 +293,19 @@ bool update(int a_ms)
 		flags[FLAG_UPDATE_GAME_STATE] = false;
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
 		{
+			//if the player has 5+ cards, they MUST turn in a set
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5)
 			{
 				do{
+					printf("You have 5+ cards. You MUST turn in a set.\n\n");
 					turnInCards();
 				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5);
-				printf("Go back to Game Window\n");
+				printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
 			else
 			{
+				//if the player has less than 5 cards, turning-in cards is optional
 				char ans;
 				do{
 					printf("Do you want to turn-in cards for Troops(Y/N)?\n");
@@ -283,7 +314,7 @@ bool update(int a_ms)
 				if(ans == 'y' || ans == 'Y')
 				{
 					turnInCards();
-					printf("Go back to Game Window\n");
+					printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 				}
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
@@ -339,7 +370,19 @@ bool update(int a_ms)
 			flags[FLAG_GAME_STATE] = STATE_WIN;
 		break;
 	case STATE_EXCESS_CARDS:
-		flags[FLAG_UPDATE_GAME_STATE] = true;
+		flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck) && (players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 6))
+		{
+			printf("You have 6+ cards.\n");
+			do{
+				printf("You MUST turn cards until you have 4 or fewer.\n\n");
+				turnInCards();
+			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > 4);
+			printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
+			flags[FLAG_UPDATE_GAME_STATE] = true;
+		}
+		else
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 		break;
 	case STATE_PLACE_EXCESS_TROOPS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -357,10 +400,7 @@ bool update(int a_ms)
 		//should be given a card?
 		//(if #ter after attacking is MORE than #ter b4 attacking)
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() > flags[FLAG_PARAM_NUM])
-		{
-			printf("Drawing a card from Deck.\n");
 			players.get(flags[FLAG_CURRENT_PLAYER])->drawCardFromDeck(deck);
-		}
 		break;
 	case STATE_FORTIFY_FROM:
 		if(flags[FLAG_PARAMS_SET])
