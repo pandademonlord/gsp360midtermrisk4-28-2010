@@ -51,7 +51,7 @@ void display()
 				sprintf(buffer, "Player %d's turn: Fortify (Moving %d Troops)\n", (players.get(i)->getID() + 1), flags[FLAG_PARAM_NUM]);
 				break;
 			case STATE_WIN:
-				sprintf(buffer, "Player %d WINS!\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
+				sprintf(buffer, "Player %d WINS!\n", (players.get(i)->getID() + 1));
 				break;
 			}
 			(V2DF(0,5)).glDrawString(buffer);
@@ -84,6 +84,9 @@ void display()
 				break;
 			case STATE_FORTIFY_TROOPS:
 				sprintf(buffer, "Press W/S to increase/decrease # of troops to move (Space to finish move).\n");
+				break;
+			case STATE_WIN:
+				sprintf(buffer, "GAME OVER\n");
 				break;
 			}
 			(V2DF(0,20)).glDrawString(buffer);
