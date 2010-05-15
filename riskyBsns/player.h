@@ -32,14 +32,6 @@ public:
 	short getTroops(){return this->m_troops;}
 	short getConqueredT(){return this->m_conqueredT;}
 	short getNumCards(){return this->m_holdCards;}
-	//checks if the player owns the territory
-	bool ifOwns(Territory* thatone)
-	{
-		if(thatone->getOwner()== this->m_ID)
-			return true;
-		else
-			return false;
-	}
 	//gives player the territory
 	void addLocal(Territory * added)
 	{
@@ -53,8 +45,14 @@ public:
 		removed->setOwner(enemy);
 		m_conqueredT--;
 	}	
-	//set amount of reinforcement the player gets gives it to troops
-	
+	//checks if the player owns the territory
+	bool ifOwns(Territory* thatone)
+	{
+		if(thatone->getOwner()== this->m_ID)
+			return true;
+		else
+			return false;
+	}
 	//add troop to a territory (used to init board with players & troops)
 	void addToTerritory(Territory *here)
 	{
@@ -63,6 +61,20 @@ public:
 			here->addTroopsDeployed(addtroop);
 			m_troops--;
 		}
+	}
+	//adds troops to the current # of bonus troops still needed to deploy
+	void addBonusTroops(short a_bonus)
+	{
+		if(a_bonus > 0)
+			this->m_troops += a_bonus;
+	}
+	//gives player troops depending on the amount of territory controlled
+	short getlocalTroops()
+	{
+		if(m_conqueredT<=minTerri)
+			return minArmys; 
+		else
+			return m_conqueredT/minArmys;
 	}
 	//checks if the player owns 1 or more continents, & returns the total bonus
 	short getContinentBonus(TemplateArray<Territory *> a_board)
@@ -125,14 +137,7 @@ public:
 
 		return bonus;
 	}
-	//gives player troops depending on the amount of territory controlled
-	short getlocalTroops()
-	{
-		if(m_conqueredT<=minTerri)
-			return minArmys; 
-		else
-			return m_conqueredT/minArmys;
-	}
+	//gives player troops for # territories occupied & continents conquered
 	void Reinforcements(TemplateArray<Territory *> a_board)
 	{
 
@@ -140,8 +145,6 @@ public:
 		m_troops+=getlocalTroops();
 		//check if the player controls any continents
 		m_troops+=getContinentBonus(a_board);
-		
-		//check if the player turns in cards no say ATM	
 	}
 	//fortifies troops from territory 1 to territory 2
 	void fortify(Territory* a_ter1, Territory* a_ter2, short a_numTroops)
@@ -209,7 +212,6 @@ public:
 			}
 		}
 	}
-
 	//is a gameplay state which does the combat
 	void combat(Territory * a_ter1, Territory * a_ter2, Player * a_plyr)
 	{
@@ -299,45 +301,7 @@ public:
 		}
 		return extraTroops;
 	}
-	void addBonusTroops(short a_bonus)
-	{
-		if(a_bonus > 0)
-			this->m_troops += a_bonus;
-	}
-	//checks if player owns a set
-	bool ownSet(TemplateArray<Card *> a_deck)
-	{
-		//no set is possible without at least 3 cards
-		if(this->m_holdCards < CARD_NUM_IN_SET)
-			return false;
-
-		//if own 5+ cards, set exists
-		if(this->m_holdCards > CARD_NUM_IN_SET + 1)
-			return true;
-		else//holding 3 or 4 cards
-		{
-			//save array of all owned cards for testing
-			TemplateArray<Card *> ownedCrds;
-			for(int i = 0; i < a_deck.size(); ++i)
-			{
-				if(a_deck.get(i)->getOwnerID() == this->m_ID)
-					ownedCrds.add(a_deck.get(i));
-			}
-
-			if(this->m_holdCards == CARD_NUM_IN_SET)
-				return this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2));
-		}
-
-		for(int i = 0; i < CARD_NUM_IN_SET; ++i)
-		{
-			//0,1,2
-			//1,2,3
-			//2,3,0
-			if(this->isCardSet(a_deck.get((i)%this->m_holdCards), a_deck.get((i+1)%this->m_holdCards), a_deck.get((i+2)%this->m_holdCards)))
-				return true;
-		}
-		return false;
-	}
+	//the player draws a random card from the avaiable cards still in the deck
 	void drawCardFromDeck(TemplateArray<Card *> a_deck)
 	{
 		//calc #cards still  in deck
@@ -376,6 +340,8 @@ public:
 				if(a_cardInDeck == a_card)
 				{
 					//printf("drew card had ID == %d\n", i);
+					printf("Player %d drew card with ID == %d\n", (this->m_ID + 1), a_deck.get(i)->getCardID());
+					printf("\n");
 					a_deck.get(i)->setOwnerID(this->m_ID);
 					m_holdCards++; 
 					break;
@@ -385,15 +351,51 @@ public:
 			}
 		}
 	}
+	//checks if player owns a "set" of cards
+	bool ownSet(TemplateArray<Card *> a_deck)
+	{
+		//no set is possible without at least 3 cards
+		if(this->m_holdCards < CARD_NUM_IN_SET)
+			return false;
+
+		//if own 5+ cards, set exists
+		if(this->m_holdCards > CARD_NUM_IN_SET + 1)
+			return true;
+		else//holding 3 or 4 cards
+		{
+			//save array of all owned cards for testing
+			TemplateArray<Card *> ownedCrds;
+			for(int i = 0; i < a_deck.size(); ++i)
+			{
+				if(a_deck.get(i)->getOwnerID() == this->m_ID)
+					ownedCrds.add(a_deck.get(i));
+			}
+
+			if(this->m_holdCards == CARD_NUM_IN_SET)
+				return this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2));
+		}
+
+		for(int i = 0; i < CARD_NUM_IN_SET; ++i)
+		{
+			//0,1,2
+			//1,2,3
+			//2,3,0
+			if(this->isCardSet(a_deck.get((i)%this->m_holdCards), a_deck.get((i+1)%this->m_holdCards), a_deck.get((i+2)%this->m_holdCards)))
+				return true;
+		}
+		return false;
+	}
+	//adds 1 to the current # of cards player is "holding"
+	void addCard()
+	{
+		m_holdCards++;
+	}
+	//subtracts 1 from the current # of cards player is "holding"
 	void removeCard()
 	{
 		m_holdCards--;
 		if(m_holdCards < 0)
 			m_holdCards = 0;
-	}
-	void addCard()
-	{
-		m_holdCards++;
 	}
 	//call if an opponent player is elimunated (current player inherits cards)
 	void exchangeCards(Player * a_plyr, TemplateArray<Card *> a_deck)
