@@ -26,21 +26,22 @@
 #define STATE_ATTACK_FROM			5
 #define STATE_ATTACK_TO				6
 #define STATE_ATTACK_BATTLE			7
-#define STATE_ELIMINATE_ENEMY		8
-#define STATE_CHECK_IF_WON			9
-#define STATE_EXCESS_CARDS			10
-#define STATE_PLACE_EXCESS_TROOPS	11
-#define STATE_CAPTURE_TERRITORY		12
-#define STATE_FORTIFY_FROM			13
-#define STATE_FORTIFY_TO			14
-#define STATE_FORTIFY_TROOPS		15
+#define STATE_CAPTURE_TERRITORY		8
+#define STATE_ELIMINATE_ENEMY		9
+#define STATE_CHECK_IF_WON			10
+#define STATE_EXCESS_CARDS			11
+#define STATE_PLACE_EXCESS_TROOPS	12
+#define STATE_AFTER_ATK_B4_FORTIFY	13
+#define STATE_FORTIFY_FROM			14
+#define STATE_FORTIFY_TO			15
+#define STATE_FORTIFY_TROOPS		16
 	//go this state ONLY if current player owns all 42 territories
-#define STATE_WIN					16
+#define STATE_WIN					17
 
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array
-#define FLAGS_NUM					15
+#define FLAGS_NUM					14
 //(bool) determine if hover is within a territory
 #define FLAG_WITHIN_AREA			0
 //(short) index of which territory was clicked on
@@ -49,28 +50,26 @@
 #define FLAG_PARAM_TER_ONE			2
 //(short) which index to use for 2nd territory
 #define FLAG_PARAM_TER_TWO			3
-//(short) how many troops to move/fortify
+//(short) stores #territories b4 atk, & later, how many troops to move/fortify
 #define FLAG_PARAM_NUM				4
-//(short) how many dice to for to attack
-#define FLAG_PARAM_ROLL_ATK			5
-//(short) how many dice to for to defend
-#define FLAG_PARAM_ROLL_DEF			6
 //(bool) are all needed parameters set?
-#define FLAG_PARAMS_SET				7
+#define FLAG_PARAMS_SET				5
 //(short) game's current state
-#define FLAG_GAME_STATE				8
+#define FLAG_GAME_STATE				6
 //(bool) should the state change?
-#define FLAG_UPDATE_GAME_STATE		9
+#define FLAG_UPDATE_GAME_STATE		7
 //(short) number of players @ start of game
-#define FLAG_PLAYERS				10
+#define FLAG_PLAYERS				8
 //(short) ID of current player
-#define FLAG_CURRENT_PLAYER			11
+#define FLAG_CURRENT_PLAYER			9
 //(bool) should the player change?
-#define FLAG_UPDATE_PLAYER			12
+#define FLAG_UPDATE_PLAYER			10
+//(bool) should the player be allowed to draw a card for capturing territory
+#define FLAG_DRAW_CARD				11
 //(short) # of card sets that have been turned in
-#define FLAG_CARD_SET				13
+#define FLAG_CARD_SET				12
 //(bool) is this the 1st set turned in this turn?
-#define FLAG_FIRST_SET_IN_TURN		14
+#define FLAG_FIRST_SET_IN_TURN		13
 
 //input
 #define CLICK_TWO_TERRITORIES		2
@@ -135,6 +134,7 @@
 #define PLAYER_FOUR					3
 #define PLAYER_FIVE					4
 #define PLAYER_SIX					5
+#define PLAYERS_MIN					2
 #define PLAYERS_MAX					6
 
 //number of territories in specified continent
@@ -220,3 +220,41 @@
 #define CARD_TERRITORY_NONE			OWNER_NONE
 #define CARD_DISCARDED				-1
 #define CARD_NUM_IN_SET				3
+#define CARD_MAX_HAND				(CARD_NUM_IN_SET+2)
+#define CARD_MAX_FR_OPPONENT		(CARD_MAX_HAND+1)
+#define CARD_MIN_FR_OPPONENT		(CARD_MAX_HAND-1)
+#define CARD_NUM_IN_DECK			44
+#define CARD_NUM_IN_DECK_WO_WILD	(CARD_NUM_IN_DECK-2)
+//set numbers
+#define CARD_SET_ONE				1
+#define CARD_SET_TWO				2
+#define CARD_SET_THREE				3
+#define CARD_SET_FOUR				4
+#define CARD_SET_FIVE				5
+#define CARD_SET_SIX				6
+//troop bonuses from #set turned-in
+#define BONUS_SET_ONE				4
+#define BONUS_SET_TWO				6
+#define BONUS_SET_THREE				8
+#define BONUS_SET_FOUR				10
+#define BONUS_SET_FIVE				12
+#define BONUS_SET_SIX				15
+#define BONUS_SET_AFTER_SIX			5
+//battle stuff
+#define dicesides					6
+#define epicfail					1
+#define minArmys					3
+#define minTerri					11
+#define ATK_MIN_TROOPS				2
+#define ATK_LEAVE_TROOPS			1
+//player stuff
+#define TROOPS_PLAYERS_TWO			40
+#define TROOPS_PLAYERS_THREE		35
+#define TROOPS_PLAYERS_FOUR			30
+#define TROOPS_PLAYERS_FIVE			25
+#define TROOPS_PLAYERS_SIX			20
+#define NUM_PLAYERS_TWO				2
+#define NUM_PLAYERS_THREE			3
+#define NUM_PLAYERS_FOUR			4
+#define NUM_PLAYERS_FIVE			5
+#define NUM_PLAYERS_SIX				6

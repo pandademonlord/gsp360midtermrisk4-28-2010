@@ -108,7 +108,7 @@ void mouse(int button, int state, int x, int y)
 					flags[FLAG_UPDATE_GAME_STATE] = true;
 					break;
 				case STATE_ATTACK_FROM:
-					flags[FLAG_GAME_STATE] = STATE_CAPTURE_TERRITORY;
+					flags[FLAG_GAME_STATE] = STATE_AFTER_ATK_B4_FORTIFY;
 					flags[FLAG_UPDATE_GAME_STATE] = true;
 					break;
 				}
@@ -201,26 +201,26 @@ void turnInCards()
 		//give player troops according to what this set's # is
 		switch(flags[FLAG_CARD_SET])
 		{
-		case 1:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(4);
+		case CARD_SET_ONE:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_ONE);
 			break;
-		case 2:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(6);
+		case CARD_SET_TWO:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_TWO);
 			break;
-		case 3:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(8);
+		case CARD_SET_THREE:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_THREE);
 			break;
-		case 4:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(10);
+		case CARD_SET_FOUR:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_FOUR);
 			break;
-		case 5:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(12);
+		case CARD_SET_FIVE:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_FIVE);
 			break;
-		case 6:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15);
+		case CARD_SET_SIX:
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_SIX);
 			break;
 		default:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(15 + ((flags[FLAG_CARD_SET] - 6) * 5));
+			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_SIX + ((flags[FLAG_CARD_SET] - CARD_SET_SIX) * BONUS_SET_AFTER_SIX));
 		}
 		//if this is the 1st set the player has turned-in this turn,
 		//give the player 2 bonus troops if 1 of the card's territory
@@ -294,12 +294,12 @@ bool update(int a_ms)
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
 		{
 			//if the player has 5+ cards, they MUST turn in a set
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5)
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_HAND)
 			{
 				do{
 					printf("You have 5+ cards. You MUST turn in a set.\n\n");
 					turnInCards();
-				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 5);
+				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_HAND);
 				printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
@@ -342,7 +342,7 @@ bool update(int a_ms)
 	case STATE_ATTACK_FROM:
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])) && (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= 2))
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])) && (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_MIN_TROOPS))
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			flags[FLAG_PARAMS_SET] = false;
 		}
@@ -359,6 +359,23 @@ bool update(int a_ms)
 		flags[FLAG_UPDATE_GAME_STATE] = true;
 		players.get(flags[FLAG_CURRENT_PLAYER])->combat(board.get(flags[FLAG_PARAM_TER_ONE]), board.get(flags[FLAG_PARAM_TER_TWO]), players.get(board.get(flags[FLAG_PARAM_TER_TWO])->getOwner()));
 		break;
+	case STATE_CAPTURE_TERRITORY:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		//should be given a card?
+		//(if #ter after attacking is MORE than #ter b4 attacking)
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() > flags[FLAG_PARAM_NUM])
+		{
+			//should the player be allowed to draw a card
+			if(flags[FLAG_DRAW_CARD])
+			{
+				players.get(flags[FLAG_CURRENT_PLAYER])->drawCardFromDeck(deck);
+				//rules state that only 1 card can be drawn per turn,
+				//do if the player captured more than 1 territory,
+				//don't let them get cards for extra territories captured
+				flags[FLAG_DRAW_CARD] = false;
+			}
+		}
+		break;
 	case STATE_ELIMINATE_ENEMY:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
 		if(players.get(board.get(flags[FLAG_PARAM_TER_TWO])->getOwner())->getConqueredT() == 0)
@@ -371,13 +388,13 @@ bool update(int a_ms)
 		break;
 	case STATE_EXCESS_CARDS:
 		flags[FLAG_UPDATE_GAME_STATE] = false;
-		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck) && (players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= 6))
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck) && (players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_FR_OPPONENT))
 		{
 			printf("You have 6+ cards.\n");
 			do{
 				printf("You MUST turn cards until you have 4 or fewer.\n\n");
 				turnInCards();
-			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > 4);
+			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MIN_FR_OPPONENT);
 			printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 			flags[FLAG_UPDATE_GAME_STATE] = true;
 		}
@@ -395,12 +412,8 @@ bool update(int a_ms)
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
-	case STATE_CAPTURE_TERRITORY:
+	case STATE_AFTER_ATK_B4_FORTIFY:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
-		//should be given a card?
-		//(if #ter after attacking is MORE than #ter b4 attacking)
-		if(players.get(flags[FLAG_CURRENT_PLAYER])->getConqueredT() > flags[FLAG_PARAM_NUM])
-			players.get(flags[FLAG_CURRENT_PLAYER])->drawCardFromDeck(deck);
 		break;
 	case STATE_FORTIFY_FROM:
 		if(flags[FLAG_PARAMS_SET])
@@ -450,6 +463,7 @@ bool update(int a_ms)
 		if(flags[FLAG_GAME_STATE] == STATE_FORTIFY_TROOPS)
 		{
 			flags[FLAG_GAME_STATE] = STATE_GET_TROOPS_TERRITORY;
+			flags[FLAG_DRAW_CARD] = true;
 			flags[FLAG_FIRST_SET_IN_TURN] = true;
 			do{
 				goToNextPlayer();
@@ -468,7 +482,7 @@ bool update(int a_ms)
 		}
 
 		flags[FLAG_UPDATE_GAME_STATE] = false;
-		printf("state == %d\n", flags[FLAG_GAME_STATE]);
+		//printf("state == %d\n", flags[FLAG_GAME_STATE]);
 		return true;
 	}
 	else
