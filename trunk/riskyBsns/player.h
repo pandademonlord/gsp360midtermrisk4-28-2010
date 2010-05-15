@@ -7,11 +7,6 @@
 #include "card.h"
 #include "templatevector.h"
 
-#define dicesides 6
-#define epicfail 1
-#define minArmys 3
-#define minTerri 11
-
 class Player
 {
 private:

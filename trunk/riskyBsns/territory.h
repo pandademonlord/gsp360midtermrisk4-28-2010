@@ -128,7 +128,7 @@ public:
 		if(this->isConnectedTo(a_territory))
 		{
 			if(!(a_numTroops < this->m_troops_deployed))
-				a_numTroops = this->m_troops_deployed - 1;
+				a_numTroops = this->m_troops_deployed - ATK_LEAVE_TROOPS;
 		
 			this->subtractTroopsDeployed(a_numTroops);
 			a_territory->addTroopsDeployed(a_numTroops);

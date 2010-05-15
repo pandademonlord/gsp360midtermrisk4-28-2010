@@ -327,20 +327,20 @@ void initPlayers()
 	short startWithTroops;
 	switch(flags[FLAG_PLAYERS])
 	{
-	case 2:
-		startWithTroops = 40;
+	case NUM_PLAYERS_TWO:
+		startWithTroops = TROOPS_PLAYERS_TWO;
 		break;
-	case 3:
-		startWithTroops = 35;
+	case NUM_PLAYERS_THREE:
+		startWithTroops = TROOPS_PLAYERS_THREE;
 		break;
-	case 4:
-		startWithTroops = 30;
+	case NUM_PLAYERS_FOUR:
+		startWithTroops = TROOPS_PLAYERS_FOUR;
 		break;
-	case 5:
-		startWithTroops = 25;
+	case NUM_PLAYERS_FIVE:
+		startWithTroops = TROOPS_PLAYERS_FIVE;
 		break;
-	case 6:
-		startWithTroops = 20;
+	case NUM_PLAYERS_SIX:
+		startWithTroops = TROOPS_PLAYERS_SIX;
 		break;
 	}
 	for(int i = 0; i < flags[FLAG_PLAYERS]; ++i)
@@ -354,17 +354,18 @@ void initPlayers()
 void initDeck()
 {
 	Card * crd;
-	for(int i = 0; i < 42; ++i)
+	for(int i = 0; i < CARD_NUM_IN_DECK_WO_WILD; ++i)
 	{
 		crd = new Card((i % 3), i, i);
 		deck.add(crd);
 	}
-	for(int i = 42; i < 44; ++i)
+	for(int i = CARD_NUM_IN_DECK_WO_WILD; i < CARD_NUM_IN_DECK; ++i)
 	{
-		crd = new Card(3, CARD_TERRITORY_NONE, i);
+		crd = new Card(CARD_ID_WILD, CARD_TERRITORY_NONE, i);
 		deck.add(crd);
 	}
 	flags[FLAG_CARD_SET] = 0;
+	flags[FLAG_DRAW_CARD] = true;
 	flags[FLAG_FIRST_SET_IN_TURN] = true;
 	//for(int i = 0; i < deck.size(); ++i)
 	//	printf("id == %d, ter == %d, unit == %d\n", deck.get(i)->getCardID(), deck.get(i)->getTerritoryID(), deck.get(i)->getUnit());
@@ -416,15 +417,15 @@ void init()
 	glutMotionFunc(draggedMotion);
 	glutMouseFunc(mouse);
 	initBoard();
+	initDeck();
 	do
 	{
-		printf("How many players (2-6)?\n");
+		printf("How many players (%d-%d)?\n", PLAYERS_MIN, PLAYERS_MAX);
 		cin >> flags[FLAG_PLAYERS];
-	}while(flags[FLAG_PLAYERS] < 2 || flags[FLAG_PLAYERS] > 6);
+	}while(flags[FLAG_PLAYERS] < PLAYERS_MIN || flags[FLAG_PLAYERS] > PLAYERS_MAX);
 	//printf("players == %d\n", flags[FLAG_PLAYERS]);
 	initPlayers();
-	initDeck();
-	flags[FLAG_GAME_STATE] = 0;
+	flags[FLAG_GAME_STATE] = STATE_INIT_PLACEMENT_CLAIM;
 	flags[FLAG_UPDATE_GAME_STATE] = false;
 	flags[FLAG_PARAMS_SET] = false;
 }
