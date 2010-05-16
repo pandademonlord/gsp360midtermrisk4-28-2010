@@ -103,6 +103,26 @@ public:
 		}
 		return false;
 	}
+	//returns true if this territory is connected to 1+ enemy territories
+	bool isConnectedToEnemy()
+	{
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if(this->m_connect.get(i)->getOwner() != this->getOwner())
+				return true;
+		}
+		return false;
+	}
+	//returns true if this territory is connected to 1+ allied territories
+	bool isConnectedToAlly()
+	{
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if(this->m_connect.get(i)->getOwner() == this->getOwner())
+				return true;
+		}
+		return false;
+	}
 	//draw the circular clickable area
 	void glDraw(){m_area.glDraw();}
 	//draws the connections to adjacent territories

@@ -245,7 +245,7 @@
 #define epicfail					1
 #define minArmys					3
 #define minTerri					11
-#define ATK_MIN_TROOPS				2
+#define ATK_FORTIFY_MIN_TROOPS		2
 #define ATK_LEAVE_TROOPS			1
 //player stuff
 #define TROOPS_PLAYERS_TWO			40

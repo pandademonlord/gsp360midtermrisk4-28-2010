@@ -406,4 +406,7 @@ public:
 			}
 		}
 	}
+	//virtual funcs to be overloaded in the AI class
+	//by default, all players are human
+	virtual bool isHuman(){return true;}
 };
