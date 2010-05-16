@@ -103,8 +103,7 @@ void mouse(int button, int state, int x, int y)
 				switch(flags[FLAG_GAME_STATE])
 				{
 				case STATE_FORTIFY_FROM:
-					flags[FLAG_GAME_STATE] = STATE_FORTIFY_TROOPS;
-					flags[FLAG_PARAM_NUM] = 0;
+					flags[FLAG_GAME_STATE] = STATE_AFTER_FORTIFY;
 					flags[FLAG_UPDATE_GAME_STATE] = true;
 					break;
 				case STATE_ATTACK_FROM:
@@ -454,6 +453,9 @@ bool update(int a_ms)
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
+	case STATE_AFTER_FORTIFY:
+		flags[FLAG_UPDATE_GAME_STATE] = true;
+		break;
 	case STATE_WIN:
 		flags[FLAG_UPDATE_GAME_STATE] = false;
 		break;
@@ -471,7 +473,7 @@ bool update(int a_ms)
 			flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 
 		//handles special cases of how to update
-		if(flags[FLAG_GAME_STATE] == STATE_FORTIFY_TROOPS)
+		if(flags[FLAG_GAME_STATE] == STATE_AFTER_FORTIFY)
 		{
 			flags[FLAG_GAME_STATE] = STATE_GET_TROOPS_TERRITORY;
 			flags[FLAG_DRAW_CARD] = true;
