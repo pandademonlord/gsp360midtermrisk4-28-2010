@@ -35,8 +35,9 @@
 #define STATE_FORTIFY_FROM			14
 #define STATE_FORTIFY_TO			15
 #define STATE_FORTIFY_TROOPS		16
+#define STATE_AFTER_FORTIFY			17
 	//go this state ONLY if current player owns all 42 territories
-#define STATE_WIN					17
+#define STATE_WIN					18
 
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
