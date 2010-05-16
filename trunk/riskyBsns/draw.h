@@ -71,13 +71,13 @@ void display()
 				sprintf(buffer, "Use the Console when using Cards\n");
 				break;
 			case STATE_ATTACK_FROM:
-				sprintf(buffer, "Left-Click on a territory you occupy (2+ troops), OR Left-Click outside a territory to end attack.\n");
+				sprintf(buffer, "Left-Click on a territory you occupy (2+ troops, Adjacent to Enemy), OR Left-Click outside a territory to end attack.\n");
 				break;
 			case STATE_ATTACK_TO:
 				sprintf(buffer, "Left-Click on an enemy territory adjacent to your territory, OR Right-Click to go back to Prev state.\n");
 				break;
 			case STATE_FORTIFY_FROM:
-				sprintf(buffer, "Left-Click on a territory you occupy (2+ troops), OR Left-Click outside a territory to end turn.\n");
+				sprintf(buffer, "Left-Click on a territory you occupy (2+ troops, Adjacent to Ally), OR Left-Click outside a territory to end turn.\n");
 				break;
 			case STATE_FORTIFY_TO:
 				sprintf(buffer, "Left-Click on a territory you occupy that's adjacent to your territory, OR Right-Click to go back to Prev state.\n");

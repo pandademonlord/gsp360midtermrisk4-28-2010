@@ -342,16 +342,23 @@ bool update(int a_ms)
 	case STATE_ATTACK_FROM:
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])) && (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_MIN_TROOPS))
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
+				&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
+				&& (board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToEnemy()))
+			{
 				flags[FLAG_UPDATE_GAME_STATE] = true;
+			}
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
 	case STATE_ATTACK_TO:
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO]))) && board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+			if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO])))
+				&& board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+			{
 				flags[FLAG_UPDATE_GAME_STATE] = true;
+			}
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
@@ -418,8 +425,12 @@ bool update(int a_ms)
 	case STATE_FORTIFY_FROM:
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])))
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
+				&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
+				&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToAlly())
+			{
 				flags[FLAG_UPDATE_GAME_STATE] = true;
+			}
 			flags[FLAG_PARAMS_SET] = false;
 		}
 		break;
