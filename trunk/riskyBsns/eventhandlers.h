@@ -246,6 +246,7 @@ void turnInCards()
 /** @return true if the game changed state and should redraw */
 bool update(int a_ms)
 {
+	static short enemyPlayer = 0;
 	switch(flags[FLAG_GAME_STATE])
 	{
 	case STATE_INIT_PLACEMENT_CLAIM:
@@ -311,10 +312,8 @@ bool update(int a_ms)
 					cin >> ans;
 				}while(ans != 'y' && ans != 'Y' && ans != 'n' && ans != 'N');
 				if(ans == 'y' || ans == 'Y')
-				{
 					turnInCards();
-					printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
-				}
+				printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
 		}
@@ -356,6 +355,7 @@ bool update(int a_ms)
 			if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO])))
 				&& board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
 			{
+				enemyPlayer = board.get(flags[FLAG_PARAM_TER_TWO])->getOwner();
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
 			flags[FLAG_PARAMS_SET] = false;
@@ -384,8 +384,8 @@ bool update(int a_ms)
 		break;
 	case STATE_ELIMINATE_ENEMY:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
-		if(players.get(board.get(flags[FLAG_PARAM_TER_TWO])->getOwner())->getConqueredT() == 0)
-			players.get(flags[FLAG_CURRENT_PLAYER])->exchangeCards(players.get(board.get(flags[FLAG_PARAM_TER_TWO])->getOwner()), deck);
+		if(players.get(enemyPlayer)->getConqueredT() == 0)
+			players.get(flags[FLAG_CURRENT_PLAYER])->exchangeCards(players.get(enemyPlayer), deck);
 		break;
 	case STATE_CHECK_IF_WON:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -394,13 +394,13 @@ bool update(int a_ms)
 		break;
 	case STATE_EXCESS_CARDS:
 		flags[FLAG_UPDATE_GAME_STATE] = false;
-		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck) && (players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_FR_OPPONENT))
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_HAND)
 		{
 			printf("You have 6+ cards.\n");
 			do{
 				printf("You MUST turn cards until you have 4 or fewer.\n\n");
 				turnInCards();
-			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MIN_FR_OPPONENT);
+			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_FR_OPPONENT);
 			printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 			flags[FLAG_UPDATE_GAME_STATE] = true;
 		}
