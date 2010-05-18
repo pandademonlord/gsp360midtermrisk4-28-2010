@@ -24,8 +24,7 @@ public:
 	short getTerritoryID(){return this->m_territoryID;}
 	void setOwnerID(short a_ID)
 	{
-		if(m_ownerID = OWNER_NONE) //if not owned give it an owner
-			m_ownerID = a_ID;
+		m_ownerID = a_ID;
 	}
 	short getOwnerID(){return this->m_ownerID;}
 	bool isOwned()

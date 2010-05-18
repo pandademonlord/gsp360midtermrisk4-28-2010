@@ -289,10 +289,13 @@ public:
 	bool terCard(Card * a_card, TemplateArray<Territory *> a_board)
 	{
 		bool extraTroops = false;
-		if(a_card->getOwnerID() == a_board.get(a_card->getCardID())->getOwner())
+		if(a_card->getUnit() != CARD_ID_WILD)
 		{
-			a_board.get(a_card->getCardID())->addTroopsDeployed(2);
-			extraTroops = true;
+			if(a_card->getOwnerID() == a_board.get(a_card->getTerritoryID())->getOwner())
+			{
+				a_board.get(a_card->getCardID())->addTroopsDeployed(2);
+				extraTroops = true;
+			}
 		}
 		return extraTroops;
 	}
