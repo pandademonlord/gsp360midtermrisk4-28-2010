@@ -172,6 +172,36 @@ public:
 			break;
 		}
 	}
+	//returns true if player has at least 1 territory with 2+ troops connected to enemy
+	bool canAttack(TemplateArray<Territory *> a_board)
+	{
+		for(int i = 0; i < a_board.size(); ++i)
+		{
+			if(a_board.get(i)->getOwner() == this->m_ID)
+			{
+				if(a_board.get(i)->getTroops() >= ATK_FORTIFY_MIN_TROOPS && a_board.get(i)->isConnectedToEnemy())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	//returns true if player has at least 1 territory with 2+ troops connected to ally
+	bool canFortify(TemplateArray<Territory *> a_board)
+	{
+		for(int i = 0; i < a_board.size(); ++i)
+		{
+			if(a_board.get(i)->getOwner() == this->m_ID)
+			{
+				if(a_board.get(i)->getTroops() >= ATK_FORTIFY_MIN_TROOPS && a_board.get(i)->isConnectedToAlly())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	//draws the ID's & # of troops within "owned" territories, in Player's unique color
 	void drawStats(TemplateArray<Territory *> a_board)
 	{

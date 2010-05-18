@@ -338,15 +338,23 @@ bool update(int a_ms)
 		}
 		break;
 	case STATE_ATTACK_FROM:
-		if(flags[FLAG_PARAMS_SET])
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->canAttack(board))
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
-				&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
-				&& (board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToEnemy()))
+			if(flags[FLAG_PARAMS_SET])
 			{
-				flags[FLAG_UPDATE_GAME_STATE] = true;
+				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
+					&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
+					&& (board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToEnemy()))
+				{
+					flags[FLAG_UPDATE_GAME_STATE] = true;
+				}
+				flags[FLAG_PARAMS_SET] = false;
 			}
-			flags[FLAG_PARAMS_SET] = false;
+		}
+		else
+		{
+			flags[FLAG_GAME_STATE] = STATE_AFTER_ATK_B4_FORTIFY;
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 		}
 		break;
 	case STATE_ATTACK_TO:
@@ -422,15 +430,23 @@ bool update(int a_ms)
 		flags[FLAG_UPDATE_GAME_STATE] = true;
 		break;
 	case STATE_FORTIFY_FROM:
-		if(flags[FLAG_PARAMS_SET])
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->canFortify(board))
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
-				&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
-				&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToAlly())
+			if(flags[FLAG_PARAMS_SET])
 			{
-				flags[FLAG_UPDATE_GAME_STATE] = true;
+				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
+					&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToAlly())
+				{
+					flags[FLAG_UPDATE_GAME_STATE] = true;
+				}
+				flags[FLAG_PARAMS_SET] = false;
 			}
-			flags[FLAG_PARAMS_SET] = false;
+		}
+		else
+		{
+			flags[FLAG_GAME_STATE] = STATE_AFTER_FORTIFY;
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 		}
 		break;
 	case STATE_FORTIFY_TO:
