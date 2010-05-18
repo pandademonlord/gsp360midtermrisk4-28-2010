@@ -502,7 +502,7 @@ bool update(int a_ms)
 		{
 			switch(flags[FLAG_GAME_STATE])
 			{
-			case STATE_PLACE_EXCESS_TROOPS:
+			case STATE_CHECK_IF_WON:
 				flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
 				break;
 			default:
