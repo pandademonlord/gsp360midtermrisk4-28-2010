@@ -342,7 +342,7 @@ public:
 		}
 		//if no cards in deck, re-shuffle all discarded cards
 		//& re-calc #cards in deck
-		if(allowedToDraw == 0)
+		while(allowedToDraw == 0)
 		{
 			for(int i = 0; i < a_deck.size(); ++i)
 			{
