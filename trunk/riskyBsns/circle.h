@@ -3,11 +3,10 @@
 #include "shape.h"
 #include "v2d.h"
 #include "drawing.h"
-#include "random.h"
 
 class Circle : public Shape
 {
-protected:
+private:
 	V2DF center;
 	float radius;
 public:

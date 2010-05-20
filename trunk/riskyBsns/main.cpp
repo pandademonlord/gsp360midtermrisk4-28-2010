@@ -11,6 +11,7 @@ using namespace std;
 #include "territory.h"
 #include "circle.h"
 #include "player.h"
+#include "playerAI.h"
 #include "card.h"
 
 // GLUT will not give access to the main loop, some variables MUST be global. :(
@@ -323,7 +324,15 @@ void initBoard()
 }
 void initPlayers()
 {
+	do
+	{
+		printf("How many players (%d-%d)?\n", PLAYERS_MIN, PLAYERS_MAX);
+		cin >> flags[FLAG_PLAYERS];
+	}while(flags[FLAG_PLAYERS] < PLAYERS_MIN || flags[FLAG_PLAYERS] > PLAYERS_MAX);
+	//printf("players == %d\n", flags[FLAG_PLAYERS]);
+
 	Player * ply;
+
 	short startWithTroops;
 	switch(flags[FLAG_PLAYERS])
 	{
@@ -345,10 +354,24 @@ void initPlayers()
 	}
 	for(int i = 0; i < flags[FLAG_PLAYERS]; ++i)
 	{
-		ply = new Player(startWithTroops,players.size());
+		char ans;
+		do{
+			printf("Should Player %d be AI controlled(Y/N)?\n", i+1);
+			cin >> ans;
+		}while(ans != 'y' && ans != 'Y' && ans != 'n' && ans != 'N');
+		if(ans == 'n' || ans == 'N')
+		{
+			ply = new Player(startWithTroops,players.size());
+		}
+		else
+		{
+			ply = new PlayerAI(startWithTroops,players.size());
+		}
 		players.add(ply);
 		//printf("numCards == %d\n", players.get(i)->getNumCards());
 	}
+	for(int i = 0; i < players.size(); ++i)
+		printf("Is Player %d AI controlled == %d\n", i+1, players.get(i)->isAI());
 	flags[FLAG_CURRENT_PLAYER] = PLAYER_ONE;
 }
 void initDeck()
@@ -418,12 +441,6 @@ void init()
 	glutMouseFunc(mouse);
 	initBoard();
 	initDeck();
-	do
-	{
-		printf("How many players (%d-%d)?\n", PLAYERS_MIN, PLAYERS_MAX);
-		cin >> flags[FLAG_PLAYERS];
-	}while(flags[FLAG_PLAYERS] < PLAYERS_MIN || flags[FLAG_PLAYERS] > PLAYERS_MAX);
-	//printf("players == %d\n", flags[FLAG_PLAYERS]);
 	initPlayers();
 	flags[FLAG_GAME_STATE] = STATE_INIT_PLACEMENT_CLAIM;
 	flags[FLAG_UPDATE_GAME_STATE] = false;

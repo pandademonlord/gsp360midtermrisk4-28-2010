@@ -8,28 +8,32 @@ if (state & GLUT_ACTIVE_SHIFT)	// shift is pressed</code>
  */
 void keyboard(unsigned char key, int x, int y)
 {
-	switch(flags[FLAG_GAME_STATE])
+	//only allow input from keyboard to be read if user is NOT AI controlled (human)
+	if(!(players.get(flags[FLAG_CURRENT_PLAYER])->isAI()))
 	{
-	case STATE_FORTIFY_TROOPS:
-		switch(key)
+		switch(flags[FLAG_GAME_STATE])
 		{
-		case 'w'://increase # of troops to move
-			flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
-			if(flags[FLAG_PARAM_NUM] > (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1))
-				flags[FLAG_PARAM_NUM] = (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1);
-			break;
-		case 's'://decrease # of troops to move
-			flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
-			if(flags[FLAG_PARAM_NUM] < 0)
-				flags[FLAG_PARAM_NUM] = 0;
-			break;
-		case ' '://"enter" your final decision
-			flags[FLAG_PARAMS_SET] = true;
+		case STATE_FORTIFY_TROOPS:
+			switch(key)
+			{
+			case 'w'://increase # of troops to move
+				flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
+				if(flags[FLAG_PARAM_NUM] > (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1))
+					flags[FLAG_PARAM_NUM] = (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1);
+				break;
+			case 's'://decrease # of troops to move
+				flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
+				if(flags[FLAG_PARAM_NUM] < 0)
+					flags[FLAG_PARAM_NUM] = 0;
+				break;
+			case ' '://"enter" your final decision
+				flags[FLAG_PARAMS_SET] = true;
+				break;
+			}
 			break;
 		}
-		break;
+		glutPostRedisplay();
 	}
-	glutPostRedisplay();
 }
 
 /** @param a_width/a_height new dimensions of the resized window */
@@ -71,75 +75,78 @@ void passiveMotion(int x, int y)
 
 void mouse(int button, int state, int x, int y)
 {
-	//printf("button %d, state %d,  x %d, y %d\n", button, state, x, y);
-	switch(button)
+	//only allow input from mouse to be read if user is NOT AI controlled (human)
+	if(!(players.get(flags[FLAG_CURRENT_PLAYER])->isAI()))
 	{
-	case GLUT_LEFT_BUTTON:
-		switch(state)
+		//printf("button %d, state %d,  x %d, y %d\n", button, state, x, y);
+		switch(button)
 		{
-		case STATE_MOUSE_BUTTON_DN:
-			if(flags[FLAG_WITHIN_AREA])
+		case GLUT_LEFT_BUTTON:
+			switch(state)
 			{
+			case STATE_MOUSE_BUTTON_DN:
+				if(flags[FLAG_WITHIN_AREA])
+				{
+					switch(flags[FLAG_GAME_STATE])
+					{
+					case STATE_INIT_PLACEMENT_CLAIM:
+					case STATE_INIT_PLACEMENT_PLACE:
+					case STATE_PLACE_BONUS_TROOPS:
+					case STATE_ATTACK_FROM:
+					case STATE_FORTIFY_FROM:
+					case STATE_PLACE_EXCESS_TROOPS:
+						flags[FLAG_PARAM_TER_ONE] = flags[FLAG_CLICKED_TER];
+						flags[FLAG_PARAMS_SET] = true;
+						break;
+					case STATE_ATTACK_TO:
+					case STATE_FORTIFY_TO:
+						flags[FLAG_PARAM_TER_TWO] = flags[FLAG_CLICKED_TER];
+						flags[FLAG_PARAMS_SET] = true;
+						break;
+					}
+				}
+				else//go to the next playing state if player doesn't want to attack or fortify
+				{
+					switch(flags[FLAG_GAME_STATE])
+					{
+					case STATE_FORTIFY_FROM:
+						flags[FLAG_GAME_STATE] = STATE_AFTER_FORTIFY;
+						flags[FLAG_UPDATE_GAME_STATE] = true;
+						break;
+					case STATE_ATTACK_FROM:
+						flags[FLAG_GAME_STATE] = STATE_AFTER_ATK_B4_FORTIFY;
+						flags[FLAG_UPDATE_GAME_STATE] = true;
+						break;
+					}
+				}
+				break;
+			}
+			//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
+			//printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
+			break;
+		case GLUT_RIGHT_BUTTON:
+			switch(state)
+			{
+			case STATE_MOUSE_BUTTON_DN:
 				switch(flags[FLAG_GAME_STATE])
 				{
-				case STATE_INIT_PLACEMENT_CLAIM:
-				case STATE_INIT_PLACEMENT_PLACE:
-				case STATE_PLACE_BONUS_TROOPS:
-				case STATE_ATTACK_FROM:
-				case STATE_FORTIFY_FROM:
-				case STATE_PLACE_EXCESS_TROOPS:
-					flags[FLAG_PARAM_TER_ONE] = flags[FLAG_CLICKED_TER];
-					flags[FLAG_PARAMS_SET] = true;
-					break;
 				case STATE_ATTACK_TO:
-				case STATE_FORTIFY_TO:
-					flags[FLAG_PARAM_TER_TWO] = flags[FLAG_CLICKED_TER];
-					flags[FLAG_PARAMS_SET] = true;
-					break;
-				}
-			}
-			else//go to the next playing state if player doesn't want to attack or fortify
-			{
-				switch(flags[FLAG_GAME_STATE])
-				{
-				case STATE_FORTIFY_FROM:
-					flags[FLAG_GAME_STATE] = STATE_AFTER_FORTIFY;
-					flags[FLAG_UPDATE_GAME_STATE] = true;
-					break;
+					flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
 				case STATE_ATTACK_FROM:
-					flags[FLAG_GAME_STATE] = STATE_AFTER_ATK_B4_FORTIFY;
-					flags[FLAG_UPDATE_GAME_STATE] = true;
+					flags[FLAG_PARAMS_SET] = false;
+					break;
+				case STATE_FORTIFY_TO://un-do which territory player is getting troops from
+					flags[FLAG_GAME_STATE] = STATE_FORTIFY_FROM;
+				case STATE_FORTIFY_FROM:
+					flags[STATE_FORTIFY_FROM] = false;
 					break;
 				}
-			}
-			break;
-		}
-		//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
-		//printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
-		break;
-	case GLUT_RIGHT_BUTTON:
-		switch(state)
-		{
-		case STATE_MOUSE_BUTTON_DN:
-			switch(flags[FLAG_GAME_STATE])
-			{
-			case STATE_ATTACK_TO:
-				flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
-			case STATE_ATTACK_FROM:
-				flags[FLAG_PARAMS_SET] = false;
-				break;
-			case STATE_FORTIFY_TO://un-do which territory player is getting troops from
-				flags[FLAG_GAME_STATE] = STATE_FORTIFY_FROM;
-			case STATE_FORTIFY_FROM:
-				flags[STATE_FORTIFY_FROM] = false;
 				break;
 			}
 			break;
 		}
-		break;
 	}
 }
-	
 
 void goToNextPlayer()
 {
@@ -343,8 +350,8 @@ bool update(int a_ms)
 			if(flags[FLAG_PARAMS_SET])
 			{
 				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
-					&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
-					&& (board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToEnemy()))
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->haveTroopsToAttackFority()
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToEnemy())
 				{
 					flags[FLAG_UPDATE_GAME_STATE] = true;
 				}
@@ -435,7 +442,7 @@ bool update(int a_ms)
 			if(flags[FLAG_PARAMS_SET])
 			{
 				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
-					&& (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() >= ATK_FORTIFY_MIN_TROOPS)
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->haveTroopsToAttackFority()
 					&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToAlly())
 				{
 					flags[FLAG_UPDATE_GAME_STATE] = true;
