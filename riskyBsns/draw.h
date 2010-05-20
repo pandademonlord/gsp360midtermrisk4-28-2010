@@ -27,8 +27,10 @@ void display()
 				sprintf(buffer, "Player %d's turn: Add 1 Army (%d Left)\n", (players.get(i)->getID() + 1), players.get(i)->getTroops());
 				break;
 			case STATE_GET_TROOPS_CARDS:
-			case STATE_EXCESS_CARDS:
 				sprintf(buffer, "Player %d's turn: Turn-in cards for Troops\n", (players.get(i)->getID() + 1));
+				break;
+			case STATE_EXCESS_CARDS:
+				sprintf(buffer, "Player %d's turn: Turn-in Excess cards for Troops\n", (players.get(i)->getID() + 1));
 				break;
 			case STATE_PLACE_BONUS_TROOPS:
 			case STATE_PLACE_EXCESS_TROOPS:
