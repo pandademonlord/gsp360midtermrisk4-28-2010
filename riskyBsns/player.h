@@ -5,11 +5,10 @@
 
 #include "territory.h"
 #include "card.h"
-#include "templatevector.h"
 
 class Player
 {
-private:
+protected:
 	short m_troops;//holds amount of units the player gets
 	short m_ID; //reflection in order to know what player he is
 	short m_conqueredT; //int to tell how many territorys the player has
@@ -18,10 +17,10 @@ public:
 	//take into account that the starting number of units is depends on players
 	Player(short t,short id)
 	{
-		m_troops = t;
-		m_ID = id;
-		m_conqueredT = 0;
-		m_holdCards = 0;
+		this->m_troops = t;
+		this->m_ID = id;
+		this->m_conqueredT = 0;
+		this->m_holdCards = 0;
 	}
 	short getID(){return this->m_ID;}
 	short getTroops(){return this->m_troops;}
@@ -177,9 +176,9 @@ public:
 	{
 		for(int i = 0; i < a_board.size(); ++i)
 		{
-			if(a_board.get(i)->getOwner() == this->m_ID)
+			if(this->ifOwns(a_board.get(i)))
 			{
-				if(a_board.get(i)->getTroops() >= ATK_FORTIFY_MIN_TROOPS && a_board.get(i)->isConnectedToEnemy())
+				if(a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToEnemy())
 				{
 					return true;
 				}
@@ -192,9 +191,9 @@ public:
 	{
 		for(int i = 0; i < a_board.size(); ++i)
 		{
-			if(a_board.get(i)->getOwner() == this->m_ID)
+			if(this->ifOwns(a_board.get(i)))
 			{
-				if(a_board.get(i)->getTroops() >= ATK_FORTIFY_MIN_TROOPS && a_board.get(i)->isConnectedToAlly())
+				if(a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly())
 				{
 					return true;
 				}
@@ -441,5 +440,5 @@ public:
 	}
 	//virtual funcs to be overloaded in the AI class
 	//by default, all players are human
-	virtual bool isHuman(){return true;}
+	virtual bool isAI(){return false;}
 };

@@ -1,7 +1,9 @@
+//Territory class written by John Parks
 #pragma once
 
 #include "circle.h"
 #include "templatearray.h"
+#include "random.h"
 
 class Territory
 {
@@ -123,6 +125,58 @@ public:
 		}
 		return false;
 	}
+	//returns a randomly selected Ally-owned connected territory ID
+	short getRandAllyTerritoryID()
+	{
+		short numOfValidOptions = 0;
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if(this->m_ownerID == this->m_connect.get(i)->getOwner())
+				numOfValidOptions++;
+		}
+		short randAlly = random() % numOfValidOptions;
+		short counter = 0;
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if(this->m_ownerID == this->m_connect.get(i)->getOwner())
+			{
+				if(randAlly == counter)
+					return this->m_connect.get(i)->getID();
+				else
+					counter++;
+			}
+		}
+	}
+	//returns a randomly selected Enemy-owned connected territory ID
+	short getRandEnemyTerritoryID()
+	{
+		short numOfValidOptions = 0;
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if(this->m_ownerID != this->m_connect.get(i)->getOwner())
+				numOfValidOptions++;
+		}
+		short randEnemy = random() % numOfValidOptions;
+		short counter = 0;
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if(this->m_ownerID != this->m_connect.get(i)->getOwner())
+			{
+				if(randEnemy == counter)
+					return this->m_connect.get(i)->getID();
+				else
+					counter++;
+			}
+		}
+	}
+	//returns true if this territory has at least ATK_FORTIFY_MIN_TROOPS troops
+	bool haveTroopsToAttackFority()
+	{
+		if(this->m_troops_deployed >= ATK_FORTIFY_MIN_TROOPS)
+			return true;
+		else
+			return false;
+	}
 	//draw the circular clickable area
 	void glDraw(){m_area.glDraw();}
 	//draws the connections to adjacent territories
@@ -157,6 +211,19 @@ public:
 	void moveTroopsTo(TemplateArray<Territory *> a_board, short a_ID, short a_numTroops)
 	{
 		this->moveTroopsTo(a_board.get(a_ID), a_numTroops);
+	}
+	//function to create an array of territories owned by the AI !!!
+	TemplateArray<Territory*> getTerOwned(short a_playerID, TemplateArray<Territory*> a_board)
+	{
+		TemplateArray<Territory*> terOwned;
+		for(int i = 0; i < TERRITORIES_TOTAL; ++i)
+		{
+			if(a_board.get(i)->getOwner() == a_playerID)
+			{
+				terOwned.add(a_board.get(i));
+			}
+		}
+		return terOwned;
 	}
 	~Territory(){}
 };
