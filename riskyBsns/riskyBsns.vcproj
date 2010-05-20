@@ -229,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\playerai.h"
+				>
+			</File>
+			<File
 				RelativePath=".\random.h"
 				>
 			</File>
