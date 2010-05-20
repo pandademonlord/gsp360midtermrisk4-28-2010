@@ -6,13 +6,14 @@
 class PlayerAI : public Player
 {
 private:
+	//whether or not AI player chooses to ATK
 	short m_toAttack;
 public:
 	PlayerAI(short t,short id) : Player(t, id)
 	{
 		m_toAttack = 0;
 	}
-	virtual bool isAI(){return true;}
+	bool isAI(){return true;}
 	//decide whether or not to continue to randomly attack
 	bool continueAttack()
 	{
@@ -23,7 +24,7 @@ public:
 			return  false;
 	}
 	//returns ID of randomly selected un-owned territory to claim
-	short claimTerritory(TemplateArray<Territory*> a_board)
+	short getClaimID(TemplateArray<Territory*> a_board)
 	{
 		short numOfValidOptions = 0;
 		for(int i = 0; i < a_board.size(); ++i)
@@ -45,7 +46,7 @@ public:
 		}
 	}
 	//returns ID of randomly selected self-owned territory to add 1 troop to
-	short addTerritory(TemplateArray<Territory*> a_board)
+	short getPlaceID(TemplateArray<Territory*> a_board)
 	{
 		short numOfValidOptions = 0;
 		for(int i = 0; i < a_board.size(); ++i)
@@ -67,7 +68,7 @@ public:
 		}
 	}
 	//randomly pick a territory to attack with, pass the board and the AI's ID
-	short pickAttackTer(TemplateArray<Territory*> a_board)
+	short getAtkOriginID(TemplateArray<Territory*> a_board)
 	{
 		short numOfValidOptions = 0;
 		for(int i = 0; i < a_board.size(); ++i)
@@ -89,12 +90,12 @@ public:
 		}
 	}
 	//pick a territory to attack by passing it the board and the result pickAttackingTer()
-	short pickTargetTer(TemplateArray<Territory*> a_board, short a_attackingTerID)
+	short getAtkTargetID(TemplateArray<Territory*> a_board, short a_attackingTerID)
 	{
 		return a_board.get(a_attackingTerID)->getRandEnemyTerritoryID();
 	}
 	//returns ID of randomly selected ally-owned ter connected to enemy
-	short pickReinforceTer(TemplateArray<Territory*> a_board)
+	short getFortOriginID(TemplateArray<Territory*> a_board)
 	{
 		short numOfValidOptions = 0;
 		for(int i = 0; i < a_board.size(); ++i)
@@ -116,8 +117,13 @@ public:
 		}
 	}
 	//returns ID of randomly selected ally-owned ter connected to ter with a_ID
-	short pickPlaceTroops(TemplateArray<Territory*> a_board, short a_ID)
+	short getFortTargetID(TemplateArray<Territory*> a_board, short a_ID)
 	{
 		return a_board.get(a_ID)->getRandAllyTerritoryID();
+	}
+	//returns radomly selected # of troops to take from ter with ID of a_ID
+	short getFortTroops(TemplateArray<Territory*> a_board, short a_ID)
+	{
+		return random() % (a_board.get(a_ID)->getTroops() - 1);
 	}
 };

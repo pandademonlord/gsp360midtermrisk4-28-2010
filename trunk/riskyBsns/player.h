@@ -5,6 +5,7 @@
 
 #include "territory.h"
 #include "card.h"
+//#include "templatearray.h"
 
 class Player
 {
@@ -384,7 +385,6 @@ public:
 		//no set is possible without at least 3 cards
 		if(this->m_holdCards < CARD_NUM_IN_SET)
 			return false;
-
 		//if own 5+ cards, set exists
 		if(this->m_holdCards > CARD_NUM_IN_SET + 1)
 			return true;
@@ -400,15 +400,17 @@ public:
 
 			if(this->m_holdCards == CARD_NUM_IN_SET)
 				return this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2));
-		}
-
-		for(int i = 0; i < CARD_NUM_IN_SET; ++i)
-		{
-			//0,1,2
-			//1,2,3
-			//2,3,0
-			if(this->isCardSet(a_deck.get((i)%this->m_holdCards), a_deck.get((i+1)%this->m_holdCards), a_deck.get((i+2)%this->m_holdCards)))
-				return true;
+			else
+			{
+				if(this->isCardSet(ownedCrds.get(0), ownedCrds.get(1), ownedCrds.get(2)))
+					return true;
+				else if(this->isCardSet(ownedCrds.get(1), ownedCrds.get(2), ownedCrds.get(3)))
+					return true;
+				else if(this->isCardSet(ownedCrds.get(2), ownedCrds.get(3), ownedCrds.get(0)))
+					return true;
+				else if(this->isCardSet(ownedCrds.get(3), ownedCrds.get(0), ownedCrds.get(1)))
+					return true;
+			}
 		}
 		return false;
 	}
@@ -441,4 +443,20 @@ public:
 	//virtual funcs to be overloaded in the AI class
 	//by default, all players are human
 	virtual bool isAI(){return false;}
+	//only works properly for AI player
+	virtual bool continueAttack(){return false;}
+	//only works properly for AI player
+	virtual short getClaimID(TemplateArray<Territory*> a_board){return OWNER_NONE;}
+	//only works properly for AI player
+	virtual short getPlaceID(TemplateArray<Territory*> a_board){return OWNER_NONE;}
+	//only works properly for AI player
+	virtual short getAtkOriginID(TemplateArray<Territory*> a_board){return OWNER_NONE;}
+	//only works properly for AI player
+	virtual short getAtkTargetID(TemplateArray<Territory*> a_board, short a_ID){return OWNER_NONE;}
+	//only works properly for AI player
+	virtual short getFortOriginID(TemplateArray<Territory*> a_board){return OWNER_NONE;}
+	//only works properly for AI player
+	virtual short getFortTargetID(TemplateArray<Territory*> a_board, short a_ID){return OWNER_NONE;}
+	//only works properly for AI player
+	virtual short getFortTroops(TemplateArray<Territory*> a_board, short a_ID){return OWNER_NONE;}
 };
