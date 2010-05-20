@@ -440,6 +440,41 @@ public:
 			}
 		}
 	}
+	void turnCardsTroops(Card * c1, Card * c2, Card * c3, short a_numSetsTurnedIn)
+	{
+		switch(a_numSetsTurnedIn)
+		{
+		case CARD_SET_ONE:
+			this->addBonusTroops(BONUS_SET_ONE);
+			break;
+		case CARD_SET_TWO:
+			this->addBonusTroops(BONUS_SET_TWO);
+			break;
+		case CARD_SET_THREE:
+			this->addBonusTroops(BONUS_SET_THREE);
+			break;
+		case CARD_SET_FOUR:
+			this->addBonusTroops(BONUS_SET_FOUR);
+			break;
+		case CARD_SET_FIVE:
+			this->addBonusTroops(BONUS_SET_FIVE);
+			break;
+		case CARD_SET_SIX:
+			this->addBonusTroops(BONUS_SET_SIX);
+			break;
+		default:
+			this->addBonusTroops(BONUS_SET_SIX + ((a_numSetsTurnedIn - CARD_SET_SIX) * BONUS_SET_AFTER_SIX));
+		}
+	}
+	void removeCardsHand(Card * c1, Card * c2, Card * c3)
+	{
+		c1->setOwnerID(CARD_DISCARDED);
+		c2->setOwnerID(CARD_DISCARDED);
+		c3->setOwnerID(CARD_DISCARDED);
+		this->removeCard();
+		this->removeCard();
+		this->removeCard();
+	}
 	//virtual funcs to be overloaded in the AI class
 	//by default, all players are human
 	virtual bool isAI(){return false;}

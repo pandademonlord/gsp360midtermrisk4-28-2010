@@ -153,17 +153,25 @@ void goToNextPlayer()
 	flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] + 1;
 	flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] % flags[FLAG_PLAYERS];
 }
+void handleCardTerritory(short sC1, short sC2, short sC3)
+{
+	if(flags[FLAG_FIRST_SET_IN_TURN])
+	{
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(sC1),board))
+			flags[FLAG_FIRST_SET_IN_TURN] = false;
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(sC2),board))
+			flags[FLAG_FIRST_SET_IN_TURN] = false;
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(sC3),board))
+			flags[FLAG_FIRST_SET_IN_TURN] = false;
+	}
+}
 void turnInCards()
 {
 	printf("A SET consists of:\n");
 	printf("1. 3 cards with the SAME unit, OR\n");
 	printf("2. 1 card of each unit (Soldier, Horseman, Cannon), OR\n");
 	printf("3. 1 WILD card & any 2 other cards\n\n");
-	//variables to hold card ID's
-	short selectC1, selectC2, selectC3;
-	//display # of cards player is holding
 	printf("You have %d cards.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
-	//display all cards held by player, & display stats
 	for(int i = 0; i < deck.size(); ++i)
 	{
 		if(deck.get(i)->getOwnerID() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
@@ -186,6 +194,7 @@ void turnInCards()
 		}
 	}
 	printf("\n");
+	short selectC1, selectC2, selectC3;
 	do{
 		printf("Enter ID of 1st card to turn-in\n");
 		cin >> selectC1;
@@ -199,55 +208,102 @@ void turnInCards()
 		cin >> selectC3;
 	}while(deck.get(selectC1)->getOwnerID() != players.get(flags[FLAG_CURRENT_PLAYER])->getID());
 	printf("\n");
-	//only give troops if 3 cards make a set
 	if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3)))
 	{
-		//increase # of sets turned-in by 1
 		flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
-		//give player troops according to what this set's # is
-		switch(flags[FLAG_CARD_SET])
+		players.get(flags[FLAG_CURRENT_PLAYER])->turnCardsTroops(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3), flags[FLAG_CARD_SET]);
+		handleCardTerritory(selectC1, selectC2, selectC3);
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCardsHand(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3));
+	}
+}
+void turnInCardsAI()
+{
+	short selectC1, selectC2, selectC3;
+	bool setFound = false;
+	TemplateArray<Card *> cardsAI;
+	for(int i = 0; i < deck.size(); ++i)
+	{
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->getID() == deck.get(i)->getOwnerID())
 		{
-		case CARD_SET_ONE:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_ONE);
-			break;
-		case CARD_SET_TWO:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_TWO);
-			break;
-		case CARD_SET_THREE:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_THREE);
-			break;
-		case CARD_SET_FOUR:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_FOUR);
-			break;
-		case CARD_SET_FIVE:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_FIVE);
-			break;
-		case CARD_SET_SIX:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_SIX);
-			break;
-		default:
-			players.get(flags[FLAG_CURRENT_PLAYER])->addBonusTroops(BONUS_SET_SIX + ((flags[FLAG_CARD_SET] - CARD_SET_SIX) * BONUS_SET_AFTER_SIX));
+			cardsAI.add(deck.get(i));
 		}
-		//if this is the 1st set the player has turned-in this turn,
-		//give the player 2 bonus troops if 1 of the card's territory
-		//is owned by this player on the board
-		if(flags[FLAG_FIRST_SET_IN_TURN])
-		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC1),board))
-				flags[FLAG_FIRST_SET_IN_TURN] = false;
-			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC2),board))
-				flags[FLAG_FIRST_SET_IN_TURN] = false;
-			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC3),board))
-				flags[FLAG_FIRST_SET_IN_TURN] = false;
-		}
-		//now that the cards have been discarded,
-		//remove them from the player's hand
-		deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
-		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
-		deck.get(selectC2)->setOwnerID(CARD_DISCARDED);
-		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
-		deck.get(selectC3)->setOwnerID(CARD_DISCARDED);
-		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+	}
+	if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(2)))
+	{
+		setFound = true;
+		selectC1 = 0;
+		selectC2 = 1;
+		selectC3 = 2;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(2), cardsAI.get(3)))
+	{
+		setFound = true;
+		selectC1 = 1;
+		selectC2 = 2;
+		selectC3 = 3;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(2), cardsAI.get(3)))
+	{
+		setFound = true;
+		selectC1 = 0;
+		selectC2 = 2;
+		selectC3 = 3;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(3)))
+	{
+		setFound = true;
+		selectC1 = 0;
+		selectC2 = 1;
+		selectC3 = 3;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(4)))
+	{
+		setFound = true;
+		selectC1 = 0;
+		selectC2 = 1;
+		selectC3 = 4;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(2), cardsAI.get(4)))
+	{
+		setFound = true;
+		selectC1 = 0;
+		selectC2 = 2;
+		selectC3 = 4;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(3), cardsAI.get(4)))
+	{
+		setFound = true;
+		selectC1 = 0;
+		selectC2 = 3;
+		selectC3 = 4;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(2), cardsAI.get(4)))
+	{
+		setFound = true;
+		selectC1 = 1;
+		selectC2 = 2;
+		selectC3 = 4;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(3), cardsAI.get(4)))
+	{
+		setFound = true;
+		selectC1 = 1;
+		selectC2 = 3;
+		selectC3 = 4;
+	}
+	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(2), cardsAI.get(3), cardsAI.get(4)))
+	{
+		setFound = true;
+		selectC1 = 2;
+		selectC2 = 3;
+		selectC3 = 4;
+	}
+	if(setFound)
+	{
+		flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
+		players.get(flags[FLAG_CURRENT_PLAYER])->turnCardsTroops(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3), flags[FLAG_CARD_SET]);
+		handleCardTerritory(selectC1, selectC2, selectC3);
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCardsHand(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3));
 	}
 }
 /** @return true if the game changed state and should redraw */
@@ -310,9 +366,12 @@ bool update(int a_ms)
 		flags[FLAG_UPDATE_GAME_STATE] = false;
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->ownSet(deck))
 		{
-			//TODO: make AI player turn-in 1st recognized set
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
 			{
+				/*do{
+					turnInCardsAI();
+				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_HAND);
+				flags[FLAG_UPDATE_GAME_STATE] = true;*/
 			}
 			else
 			{
@@ -348,6 +407,11 @@ bool update(int a_ms)
 		flags[FLAG_UPDATE_GAME_STATE] = true;
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->getTroops() > 0)
 			flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI() && !(flags[FLAG_UPDATE_GAME_STATE]))
+		{
+			flags[FLAG_PARAMS_SET] = true;
+			flags[FLAG_PARAM_TER_ONE] = players.get(flags[FLAG_CURRENT_PLAYER])->getPlaceID(board);
+		}
 		if(flags[FLAG_UPDATE_GAME_STATE])
 		{
 			//save the current # owned territory, to check if playe gains new territory(s) from attacking
@@ -356,7 +420,7 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])))
 				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
 			flags[FLAG_PARAMS_SET] = false;
 		}
@@ -364,6 +428,22 @@ bool update(int a_ms)
 	case STATE_ATTACK_FROM:
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->canAttack(board))
 		{
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
+			{
+				//if(players.get(flags[FLAG_CURRENT_PLAYER])->continueAttack())
+				//{
+				if(!(flags[FLAG_UPDATE_GAME_STATE]))
+				{
+					flags[FLAG_PARAMS_SET] = true;
+					flags[FLAG_PARAM_TER_ONE] = players.get(flags[FLAG_CURRENT_PLAYER])->getAtkOriginID(board);
+				}
+				/*}
+				else
+				{
+					flags[FLAG_GAME_STATE] = STATE_AFTER_ATK_B4_FORTIFY;
+					flags[FLAG_UPDATE_GAME_STATE] = true;
+				}*/
+			}
 			if(flags[FLAG_PARAMS_SET])
 			{
 				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
@@ -382,6 +462,11 @@ bool update(int a_ms)
 		}
 		break;
 	case STATE_ATTACK_TO:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI() && !(flags[FLAG_UPDATE_GAME_STATE]))
+		{
+			flags[FLAG_PARAMS_SET] = true;
+			flags[FLAG_PARAM_TER_TWO] = players.get(flags[FLAG_CURRENT_PLAYER])->getAtkTargetID(board, flags[FLAG_PARAM_TER_ONE]);
+		}
 		if(flags[FLAG_PARAMS_SET])
 		{
 			if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO])))
@@ -431,7 +516,14 @@ bool update(int a_ms)
 			printf("You have 6+ cards.\n");
 			do{
 				printf("You MUST turn cards until you have 4 or fewer.\n\n");
-				turnInCards();
+				if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
+				{
+					//turnInCardsAI();
+				}
+				else
+				{
+					turnInCards();
+				}
 			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_FR_OPPONENT);
 			printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 			flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -443,6 +535,11 @@ bool update(int a_ms)
 		flags[FLAG_UPDATE_GAME_STATE] = true;
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->getTroops() > 0)
 			flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI() && !(flags[FLAG_UPDATE_GAME_STATE]))
+		{
+			flags[FLAG_PARAMS_SET] = true;
+			flags[FLAG_PARAM_TER_ONE] = players.get(flags[FLAG_CURRENT_PLAYER])->getPlaceID(board);
+		}
 		if(flags[FLAG_PARAMS_SET])
 		{
 			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
@@ -456,6 +553,11 @@ bool update(int a_ms)
 	case STATE_FORTIFY_FROM:
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->canFortify(board))
 		{
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI() && !(flags[FLAG_UPDATE_GAME_STATE]))
+			{
+				flags[FLAG_PARAMS_SET] = true;
+				flags[FLAG_PARAM_TER_ONE] = players.get(flags[FLAG_CURRENT_PLAYER])->getFortOriginID(board);
+			}
 			if(flags[FLAG_PARAMS_SET])
 			{
 				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
@@ -474,6 +576,11 @@ bool update(int a_ms)
 		}
 		break;
 	case STATE_FORTIFY_TO:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI() && !(flags[FLAG_UPDATE_GAME_STATE]))
+		{
+			flags[FLAG_PARAMS_SET] = true;
+			flags[FLAG_PARAM_TER_TWO] = players.get(flags[FLAG_CURRENT_PLAYER])->getFortTargetID(board, flags[FLAG_PARAM_TER_ONE]);
+		}
 		if(flags[FLAG_PARAMS_SET])
 		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO]))
@@ -486,6 +593,11 @@ bool update(int a_ms)
 		}
 		break;
 	case STATE_FORTIFY_TROOPS:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI() && !(flags[FLAG_UPDATE_GAME_STATE]))
+		{
+			flags[FLAG_PARAMS_SET] = true;
+			flags[FLAG_PARAM_NUM] = players.get(flags[FLAG_CURRENT_PLAYER])->getFortTroops(board, flags[FLAG_PARAM_TER_ONE]);
+		}
 		if(flags[FLAG_PARAMS_SET])
 		{
 			players.get(flags[FLAG_CURRENT_PLAYER])->fortify(board.get(flags[FLAG_PARAM_TER_ONE]), board.get(flags[FLAG_PARAM_TER_TWO]), flags[FLAG_PARAM_NUM]);
