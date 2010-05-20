@@ -228,82 +228,128 @@ void turnInCardsAI()
 			cardsAI.add(deck.get(i));
 		}
 	}
-	if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(2)))
+	switch(cardsAI.size())
 	{
-		setFound = true;
-		selectC1 = 0;
-		selectC2 = 1;
-		selectC3 = 2;
+	case CARD_NUM_IN_SET:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(2)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 1;
+			selectC3 = 2;
+		}
+		break;
+	case CARD_MAX_FR_OPPONENT:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(2)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 1;
+			selectC3 = 2;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(2), cardsAI.get(3)))
+		{
+			setFound = true;
+			selectC1 = 1;
+			selectC2 = 2;
+			selectC3 = 3;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(2), cardsAI.get(3)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 2;
+			selectC3 = 3;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(3)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 1;
+			selectC3 = 3;
+		}
+		break;
+	case CARD_MAX_HAND:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(2)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 1;
+			selectC3 = 2;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(2), cardsAI.get(3)))
+		{
+			setFound = true;
+			selectC1 = 1;
+			selectC2 = 2;
+			selectC3 = 3;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(2), cardsAI.get(3)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 2;
+			selectC3 = 3;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(3)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 1;
+			selectC3 = 3;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(4)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 1;
+			selectC3 = 4;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(2), cardsAI.get(4)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 2;
+			selectC3 = 4;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(3), cardsAI.get(4)))
+		{
+			setFound = true;
+			selectC1 = 0;
+			selectC2 = 3;
+			selectC3 = 4;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(2), cardsAI.get(4)))
+		{
+			setFound = true;
+			selectC1 = 1;
+			selectC2 = 2;
+			selectC3 = 4;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(3), cardsAI.get(4)))
+		{
+			setFound = true;
+			selectC1 = 1;
+			selectC2 = 3;
+			selectC3 = 4;
+		}
+		else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(2), cardsAI.get(3), cardsAI.get(4)))
+		{
+			setFound = true;
+			selectC1 = 2;
+			selectC2 = 3;
+			selectC3 = 4;
+		}
+		break;
 	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(2), cardsAI.get(3)))
-	{
-		setFound = true;
-		selectC1 = 1;
-		selectC2 = 2;
-		selectC3 = 3;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(2), cardsAI.get(3)))
-	{
-		setFound = true;
-		selectC1 = 0;
-		selectC2 = 2;
-		selectC3 = 3;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(3)))
-	{
-		setFound = true;
-		selectC1 = 0;
-		selectC2 = 1;
-		selectC3 = 3;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(4)))
-	{
-		setFound = true;
-		selectC1 = 0;
-		selectC2 = 1;
-		selectC3 = 4;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(2), cardsAI.get(4)))
-	{
-		setFound = true;
-		selectC1 = 0;
-		selectC2 = 2;
-		selectC3 = 4;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(3), cardsAI.get(4)))
-	{
-		setFound = true;
-		selectC1 = 0;
-		selectC2 = 3;
-		selectC3 = 4;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(2), cardsAI.get(4)))
-	{
-		setFound = true;
-		selectC1 = 1;
-		selectC2 = 2;
-		selectC3 = 4;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(1), cardsAI.get(3), cardsAI.get(4)))
-	{
-		setFound = true;
-		selectC1 = 1;
-		selectC2 = 3;
-		selectC3 = 4;
-	}
-	else if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(2), cardsAI.get(3), cardsAI.get(4)))
-	{
-		setFound = true;
-		selectC1 = 2;
-		selectC2 = 3;
-		selectC3 = 4;
-	}
+	
 	if(setFound)
 	{
 		flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
 		players.get(flags[FLAG_CURRENT_PLAYER])->turnCardsTroops(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3), flags[FLAG_CARD_SET]);
 		handleCardTerritory(selectC1, selectC2, selectC3);
 		players.get(flags[FLAG_CURRENT_PLAYER])->removeCardsHand(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3));
+		setFound = false;
 	}
 }
 /** @return true if the game changed state and should redraw */
@@ -368,10 +414,9 @@ bool update(int a_ms)
 		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
 			{
-				/*do{
+				if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_HAND)
 					turnInCardsAI();
-				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_HAND);
-				flags[FLAG_UPDATE_GAME_STATE] = true;*/
+				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
 			else
 			{
@@ -510,26 +555,36 @@ bool update(int a_ms)
 			flags[FLAG_GAME_STATE] = STATE_WIN;
 		break;
 	case STATE_EXCESS_CARDS:
-		flags[FLAG_UPDATE_GAME_STATE] = false;
-		if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_HAND)
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
 		{
-			printf("You have 6+ cards.\n");
-			do{
-				printf("You MUST turn cards until you have 4 or fewer.\n\n");
-				if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_HAND)
+			{
+				flags[FLAG_UPDATE_GAME_STATE] = false;
+				if(!(flags[FLAG_UPDATE_GAME_STATE]))
 				{
-					//turnInCardsAI();
+					turnInCardsAI();
+					flags[FLAG_UPDATE_GAME_STATE] = true;
 				}
-				else
-				{
-					turnInCards();
-				}
-			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_FR_OPPONENT);
-			printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
-			flags[FLAG_UPDATE_GAME_STATE] = true;
+			}
+			else
+				flags[FLAG_UPDATE_GAME_STATE] = true;
 		}
 		else
-			flags[FLAG_UPDATE_GAME_STATE] = true;
+		{
+			flags[FLAG_UPDATE_GAME_STATE] = false;
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_HAND)
+			{
+				printf("You have 6+ cards.\n");
+				do{
+					printf("You MUST turn cards until you have 4 or fewer.\n\n");
+					turnInCards();
+				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_FR_OPPONENT);
+				printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
+				flags[FLAG_UPDATE_GAME_STATE] = true;
+			}
+			else
+				flags[FLAG_UPDATE_GAME_STATE] = true;
+		}
 		break;
 	case STATE_PLACE_EXCESS_TROOPS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
