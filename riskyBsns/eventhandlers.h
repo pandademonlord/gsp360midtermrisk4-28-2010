@@ -153,18 +153,6 @@ void goToNextPlayer()
 	flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] + 1;
 	flags[FLAG_CURRENT_PLAYER] = flags[FLAG_CURRENT_PLAYER] % flags[FLAG_PLAYERS];
 }
-void handleCardTerritory(short sC1, short sC2, short sC3)
-{
-	if(flags[FLAG_FIRST_SET_IN_TURN])
-	{
-		if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(sC1),board))
-			flags[FLAG_FIRST_SET_IN_TURN] = false;
-		else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(sC2),board))
-			flags[FLAG_FIRST_SET_IN_TURN] = false;
-		else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(sC3),board))
-			flags[FLAG_FIRST_SET_IN_TURN] = false;
-	}
-}
 void turnInCards()
 {
 	printf("A SET consists of:\n");
@@ -211,9 +199,22 @@ void turnInCards()
 	if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3)))
 	{
 		flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
-		players.get(flags[FLAG_CURRENT_PLAYER])->turnCardsTroops(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3), flags[FLAG_CARD_SET]);
-		handleCardTerritory(selectC1, selectC2, selectC3);
-		players.get(flags[FLAG_CURRENT_PLAYER])->removeCardsHand(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3));
+		players.get(flags[FLAG_CURRENT_PLAYER])->turnCardsTroops(flags[FLAG_CARD_SET]);
+		if(flags[FLAG_FIRST_SET_IN_TURN])
+		{
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC1),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC2),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(selectC3),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+		}
+		deck.get(selectC1)->setOwnerID(CARD_DISCARDED);
+		deck.get(selectC2)->setOwnerID(CARD_DISCARDED);
+		deck.get(selectC3)->setOwnerID(CARD_DISCARDED);
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
 	}
 }
 void turnInCardsAI()
@@ -224,9 +225,7 @@ void turnInCardsAI()
 	for(int i = 0; i < deck.size(); ++i)
 	{
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->getID() == deck.get(i)->getOwnerID())
-		{
 			cardsAI.add(deck.get(i));
-		}
 	}
 	switch(cardsAI.size())
 	{
@@ -346,9 +345,22 @@ void turnInCardsAI()
 	if(setFound)
 	{
 		flags[FLAG_CARD_SET] = flags[FLAG_CARD_SET] + 1;
-		players.get(flags[FLAG_CURRENT_PLAYER])->turnCardsTroops(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3), flags[FLAG_CARD_SET]);
-		handleCardTerritory(selectC1, selectC2, selectC3);
-		players.get(flags[FLAG_CURRENT_PLAYER])->removeCardsHand(deck.get(selectC1), deck.get(selectC2), deck.get(selectC3));
+		players.get(flags[FLAG_CURRENT_PLAYER])->turnCardsTroops(flags[FLAG_CARD_SET]);
+		if(flags[FLAG_FIRST_SET_IN_TURN])
+		{
+			if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(cardsAI.get(selectC1)->getCardID()),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(cardsAI.get(selectC2)->getCardID()),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+			else if(players.get(flags[FLAG_CURRENT_PLAYER])->terCard(deck.get(cardsAI.get(selectC3)->getCardID()),board))
+				flags[FLAG_FIRST_SET_IN_TURN] = false;
+		}
+		deck.get(cardsAI.get(selectC1)->getCardID())->setOwnerID(CARD_DISCARDED);
+		deck.get(cardsAI.get(selectC2)->getCardID())->setOwnerID(CARD_DISCARDED);
+		deck.get(cardsAI.get(selectC3)->getCardID())->setOwnerID(CARD_DISCARDED);
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
+		players.get(flags[FLAG_CURRENT_PLAYER])->removeCard();
 		setFound = false;
 	}
 }
@@ -700,7 +712,6 @@ bool update(int a_ms)
 				flags[FLAG_GAME_STATE] = flags[FLAG_GAME_STATE] + 1;
 			}
 		}
-
 		flags[FLAG_UPDATE_GAME_STATE] = false;
 		//printf("state == %d\n", flags[FLAG_GAME_STATE]);
 		return true;

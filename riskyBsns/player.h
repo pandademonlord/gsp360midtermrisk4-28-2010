@@ -440,7 +440,7 @@ public:
 			}
 		}
 	}
-	void turnCardsTroops(Card * c1, Card * c2, Card * c3, short a_numSetsTurnedIn)
+	void turnCardsTroops(short a_numSetsTurnedIn)
 	{
 		switch(a_numSetsTurnedIn)
 		{
@@ -465,15 +465,6 @@ public:
 		default:
 			this->addBonusTroops(BONUS_SET_SIX + ((a_numSetsTurnedIn - CARD_SET_SIX) * BONUS_SET_AFTER_SIX));
 		}
-	}
-	void removeCardsHand(Card * c1, Card * c2, Card * c3)
-	{
-		c1->setOwnerID(CARD_DISCARDED);
-		c2->setOwnerID(CARD_DISCARDED);
-		c3->setOwnerID(CARD_DISCARDED);
-		this->removeCard();
-		this->removeCard();
-		this->removeCard();
 	}
 	//virtual funcs to be overloaded in the AI class
 	//by default, all players are human
