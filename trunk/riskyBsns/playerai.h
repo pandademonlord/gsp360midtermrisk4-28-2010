@@ -67,22 +67,46 @@ public:
 	//randomly pick a territory to attack with, pass the board and the AI's ID
 	short getAtkOriginID(TemplateArray<Territory*> a_board)
 	{
-		short numOfValidOptions = 0;
+		short numLoneEnemy = 0;
 		for(int i = 0; i < a_board.size(); ++i)
 		{
-			if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToEnemy())
-				numOfValidOptions++;
+			if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->connectedToLoneEnemy())
+				numLoneEnemy++;
 		}
-		short randAlly = random() % numOfValidOptions;
-		short counter = 0;
-		for(int i = 0; i < a_board.size(); ++i)
+		if(numLoneEnemy > 0)
 		{
-			if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToEnemy())
+			short randAlly = random() % numLoneEnemy;
+			short counter = 0;
+			for(int i = 0; i < a_board.size(); ++i)
 			{
-				if(randAlly == counter)
-					return a_board.get(i)->getID();
-				else
-					counter++;
+				if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->connectedToLoneEnemy())
+				{
+					if(randAlly == counter)
+						return a_board.get(i)->getID();
+					else
+						counter++;
+				}
+			}
+		}
+		else
+		{
+			short numOfValidOptions = 0;
+			for(int i = 0; i < a_board.size(); ++i)
+			{
+				if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToEnemy())
+					numOfValidOptions++;
+			}
+			short randAlly = random() % numOfValidOptions;
+			short counter = 0;
+			for(int i = 0; i < a_board.size(); ++i)
+			{
+				if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToEnemy())
+				{
+					if(randAlly == counter)
+						return a_board.get(i)->getID();
+					else
+						counter++;
+				}
 			}
 		}
 	}
@@ -98,7 +122,7 @@ public:
 		for(int i = 0; i < a_board.size(); ++i)
 		{
 			if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly()
-				& !(a_board.get(i)->isConnectedToEnemy()))
+				& a_board.get(i)->connectedToLoneAlly())
 				validNoEnemy++;
 		}
 		if(validNoEnemy > 0)
@@ -108,7 +132,7 @@ public:
 			for(int i = 0; i < a_board.size(); ++i)
 			{
 				if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly()
-					& !(a_board.get(i)->isConnectedToEnemy()))
+					& a_board.get(i)->connectedToLoneAlly())
 				{
 					if(randAlly == counter)
 						return a_board.get(i)->getID();

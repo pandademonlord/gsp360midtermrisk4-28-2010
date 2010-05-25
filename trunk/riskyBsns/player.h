@@ -425,9 +425,10 @@ public:
 		if(m_holdCards < 0)
 			m_holdCards = 0;
 	}
-	//call if an opponent player is elimunated (current player inherits cards)
+	//call if an opponent player is eliminated (current player inherits cards)
 	void exchangeCards(Player * a_plyr, TemplateArray<Card *> a_deck)
 	{
+		printf("Player %d has eliminated Player %d\n", (this->m_ID + 1), (a_plyr->getID() + 1));
 		//give all cards previously owned by a_plyr to this player
 		for(int i = 0; i < a_deck.size(); ++i)
 		{
@@ -441,6 +442,7 @@ public:
 	}
 	void turnCardsTroops(short a_numSetsTurnedIn)
 	{
+		//printf("Player %d is turning in a set.\n", (this->getID() + 1));
 		switch(a_numSetsTurnedIn)
 		{
 		case CARD_SET_ONE:
