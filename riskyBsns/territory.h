@@ -125,6 +125,26 @@ public:
 		}
 		return false;
 	}
+	//check if any enemy connection is surrounded by differently owned territories
+	bool connectedToLoneEnemy()
+	{
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if((this->m_ownerID != this->m_connect.get(i)->getOwner()) && !(this->m_connect.get(i)->isConnectedToAlly()))
+				return true;
+		}
+		return false;
+	}
+	//check if any ally connection is surrounded by ally owned territories
+	bool connectedToLoneAlly()
+	{
+		for(int i = 0; i < this->m_connect.size(); ++i)
+		{
+			if((this->m_ownerID == this->m_connect.get(i)->getOwner()) && !(this->m_connect.get(i)-isConnectedToEnemy()))
+				return true;
+		}
+		return false;
+	}
 	//returns a randomly selected Ally-owned connected territory ID
 	short getRandAllyTerritoryID()
 	{
