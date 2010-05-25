@@ -212,18 +212,5 @@ public:
 	{
 		this->moveTroopsTo(a_board.get(a_ID), a_numTroops);
 	}
-	//function to create an array of territories owned by the AI !!!
-	TemplateArray<Territory*> getTerOwned(short a_playerID, TemplateArray<Territory*> a_board)
-	{
-		TemplateArray<Territory*> terOwned;
-		for(int i = 0; i < TERRITORIES_TOTAL; ++i)
-		{
-			if(a_board.get(i)->getOwner() == a_playerID)
-			{
-				terOwned.add(a_board.get(i));
-			}
-		}
-		return terOwned;
-	}
 	~Territory(){}
 };

@@ -39,7 +39,7 @@ public:
 	{
 		removed->setOwner(enemy);
 		m_conqueredT--;
-	}	
+	}
 	//checks if the player owns the territory
 	bool ifOwns(Territory* thatone)
 	{

@@ -24,13 +24,5 @@ public:
 		this->m_ownerID = a_ID;
 	}
 	short getOwnerID(){return this->m_ownerID;}
-	bool isOwned()
-	{
-		if(this->m_ownerID == OWNER_NONE)
-			return false;
-		else
-			return true;
-	}
 	void reshuffle(){this->m_ownerID = OWNER_NONE;}	
-	short drawCard(){return this->m_ID;}
 };
