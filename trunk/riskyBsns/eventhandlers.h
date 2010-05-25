@@ -268,7 +268,7 @@ void turnInCardsAI()
 			selectC3 = 3;
 		}
 		break;
-	case CARD_MAX_HAND:
+	default:
 		if(players.get(flags[FLAG_CURRENT_PLAYER])->isCardSet(cardsAI.get(0), cardsAI.get(1), cardsAI.get(2)))
 		{
 			setFound = true;
@@ -426,8 +426,9 @@ bool update(int a_ms)
 		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
 			{
-				if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_HAND)
+				do{
 					turnInCardsAI();
+				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() >= CARD_MAX_HAND);
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 			}
 			else
@@ -447,6 +448,7 @@ bool update(int a_ms)
 					//if the player has less than 5 cards, turning-in cards is optional
 					char ans;
 					do{
+						printf("You have %d cards, & have a set.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
 						printf("Do you want to turn-in cards for Troops(Y/N)?\n");
 						cin >> ans;
 					}while(ans != 'y' && ans != 'Y' && ans != 'n' && ans != 'N');
@@ -487,19 +489,19 @@ bool update(int a_ms)
 		{
 			if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
 			{
-				//if(players.get(flags[FLAG_CURRENT_PLAYER])->continueAttack())
-				//{
-				if(!(flags[FLAG_UPDATE_GAME_STATE]))
+				if(players.get(flags[FLAG_CURRENT_PLAYER])->continueAttack())
 				{
-					flags[FLAG_PARAMS_SET] = true;
-					flags[FLAG_PARAM_TER_ONE] = players.get(flags[FLAG_CURRENT_PLAYER])->getAtkOriginID(board);
+					if(!(flags[FLAG_UPDATE_GAME_STATE]))
+					{
+						flags[FLAG_PARAMS_SET] = true;
+						flags[FLAG_PARAM_TER_ONE] = players.get(flags[FLAG_CURRENT_PLAYER])->getAtkOriginID(board);
+					}
 				}
-				/*}
 				else
 				{
 					flags[FLAG_GAME_STATE] = STATE_AFTER_ATK_B4_FORTIFY;
 					flags[FLAG_UPDATE_GAME_STATE] = true;
-				}*/
+				}
 			}
 			if(flags[FLAG_PARAMS_SET])
 			{
@@ -567,36 +569,22 @@ bool update(int a_ms)
 			flags[FLAG_GAME_STATE] = STATE_WIN;
 		break;
 	case STATE_EXCESS_CARDS:
-		if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
+		flags[FLAG_UPDATE_GAME_STATE] = false;
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_HAND)
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_HAND)
-			{
-				flags[FLAG_UPDATE_GAME_STATE] = false;
-				if(!(flags[FLAG_UPDATE_GAME_STATE]))
-				{
+			printf("You have 6+ cards.\n");
+			do{
+				printf("You MUST turn cards until you have 4 or fewer.\n\n");
+				if(players.get(flags[FLAG_CURRENT_PLAYER])->isAI())
 					turnInCardsAI();
-					flags[FLAG_UPDATE_GAME_STATE] = true;
-				}
-			}
-			else
-				flags[FLAG_UPDATE_GAME_STATE] = true;
+				else
+					turnInCards();
+			}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_FR_OPPONENT);
+			printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 		}
 		else
-		{
-			flags[FLAG_UPDATE_GAME_STATE] = false;
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_HAND)
-			{
-				printf("You have 6+ cards.\n");
-				do{
-					printf("You MUST turn cards until you have 4 or fewer.\n\n");
-					turnInCards();
-				}while(players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards() > CARD_MAX_FR_OPPONENT);
-				printf("You now have %d cards. Please go back to the Game Window.\n", players.get(flags[FLAG_CURRENT_PLAYER])->getNumCards());
-				flags[FLAG_UPDATE_GAME_STATE] = true;
-			}
-			else
-				flags[FLAG_UPDATE_GAME_STATE] = true;
-		}
+			flags[FLAG_UPDATE_GAME_STATE] = true;
 		break;
 	case STATE_PLACE_EXCESS_TROOPS:
 		flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -679,7 +667,6 @@ bool update(int a_ms)
 		flags[FLAG_UPDATE_GAME_STATE] = false;
 		break;
 	}
-
 	if(flags[FLAG_UPDATE_PLAYER])
 	{
 		goToNextPlayer();

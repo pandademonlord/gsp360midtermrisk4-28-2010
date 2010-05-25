@@ -369,7 +369,6 @@ public:
 				{
 					//printf("drew card had ID == %d\n", i);
 					printf("Player %d drew card with ID == %d\n", (this->m_ID + 1), a_deck.get(i)->getCardID());
-					printf("\n");
 					a_deck.get(i)->setOwnerID(this->m_ID);
 					m_holdCards++; 
 					break;

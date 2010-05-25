@@ -5,20 +5,17 @@
 
 class PlayerAI : public Player
 {
-private:
-	//whether or not AI player chooses to ATK
-	short m_toAttack;
 public:
 	PlayerAI(short t,short id) : Player(t, id)
-	{
-		m_toAttack = 0;
-	}
+	{}
 	bool isAI(){return true;}
 	//decide whether or not to continue to randomly attack
 	bool continueAttack()
 	{
-		m_toAttack = random() % 2;
-		if(m_toAttack == true)
+		const short maxAtkSize = 100;
+		const float atkRatio = .75;
+		short a_toAttack = random() % maxAtkSize;
+		if(a_toAttack < (maxAtkSize * atkRatio))
 			return true;
 		else
 			return  false;
@@ -97,22 +94,48 @@ public:
 	//returns ID of randomly selected ally-owned ter connected to enemy
 	short getFortOriginID(TemplateArray<Territory*> a_board)
 	{
-		short numOfValidOptions = 0;
+		short validNoEnemy = 0;
 		for(int i = 0; i < a_board.size(); ++i)
 		{
-			if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly())
-				numOfValidOptions++;
+			if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly()
+				& !(a_board.get(i)->isConnectedToEnemy()))
+				validNoEnemy++;
 		}
-		short randAlly = random() % numOfValidOptions;
-		short counter = 0;
-		for(int i = 0; i < a_board.size(); ++i)
+		if(validNoEnemy > 0)
 		{
-			if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly())
+			short randAlly = random() % validNoEnemy;
+			short counter = 0;
+			for(int i = 0; i < a_board.size(); ++i)
 			{
-				if(randAlly == counter)
-					return a_board.get(i)->getID();
-				else
-					counter++;
+				if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly()
+					& !(a_board.get(i)->isConnectedToEnemy()))
+				{
+					if(randAlly == counter)
+						return a_board.get(i)->getID();
+					else
+						counter++;
+				}
+			}
+		}
+		else
+		{
+			short numOfValidOptions = 0;
+			for(int i = 0; i < a_board.size(); ++i)
+			{
+				if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly())
+					numOfValidOptions++;
+			}
+			short randAlly = random() % numOfValidOptions;
+			short counter = 0;
+			for(int i = 0; i < a_board.size(); ++i)
+			{
+				if(this->ifOwns(a_board.get(i)) && a_board.get(i)->haveTroopsToAttackFority() && a_board.get(i)->isConnectedToAlly())
+				{
+					if(randAlly == counter)
+						return a_board.get(i)->getID();
+					else
+						counter++;
+				}
 			}
 		}
 	}
