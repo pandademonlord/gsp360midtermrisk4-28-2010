@@ -2,6 +2,7 @@
 #pragma once
 
 #include "circle.h"
+#include "triangle.h"
 #include "templatearray.h"
 #include "random.h"
 
@@ -9,6 +10,7 @@ class Territory
 {
 private:
 	Circle m_area;
+	//TemplateArray<Triangle *> m_areaTri;
 	short m_ID;
 	short m_continentID;
 	TemplateArray<Territory *> m_connect;
@@ -54,6 +56,10 @@ public:
 		m_area.setCenter(a_pos);
 		m_area.setRadius(a_radius);
 	}
+	/*void addTriangle(Triangle * a_tri)
+	{
+		m_areaTri.add(a_tri);
+	}*/
 	//adds a connection from this territory to another territory
 	void addConnection(Territory* a_territory)
 	{
@@ -215,6 +221,12 @@ public:
 	bool isWithin(V2DF &click)
 	{
 		return m_area.isClickable(click);
+		/*for(int i = 0; i < m_areaTri.size(); ++i)
+		{
+			if(m_areaTri.get(i)->isClickable(click))
+				return true;
+		}
+		return false;*/
 	}
 	//moves a_numTroops amt of troops from this territory to a_territory
 	void moveTroopsTo(Territory * a_territory, short a_numTroops)

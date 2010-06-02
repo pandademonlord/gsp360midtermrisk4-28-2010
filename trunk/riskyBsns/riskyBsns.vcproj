@@ -253,6 +253,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\triangle.h"
+				>
+			</File>
+			<File
 				RelativePath=".\v2d.h"
 				>
 			</File>
