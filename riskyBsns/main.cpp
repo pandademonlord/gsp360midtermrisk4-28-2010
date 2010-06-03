@@ -325,14 +325,13 @@ void initBoard()
 void initPlayers()
 {
 	const short asciiNum0 = 48;
-	const short asciiNum9 = asciiNum0 + 9;
 	char a_ch;
 	do
 	{
 		printf("How many players (%d-%d)?\n", PLAYERS_MIN, PLAYERS_MAX);
 		cin >> a_ch;
-		if(a_ch >= asciiNum0 && a_ch <= asciiNum9)
-			flags[FLAG_PLAYERS] = int(a_ch - asciiNum0);
+		if(isdigit(a_ch))
+			flags[FLAG_PLAYERS] = a_ch - asciiNum0;
 	}while(flags[FLAG_PLAYERS] < PLAYERS_MIN || flags[FLAG_PLAYERS] > PLAYERS_MAX);
 	//printf("players == %d\n", flags[FLAG_PLAYERS]);
 
