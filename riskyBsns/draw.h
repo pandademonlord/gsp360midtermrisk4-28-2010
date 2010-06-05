@@ -9,12 +9,15 @@ void display()
 
 	//draw code
 	char buffer[BUFFER_SIZE];
+	//int test = 31;
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->drawConnections();
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->glDrawWorld();
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->glDraw();
+	//board.get(test)->glDrawWorld();
+	//board.get(test)->glDraw();
 	for(int i = 0; i < flags[FLAG_PLAYERS]; ++i)
 	{
 		players.get(i)->drawStats(board);
