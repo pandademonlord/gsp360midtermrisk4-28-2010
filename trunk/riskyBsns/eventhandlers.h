@@ -51,6 +51,101 @@ void draggedMotion(int x, int y)
 	//printf("mouse dragged (pixel location: %d, %d)\n",x,y);
 }
 
+bool isValidMove()
+{
+	switch(flags[FLAG_GAME_STATE])
+	{
+	case STATE_INIT_PLACEMENT_CLAIM:
+		if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == OWNER_NONE)
+			return true;
+		break;
+	case STATE_INIT_PLACEMENT_PLACE:
+	case STATE_PLACE_BONUS_TROOPS:
+	case STATE_PLACE_EXCESS_TROOPS:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])))
+			return true;
+		break;
+	case STATE_ATTACK_FROM:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->haveTroopsToAttackFority()
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToEnemy())
+		{
+			return true;
+		}
+		break;
+	case STATE_ATTACK_TO:
+		if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO])))
+				&& board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+		{
+			return true;
+		}
+		break;
+	case STATE_FORTIFY_FROM:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->haveTroopsToAttackFority()
+					&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToAlly())
+		{
+			return true;
+		}
+		break;
+	case STATE_FORTIFY_TO:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO]))
+				&& board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+		{
+			return true;
+		}
+		break;
+	}
+	return false;
+}
+bool isValidMoveHover()
+{
+	switch(flags[FLAG_GAME_STATE])
+	{
+	case STATE_INIT_PLACEMENT_CLAIM:
+		if(board.get(flags[FLAG_CLICKED_TER])->getOwner() == OWNER_NONE)
+			return true;
+		break;
+	case STATE_INIT_PLACEMENT_PLACE:
+	case STATE_PLACE_BONUS_TROOPS:
+	case STATE_PLACE_EXCESS_TROOPS:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_CLICKED_TER])))
+			return true;
+		break;
+	case STATE_ATTACK_FROM:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_CLICKED_TER]))
+					&& board.get(flags[FLAG_CLICKED_TER])->haveTroopsToAttackFority()
+					&& board.get(flags[FLAG_CLICKED_TER])->isConnectedToEnemy())
+		{
+			return true;
+		}
+		break;
+	case STATE_ATTACK_TO:
+		if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_CLICKED_TER])))
+				&& board.get(flags[FLAG_CLICKED_TER])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+		{
+			return true;
+		}
+		break;
+	case STATE_FORTIFY_FROM:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_CLICKED_TER]))
+					&& board.get(flags[FLAG_CLICKED_TER])->haveTroopsToAttackFority()
+					&& board.get(flags[FLAG_CLICKED_TER])->isConnectedToAlly())
+		{
+			return true;
+		}
+		break;
+	case STATE_FORTIFY_TO:
+		if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_CLICKED_TER]))
+				&& board.get(flags[FLAG_CLICKED_TER])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+		{
+			return true;
+		}
+		break;
+	}
+	return false;
+}
+
 /** @param x/y the coordinate of where the mouse is */
 void passiveMotion(int x, int y)
 {
@@ -64,6 +159,8 @@ void passiveMotion(int x, int y)
 		{
 			flags[FLAG_WITHIN_AREA] = true;
 			flags[FLAG_CLICKED_TER] = i;
+			//flags[FLAG_IS_VALID_INPUT] = isValidMove();
+			if(isValidMoveHover())
 			board.get(flags[FLAG_CLICKED_TER])->setColor(HIGHLIGHT_COLOR);
 			break;
 		}
@@ -96,13 +193,15 @@ void mouse(int button, int state, int x, int y)
 					case STATE_FORTIFY_FROM:
 					case STATE_PLACE_EXCESS_TROOPS:
 						flags[FLAG_PARAM_TER_ONE] = flags[FLAG_CLICKED_TER];
-						board.get(flags[FLAG_PARAM_TER_ONE])->setColor(CLICKED_COLOR);
+						if(isValidMoveHover())
+							board.get(flags[FLAG_PARAM_TER_ONE])->setColor(CLICKED_COLOR);
 						flags[FLAG_PARAMS_SET] = true;
 						break;
 					case STATE_ATTACK_TO:
 					case STATE_FORTIFY_TO:
 						flags[FLAG_PARAM_TER_TWO] = flags[FLAG_CLICKED_TER];
-						board.get(flags[FLAG_PARAM_TER_TWO])->setColor(CLICKED_COLOR);
+						if(isValidMoveHover())
+							board.get(flags[FLAG_PARAM_TER_TWO])->setColor(CLICKED_COLOR);
 						flags[FLAG_PARAMS_SET] = true;
 						break;
 					}
@@ -387,7 +486,7 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == OWNER_NONE)
+			if(isValidMove())
 			{
 				players.get(flags[FLAG_CURRENT_PLAYER])->addLocal(board.get(flags[FLAG_PARAM_TER_ONE]));
 				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
@@ -410,7 +509,7 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+			if(isValidMove())
 			{
 				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
 				flags[FLAG_UPDATE_PLAYER] = true;
@@ -484,7 +583,7 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE])))
+			if(isValidMove())
 				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
 			flags[FLAG_PARAMS_SET] = false;
 		}
@@ -510,12 +609,8 @@ bool update(int a_ms)
 			}
 			if(flags[FLAG_PARAMS_SET])
 			{
-				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
-					&& board.get(flags[FLAG_PARAM_TER_ONE])->haveTroopsToAttackFority()
-					&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToEnemy())
-				{
+				if(isValidMove())
 					flags[FLAG_UPDATE_GAME_STATE] = true;
-				}
 				flags[FLAG_PARAMS_SET] = false;
 			}
 		}
@@ -533,8 +628,7 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(!(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO])))
-				&& board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+			if(isValidMove())
 			{
 				enemyPlayer = board.get(flags[FLAG_PARAM_TER_TWO])->getOwner();
 				flags[FLAG_UPDATE_GAME_STATE] = true;
@@ -602,7 +696,7 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(board.get(flags[FLAG_PARAM_TER_ONE])->getOwner() == players.get(flags[FLAG_CURRENT_PLAYER])->getID())
+			if(isValidMove())
 				players.get(flags[FLAG_CURRENT_PLAYER])->addToTerritory(board.get(flags[FLAG_PARAM_TER_ONE]));
 			flags[FLAG_PARAMS_SET] = false;
 		}
@@ -620,12 +714,8 @@ bool update(int a_ms)
 			}
 			if(flags[FLAG_PARAMS_SET])
 			{
-				if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_ONE]))
-					&& board.get(flags[FLAG_PARAM_TER_ONE])->haveTroopsToAttackFority()
-					&& board.get(flags[FLAG_PARAM_TER_ONE])->isConnectedToAlly())
-				{
+				if(isValidMove())
 					flags[FLAG_UPDATE_GAME_STATE] = true;
-				}
 				flags[FLAG_PARAMS_SET] = false;
 			}
 		}
@@ -643,8 +733,7 @@ bool update(int a_ms)
 		}
 		if(flags[FLAG_PARAMS_SET])
 		{
-			if(players.get(flags[FLAG_CURRENT_PLAYER])->ifOwns(board.get(flags[FLAG_PARAM_TER_TWO]))
-				&& board.get(flags[FLAG_PARAM_TER_TWO])->isConnectedTo(board.get(flags[FLAG_PARAM_TER_ONE])))
+			if(isValidMove())
 			{
 				flags[FLAG_UPDATE_GAME_STATE] = true;
 				flags[FLAG_PARAM_NUM] = 0;
