@@ -96,14 +96,17 @@ void mouse(int button, int state, int x, int y)
 					case STATE_FORTIFY_FROM:
 					case STATE_PLACE_EXCESS_TROOPS:
 						flags[FLAG_PARAM_TER_ONE] = flags[FLAG_CLICKED_TER];
+						board.get(flags[FLAG_PARAM_TER_ONE])->setColor(CLICKED_COLOR);
 						flags[FLAG_PARAMS_SET] = true;
 						break;
 					case STATE_ATTACK_TO:
 					case STATE_FORTIFY_TO:
 						flags[FLAG_PARAM_TER_TWO] = flags[FLAG_CLICKED_TER];
+						board.get(flags[FLAG_PARAM_TER_TWO])->setColor(CLICKED_COLOR);
 						flags[FLAG_PARAMS_SET] = true;
 						break;
 					}
+					glutPostRedisplay();
 				}
 				else//go to the next playing state if player doesn't want to attack or fortify
 				{
