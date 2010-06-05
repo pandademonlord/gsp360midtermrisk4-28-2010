@@ -47,8 +47,9 @@ public:
 		{
 			center.add(getPoint(i));
 			// center point, the average of all points
-			center.divide(3);
+			//center.divide(3);
 		}
+		center.divide(3);
 		return center;
 	}
 	Triangle(V2DF a_pt1, V2DF a_pt2, V2DF a_pt3)
@@ -61,8 +62,11 @@ public:
 	void glDraw()
 	{
 		glColor3ub(c_r, c_g, c_b);
+		//glColor3ub(255, 0, 0);
 		a.glDrawTo(b);
+		//glColor3ub(0, 255, 0);
 		b.glDrawTo(c);
+		//glColor3ub(0, 0, 255);
 		c.glDrawTo(a);
 	}
 	/** @return true if this polygon, if convex, has it's points in clockwise order */
