@@ -105,6 +105,7 @@
 //which colors to use
 	//for hovering & continents
 #define HIGHLIGHT_COLOR				COLOR_WHITE
+#define CLICKED_COLOR				COLOR_BLUE
 #define CONTINENT_COLOR_NA			COLOR_YELLOW_DARK
 #define CONTINENT_COLOR_SA			COLOR_RED_DARK
 #define CONTINENT_COLOR_EU			COLOR_BLUE_DARK

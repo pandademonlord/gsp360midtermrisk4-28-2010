@@ -12,6 +12,8 @@ void display()
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->drawConnections();
 	for(int i = 0; i < board.size(); ++i)
+		board.get(i)->glDrawWorld();
+	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->glDraw();
 	for(int i = 0; i < flags[FLAG_PLAYERS]; ++i)
 	{

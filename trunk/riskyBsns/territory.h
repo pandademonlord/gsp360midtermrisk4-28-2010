@@ -10,7 +10,7 @@ class Territory
 {
 private:
 	Circle m_area;
-	//TemplateArray<Triangle *> m_areaTri;
+	TemplateArray<Triangle *> m_areaTri;
 	short m_ID;
 	short m_continentID;
 	TemplateArray<Territory *> m_connect;
@@ -41,6 +41,30 @@ public:
 			break;
 		}
 	}
+	void useContinentColorTri()
+	{
+		switch(this->m_continentID)
+		{
+		case CONTINENT_ID_N_AMERICA:
+			this->setColorTri(CONTINENT_COLOR_NA);
+			break;
+		case CONTINENT_ID_S_AMERICA:
+			this->setColorTri(CONTINENT_COLOR_SA);
+			break;
+		case CONTINENT_ID_EUROPE:
+			this->setColorTri(CONTINENT_COLOR_EU);
+			break;
+		case CONTINENT_ID_AFRICA:
+			this->setColorTri(CONTINENT_COLOR_AF);
+			break;
+		case CONTINENT_ID_ASIA:
+			this->setColorTri(CONTINENT_COLOR_AS);
+			break;
+		case CONTINENT_ID_OCEANIA:
+			this->setColorTri(CONTINENT_COLOR_OC);
+			break;
+		}
+	}
 	Territory(short a_ID, short a_continentID)
 	{
 		m_area = Circle();
@@ -56,10 +80,10 @@ public:
 		m_area.setCenter(a_pos);
 		m_area.setRadius(a_radius);
 	}
-	/*void addTriangle(Triangle * a_tri)
+	void addTriangle(Triangle * a_tri)
 	{
 		m_areaTri.add(a_tri);
-	}*/
+	}
 	//adds a connection from this territory to another territory
 	void addConnection(Territory* a_territory)
 	{
@@ -98,6 +122,11 @@ public:
 	void setColor(short a_r, short a_g, short a_b)
 	{
 		this->m_area.setColor(a_r, a_g, a_b);
+	}
+	void setColorTri(short a_r, short a_g, short a_b)
+	{
+		for(int i = 0; i < this->m_areaTri.size(); ++i)
+			this->m_areaTri.get(i)->setColor(a_r, a_g, a_b);
 	}
 	//returns the # of existing connections
 	short getNumberConnections(){return this->m_connect.size();}
@@ -205,6 +234,11 @@ public:
 	}
 	//draw the circular clickable area
 	void glDraw(){m_area.glDraw();}
+	void glDrawWorld()
+	{
+		for(int i = 0; i < this->m_areaTri.size(); ++i)
+			this->m_areaTri.get(i)->glDraw();
+	}
 	//draws the connections to adjacent territories
 	void drawConnections()
 	{
@@ -220,13 +254,13 @@ public:
 	}
 	bool isWithin(V2DF &click)
 	{
-		return m_area.isClickable(click);
-		/*for(int i = 0; i < m_areaTri.size(); ++i)
+		//return m_area.isClickable(click);
+		for(int i = 0; i < m_areaTri.size(); ++i)
 		{
 			if(m_areaTri.get(i)->isClickable(click))
 				return true;
 		}
-		return false;*/
+		return false;
 	}
 	//moves a_numTroops amt of troops from this territory to a_territory
 	void moveTroopsTo(Territory * a_territory, short a_numTroops)
@@ -244,5 +278,9 @@ public:
 	{
 		this->moveTroopsTo(a_board.get(a_ID), a_numTroops);
 	}
-	~Territory(){}
+	~Territory()
+	{
+		for(int i = 0; i < this->m_areaTri.size(); ++i)
+			delete [] this->m_areaTri.get(i);
+	}
 };
