@@ -368,7 +368,7 @@ public:
 				if(a_cardInDeck == a_card)
 				{
 					//printf("drew card had ID == %d\n", i);
-					printf("Player %d drew card with ID == %d\n", (this->m_ID + 1), a_deck.get(i)->getCardID());
+					//printf("Player %d drew card with ID == %d\n", (this->m_ID + 1), a_deck.get(i)->getCardID());
 					a_deck.get(i)->setOwnerID(this->m_ID);
 					m_holdCards++; 
 					break;
@@ -428,7 +428,7 @@ public:
 	//call if an opponent player is eliminated (current player inherits cards)
 	void exchangeCards(Player * a_plyr, TemplateArray<Card *> a_deck)
 	{
-		printf("Player %d has eliminated Player %d\n", (this->m_ID + 1), (a_plyr->getID() + 1));
+		//printf("Player %d has eliminated Player %d\n", (this->m_ID + 1), (a_plyr->getID() + 1));
 		//give all cards previously owned by a_plyr to this player
 		for(int i = 0; i < a_deck.size(); ++i)
 		{
