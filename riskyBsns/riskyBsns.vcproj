@@ -241,6 +241,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\rect.h"
+				>
+			</File>
+			<File
 				RelativePath=".\shape.h"
 				>
 			</File>

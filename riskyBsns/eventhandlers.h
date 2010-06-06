@@ -9,31 +9,7 @@ if (state & GLUT_ACTIVE_SHIFT)	// shift is pressed</code>
 void keyboard(unsigned char key, int x, int y)
 {
 	//only allow input from keyboard to be read if user is NOT AI controlled (human)
-	if(!(players.get(flags[FLAG_CURRENT_PLAYER])->isAI()))
-	{
-		switch(flags[FLAG_GAME_STATE])
-		{
-		case STATE_FORTIFY_TROOPS:
-			switch(key)
-			{
-			case 'w'://increase # of troops to move
-				flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
-				if(flags[FLAG_PARAM_NUM] > (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1))
-					flags[FLAG_PARAM_NUM] = (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1);
-				break;
-			case 's'://decrease # of troops to move
-				flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
-				if(flags[FLAG_PARAM_NUM] < 0)
-					flags[FLAG_PARAM_NUM] = 0;
-				break;
-			case ' '://"enter" your final decision
-				flags[FLAG_PARAMS_SET] = true;
-				break;
-			}
-			break;
-		}
-		glutPostRedisplay();
-	}
+	//glutPostRedisplay();
 }
 
 /** @param a_width/a_height new dimensions of the resized window */
@@ -175,6 +151,7 @@ void mouse(int button, int state, int x, int y)
 	//only allow input from mouse to be read if user is NOT AI controlled (human)
 	if(!(players.get(flags[FLAG_CURRENT_PLAYER])->isAI()))
 	{
+		V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
 		//printf("button %d, state %d,  x %d, y %d\n", button, state, x, y);
 		switch(button)
 		{
@@ -207,44 +184,47 @@ void mouse(int button, int state, int x, int y)
 					}
 					glutPostRedisplay();
 				}
-				else//go to the next playing state if player doesn't want to attack or fortify
+				else if(finishRect.isClickable(click))
 				{
 					switch(flags[FLAG_GAME_STATE])
 					{
-					case STATE_FORTIFY_FROM:
-						flags[FLAG_GAME_STATE] = STATE_AFTER_FORTIFY;
-						flags[FLAG_UPDATE_GAME_STATE] = true;
-						break;
 					case STATE_ATTACK_FROM:
 						flags[FLAG_GAME_STATE] = STATE_AFTER_ATK_B4_FORTIFY;
 						flags[FLAG_UPDATE_GAME_STATE] = true;
 						break;
+					case STATE_ATTACK_TO:
+						flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
+						flags[STATE_FORTIFY_FROM] = false;
+						break;
+					case STATE_FORTIFY_FROM:
+						flags[FLAG_GAME_STATE] = STATE_AFTER_FORTIFY;
+						flags[FLAG_UPDATE_GAME_STATE] = true;
+						break;
+					case STATE_FORTIFY_TO:
+						flags[FLAG_GAME_STATE] = STATE_FORTIFY_FROM;
+						flags[STATE_FORTIFY_FROM] = false;
+						break;
+					case STATE_FORTIFY_TROOPS:
+						flags[FLAG_PARAMS_SET] = true;
+						break;
 					}
+				}
+				else if(fortAdd.isClickable(click))
+				{
+					flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
+					if(flags[FLAG_PARAM_NUM] > (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1))
+						flags[FLAG_PARAM_NUM] = (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1);
+				}
+				else if(fortSub.isClickable(click))
+				{
+					flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
+					if(flags[FLAG_PARAM_NUM] < 0)
+						flags[FLAG_PARAM_NUM] = 0;
 				}
 				break;
 			}
 			//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
 			//printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
-			break;
-		case GLUT_RIGHT_BUTTON:
-			switch(state)
-			{
-			case STATE_MOUSE_BUTTON_DN:
-				switch(flags[FLAG_GAME_STATE])
-				{
-				case STATE_ATTACK_TO:
-					flags[FLAG_GAME_STATE] = STATE_ATTACK_FROM;
-				case STATE_ATTACK_FROM:
-					flags[FLAG_PARAMS_SET] = false;
-					break;
-				case STATE_FORTIFY_TO://un-do which territory player is getting troops from
-					flags[FLAG_GAME_STATE] = STATE_FORTIFY_FROM;
-				case STATE_FORTIFY_FROM:
-					flags[STATE_FORTIFY_FROM] = false;
-					break;
-				}
-				break;
-			}
 			break;
 		}
 	}
