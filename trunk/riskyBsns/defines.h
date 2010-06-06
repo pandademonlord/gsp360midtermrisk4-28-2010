@@ -11,7 +11,7 @@
 #define INIT_WINDOW_X				10
 #define INIT_WINDOW_Y				50
 #define TIMER_VALUE					20
-#define BUFFER_SIZE					150
+#define BUFFER_SIZE					60
 
 //mouse button states
 #define	STATE_MOUSE_BUTTON_DN		0
@@ -42,7 +42,7 @@
 //flags (array of "short" numbers, either used as "short" or "bool" value)
 	//#defined numbers represent that flag's element in the array
 //# of total flags within array
-#define FLAGS_NUM					14
+#define FLAGS_NUM					16
 //(bool) determine if hover is within a territory
 #define FLAG_WITHIN_AREA			0
 //(short) index of which territory was clicked on
@@ -71,11 +71,15 @@
 #define FLAG_CARD_SET				12
 //(bool) is this the 1st set turned in this turn?
 #define FLAG_FIRST_SET_IN_TURN		13
+//(bool) determine if hover is within a button
+#define FLAG_BUTTON_WITHIN			14
+//(short) index of which button was clicked on
+#define FLAG_BUTTON_CLICKED			15
 
 //input
-#define CLICK_TWO_TERRITORIES		2
-#define CLICK_TERRITORY_ONE			0
-#define CLICK_TERRITORY_TWO			1
+#define	BUTTON_GENERAL					0
+#define	BUTTON_MOVE_INC					1
+#define	BUTTON_MOVE_DEC					2
 
 //colors
 #define COLOR_DARK_VALUE			150

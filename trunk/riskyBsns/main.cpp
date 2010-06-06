@@ -22,13 +22,26 @@ GLUTRenderingContext g_screen(V2DF(SCREEN_WIDTH,SCREEN_HEIGHT), V2DF(SCREEN_MIN_
 TemplateArray<Territory *> board;
 TemplateArray<Player *> players;
 TemplateArray<Card *> deck;
+TemplateArray<Rect *> buttons;
 short flags[FLAGS_NUM];
-Rect finishRect(V2DF((SCREEN_MIN_X + (8 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + SCREEN_HEIGHT/6)), SCREEN_HEIGHT/6, SCREEN_HEIGHT/6);
-Rect fortAdd(V2DF((SCREEN_MIN_X + (4.25 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + (1.75 * SCREEN_HEIGHT/6))), SCREEN_HEIGHT/6, (SCREEN_HEIGHT/6)/2);
-Rect fortSub(V2DF((SCREEN_MIN_X + (4.25 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + (1 * SCREEN_HEIGHT/6))), SCREEN_HEIGHT/6, (SCREEN_HEIGHT/6)/2);
 
+void initButtons()
+{
+	Rect * rec;
+	rec = new Rect(V2DF((SCREEN_MIN_X + (8 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + SCREEN_HEIGHT/6)), SCREEN_HEIGHT/6, SCREEN_HEIGHT/6);
+	buttons.add(rec);
+	rec = new Rect(V2DF((SCREEN_MIN_X + (4.25 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + (1.75 * SCREEN_HEIGHT/6))), SCREEN_HEIGHT/6, (SCREEN_HEIGHT/6)/2);
+	buttons.add(rec);
+	rec = new Rect(V2DF((SCREEN_MIN_X + (4.25 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + (1 * SCREEN_HEIGHT/6))), SCREEN_HEIGHT/6, (SCREEN_HEIGHT/6)/2);
+	buttons.add(rec);
+
+	for(int i = 0; i < buttons.size(); ++i)
+		buttons.get(i)->setColor(HIGHLIGHT_COLOR);
+}
 void initBoard()
 {
+	initButtons();
+
 	Territory * ter;
 
 	//set continent ID
@@ -1632,9 +1645,6 @@ void initBoard()
 
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->useContinentColorTri();
-	finishRect.setColor(HIGHLIGHT_COLOR);
-	fortAdd.setColor(HIGHLIGHT_COLOR);
-	fortSub.setColor(HIGHLIGHT_COLOR);
 	//for(int i = 0; i < board.size(); ++i)
 	//	printf("i == %d, ID == %d, contID == %d, #connect == %d, #troop == %d\n", i, board.get(i)->getID(), board.get(i)->getContinent(), board.get(i)->getNumberConnections(), board.get(i)->getTroops());
 }

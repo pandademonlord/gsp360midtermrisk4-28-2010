@@ -127,6 +127,7 @@ void passiveMotion(int x, int y)
 {
 	//printf("mouse moved (pixel location: %d, %d)\n",x,y);
 	flags[FLAG_WITHIN_AREA] = false;
+	flags[FLAG_BUTTON_WITHIN] = false;
 	static short prev_state = false;
 	V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
 	for(int i = 0; i < board.size(); ++i)
@@ -135,12 +136,41 @@ void passiveMotion(int x, int y)
 		{
 			flags[FLAG_WITHIN_AREA] = true;
 			flags[FLAG_CLICKED_TER] = i;
-			//flags[FLAG_IS_VALID_INPUT] = isValidMove();
 			if(isValidMoveHover())
-			board.get(flags[FLAG_CLICKED_TER])->setColor(HIGHLIGHT_COLOR);
+				board.get(flags[FLAG_CLICKED_TER])->setColor(HIGHLIGHT_COLOR);
 			break;
 		}
 		board.get(flags[FLAG_CLICKED_TER])->useContinentColor();
+	}
+	//check buttons
+	if(!flags[FLAG_WITHIN_AREA])
+	{
+		for(int i = 0; i < buttons.size(); ++i)
+		{
+			if(buttons.get(i)->isClickable(click))
+			{
+				flags[FLAG_BUTTON_WITHIN] = true;
+				flags[FLAG_BUTTON_CLICKED] = i;
+				break;
+			}
+		}
+		if(flags[FLAG_BUTTON_WITHIN])
+		{
+			switch(flags[FLAG_GAME_STATE])
+			{
+			case STATE_ATTACK_FROM:
+			case STATE_ATTACK_TO:
+			case STATE_FORTIFY_FROM:
+			case STATE_FORTIFY_TO:
+				if(flags[FLAG_BUTTON_CLICKED] != BUTTON_GENERAL)
+					flags[FLAG_BUTTON_WITHIN] = false;
+				break;
+			case STATE_FORTIFY_TROOPS:
+				break;
+			default:
+				flags[FLAG_BUTTON_WITHIN] = false;
+			}
+		}
 	}
 	glutPostRedisplay();
 	//printf("flags[FLAG_WITHIN_AREA] == %d, flags[FLAG_CLICKED_TER] == %d\n", flags[FLAG_WITHIN_AREA], flags[FLAG_CLICKED_TER]);
@@ -184,7 +214,7 @@ void mouse(int button, int state, int x, int y)
 					}
 					glutPostRedisplay();
 				}
-				else if(finishRect.isClickable(click))
+				else if(flags[FLAG_BUTTON_WITHIN])
 				{
 					switch(flags[FLAG_GAME_STATE])
 					{
@@ -205,27 +235,25 @@ void mouse(int button, int state, int x, int y)
 						flags[STATE_FORTIFY_FROM] = false;
 						break;
 					case STATE_FORTIFY_TROOPS:
-						flags[FLAG_PARAMS_SET] = true;
-						break;
+						switch(flags[FLAG_BUTTON_CLICKED])
+						{
+						case BUTTON_GENERAL:
+							flags[FLAG_PARAMS_SET] = true;
+							break;
+						case BUTTON_MOVE_INC:
+							flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
+							if(flags[FLAG_PARAM_NUM] > (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1))
+								flags[FLAG_PARAM_NUM] = (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1);
+							break;
+						case BUTTON_MOVE_DEC:
+							flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
+							if(flags[FLAG_PARAM_NUM] < 0)
+								flags[FLAG_PARAM_NUM] = 0;
+							break;
+						}
 					}
 				}
-				else if(fortAdd.isClickable(click))
-				{
-					flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] + 1;
-					if(flags[FLAG_PARAM_NUM] > (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1))
-						flags[FLAG_PARAM_NUM] = (board.get(flags[FLAG_PARAM_TER_ONE])->getTroops() - 1);
-				}
-				else if(fortSub.isClickable(click))
-				{
-					flags[FLAG_PARAM_NUM] = flags[FLAG_PARAM_NUM] - 1;
-					if(flags[FLAG_PARAM_NUM] < 0)
-						flags[FLAG_PARAM_NUM] = 0;
-				}
-				break;
 			}
-			//V2DF click = g_screen.convertPixelsToCartesian(V2DF(x,y));
-			//printf("clicked at cartiesian coordinate %f, %f\n", click.getX(), click.getY());
-			break;
 		}
 	}
 }
