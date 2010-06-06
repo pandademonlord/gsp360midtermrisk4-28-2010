@@ -9,7 +9,7 @@ void display()
 
 	//draw code
 	char buffer[BUFFER_SIZE];
-	//int test = 31;
+	//int test = 41;
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->drawConnections();
 	for(int i = 0; i < board.size(); ++i)
