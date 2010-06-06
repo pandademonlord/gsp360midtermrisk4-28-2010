@@ -178,7 +178,7 @@ void initBoard()
 	board.get(ID_E_US)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(198,144)),
 						g_screen.convertPixelsToCartesian(V2DF(190,199)),
-						g_screen.convertPixelsToCartesian(V2DF(258,298)));
+						g_screen.convertPixelsToCartesian(V2DF(260,199))); //fixed
 	board.get(ID_E_US)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(198,144)),
 						g_screen.convertPixelsToCartesian(V2DF(258,198)),
@@ -265,7 +265,7 @@ void initBoard()
 						g_screen.convertPixelsToCartesian(V2DF(298,40)));
 	board.get(ID_NW_TERRITORY)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(278,42)),
-						g_screen.convertPixelsToCartesian(V2DF(277,41)),
+						g_screen.convertPixelsToCartesian(V2DF(277,51)), //fixed
 						g_screen.convertPixelsToCartesian(V2DF(289,42)));
 	board.get(ID_NW_TERRITORY)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(223,39)),
@@ -316,43 +316,43 @@ void initBoard()
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(275,134)),
 						g_screen.convertPixelsToCartesian(V2DF(291,157)),
 						g_screen.convertPixelsToCartesian(V2DF(302,110)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(302,110)),
 						g_screen.convertPixelsToCartesian(V2DF(291,157)),
 						g_screen.convertPixelsToCartesian(V2DF(311,142)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(302,110)),
 						g_screen.convertPixelsToCartesian(V2DF(311,142)),
 						g_screen.convertPixelsToCartesian(V2DF(355,134)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(302,110)),
 						g_screen.convertPixelsToCartesian(V2DF(355,134)),
 						g_screen.convertPixelsToCartesian(V2DF(350,123)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(302,110)),
 						g_screen.convertPixelsToCartesian(V2DF(350,123)),
 						g_screen.convertPixelsToCartesian(V2DF(335,105)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(302,100)),
 						g_screen.convertPixelsToCartesian(V2DF(302,110)),
 						g_screen.convertPixelsToCartesian(V2DF(335,105)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(302,100)),
 						g_screen.convertPixelsToCartesian(V2DF(335,105)),
 						g_screen.convertPixelsToCartesian(V2DF(317,85)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(335,105)),
 						g_screen.convertPixelsToCartesian(V2DF(350,123)),
 						g_screen.convertPixelsToCartesian(V2DF(350,96)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(350,123)),
 						g_screen.convertPixelsToCartesian(V2DF(335,134)),
 						g_screen.convertPixelsToCartesian(V2DF(364,122)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(311,142)),
 						g_screen.convertPixelsToCartesian(V2DF(313,165)),
 						g_screen.convertPixelsToCartesian(V2DF(338,155)));
-	board.get(ID_QUEBEC)->addTriangle(tri);
+	board.get(ID_ONTARIO)->addTriangle(tri);
 		//9. Western United States
 	board.get(ID_W_US)->setArea(V2DF(140,450),40);
 	board.get(ID_W_US)->addConnection(board.get(ID_ALBERTA));
@@ -482,10 +482,10 @@ void initBoard()
 	board.get(ID_VENEZUELA)->addConnection(board.get(ID_PERU));
 	board.get(ID_VENEZUELA)->addConnection(board.get(ID_C_AMERICA));
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(245,315)),
-						g_screen.convertPixelsToCartesian(V2DF(227,258)),
+						g_screen.convertPixelsToCartesian(V2DF(227,358)), //fixed
 						g_screen.convertPixelsToCartesian(V2DF(266,355)));
 	board.get(ID_VENEZUELA)->addTriangle(tri);
-	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(227,258)),
+	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(227,358)), //fixed
 						g_screen.convertPixelsToCartesian(V2DF(264,383)),
 						g_screen.convertPixelsToCartesian(V2DF(266,355)));
 	board.get(ID_VENEZUELA)->addTriangle(tri);
@@ -561,7 +561,7 @@ void initBoard()
 						g_screen.convertPixelsToCartesian(V2DF(626,145)),
 						g_screen.convertPixelsToCartesian(V2DF(638,115)));
 	board.get(ID_N_EUROPE)->addTriangle(tri);
-	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(638)),
+	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(638,155)), //fixed
 						g_screen.convertPixelsToCartesian(V2DF(621,152)),
 						g_screen.convertPixelsToCartesian(V2DF(650,137)));
 	board.get(ID_N_EUROPE)->addTriangle(tri);
@@ -746,7 +746,7 @@ void initBoard()
 	board.get(ID_E_AFRICA)->addConnection(board.get(ID_S_AFRICA));
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(658,266)),
 						g_screen.convertPixelsToCartesian(V2DF(654,319)),
-						g_screen.convertPixelsToCartesian(V2DF(706,625)));
+						g_screen.convertPixelsToCartesian(V2DF(706,265))); //fixed
 	board.get(ID_E_AFRICA)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(706,265)),
 						g_screen.convertPixelsToCartesian(V2DF(654,319)),
@@ -1377,51 +1377,51 @@ void initBoard()
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(902,108)),
 						g_screen.convertPixelsToCartesian(V2DF(918,99)),
 						g_screen.convertPixelsToCartesian(V2DF(910,78)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(902,108)),
 						g_screen.convertPixelsToCartesian(V2DF(910,78)),
 						g_screen.convertPixelsToCartesian(V2DF(883,33)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(902,108)),
 						g_screen.convertPixelsToCartesian(V2DF(883,33)),
 						g_screen.convertPixelsToCartesian(V2DF(851,28)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(902,108)),
 						g_screen.convertPixelsToCartesian(V2DF(851,28)),
 						g_screen.convertPixelsToCartesian(V2DF(869,108)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(902,108)),
 						g_screen.convertPixelsToCartesian(V2DF(869,108)),
 						g_screen.convertPixelsToCartesian(V2DF(872,128)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(902,108)),
 						g_screen.convertPixelsToCartesian(V2DF(872,128)),
 						g_screen.convertPixelsToCartesian(V2DF(886,128)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(902,108)),
 						g_screen.convertPixelsToCartesian(V2DF(886,128)),
 						g_screen.convertPixelsToCartesian(V2DF(902,121)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(871,127)),
 						g_screen.convertPixelsToCartesian(V2DF(861,135)),
 						g_screen.convertPixelsToCartesian(V2DF(876,147)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(871,127)),
 						g_screen.convertPixelsToCartesian(V2DF(876,147)),
 						g_screen.convertPixelsToCartesian(V2DF(884,141)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(871,127)),
 						g_screen.convertPixelsToCartesian(V2DF(884,141)),
 						g_screen.convertPixelsToCartesian(V2DF(882,128)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(871,127)),
 						g_screen.convertPixelsToCartesian(V2DF(869,108)),
 						g_screen.convertPixelsToCartesian(V2DF(857,111)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 	tri = new Triangle(g_screen.convertPixelsToCartesian(V2DF(851,28)),
 						g_screen.convertPixelsToCartesian(V2DF(801,47)),
 						g_screen.convertPixelsToCartesian(V2DF(869,108)));
-	board.get(ID_SIBERIA)->addTriangle(tri);
+	board.get(ID_SIAM)->addTriangle(tri);
 		//11. Ural
 	board.get(ID_URAL)->setArea(g_screen.convertPixelsToCartesian(V2DF(775,92)),35);
 	board.get(ID_URAL)->addConnection(board.get(ID_RUSSIA));
@@ -1626,8 +1626,6 @@ void initBoard()
 						g_screen.convertPixelsToCartesian(V2DF(1125,485)));
 	board.get(ID_W_AUSTRALIA)->addTriangle(tri);
 
-	for(int i = 0; i < board.size(); ++i)
-		board.get(i)->useContinentColorTri();
 	//for(int i = 0; i < board.size(); ++i)
 	//	printf("i == %d, ID == %d, contID == %d, #connect == %d, #troop == %d\n", i, board.get(i)->getID(), board.get(i)->getContinent(), board.get(i)->getNumberConnections(), board.get(i)->getTroops());
 }
