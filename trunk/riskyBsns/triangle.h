@@ -134,23 +134,4 @@ public:
 			return a;
 		}
 	}
-	bool collidesWithTriangle(Triangle * tri)
-	{
-		V2DF point;
-		float dist;
-		for(int i = 0; i < 3; ++i)
-		{
-			if((tri->isClickable(this->getPoint(i))) || (this->isClickable(tri->getPoint(i))))
-				return true;
-		}
-		for(int i = 0; i < 3; ++i)
-		{
-			for(int j = 0; j < 3; ++j)
-			{
-				if(point.lineIntersection(this->getPoint(i), this->getPoint(i+1), tri->getPoint(j), tri->getPoint(j+1), dist, point))
-					return true;
-			}
-		}
-		return false;
-	}
 };

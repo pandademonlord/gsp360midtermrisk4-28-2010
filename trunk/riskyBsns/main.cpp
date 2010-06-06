@@ -9,8 +9,9 @@ using namespace std;
 #include "templatearray.h"
 #include "defines.h"
 #include "territory.h"
-#include "triangle.h"
 #include "circle.h"
+#include "triangle.h"
+#include "rect.h"
 #include "player.h"
 #include "playerai.h"
 #include "card.h"
@@ -22,6 +23,9 @@ TemplateArray<Territory *> board;
 TemplateArray<Player *> players;
 TemplateArray<Card *> deck;
 short flags[FLAGS_NUM];
+Rect finishRect(V2DF((SCREEN_MIN_X + (8 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + SCREEN_HEIGHT/6)), SCREEN_HEIGHT/6, SCREEN_HEIGHT/6);
+Rect fortAdd(V2DF((SCREEN_MIN_X + (4.25 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + (1.75 * SCREEN_HEIGHT/6))), SCREEN_HEIGHT/6, (SCREEN_HEIGHT/6)/2);
+Rect fortSub(V2DF((SCREEN_MIN_X + (4.25 * SCREEN_HEIGHT/6)), (SCREEN_MIN_Y + (1 * SCREEN_HEIGHT/6))), SCREEN_HEIGHT/6, (SCREEN_HEIGHT/6)/2);
 
 void initBoard()
 {
@@ -1628,6 +1632,9 @@ void initBoard()
 
 	for(int i = 0; i < board.size(); ++i)
 		board.get(i)->useContinentColorTri();
+	finishRect.setColor(HIGHLIGHT_COLOR);
+	fortAdd.setColor(HIGHLIGHT_COLOR);
+	fortSub.setColor(HIGHLIGHT_COLOR);
 	//for(int i = 0; i < board.size(); ++i)
 	//	printf("i == %d, ID == %d, contID == %d, #connect == %d, #troop == %d\n", i, board.get(i)->getID(), board.get(i)->getContinent(), board.get(i)->getNumberConnections(), board.get(i)->getTroops());
 }
