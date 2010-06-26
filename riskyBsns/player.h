@@ -213,7 +213,8 @@ public:
 			if(a_board.get(i)->getOwner() == this->m_ID)
 			{
 				//displays ID of Territory, NOT player
-				sprintf(buffer, "ID: %d\n", a_board.get(i)->getID());
+				//sprintf(buffer, "ID: %d\n", a_board.get(i)->getID());
+				sprintf(buffer, a_board.get(i)->getTerName());
 				(a_board.get(i)->getPosition().sum(V2DF(-15,5))).glDrawString(buffer);
 				//displays # of troops within territory
 				sprintf(buffer, "#T: %d\n", a_board.get(i)->getTroops());

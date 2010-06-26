@@ -62,12 +62,14 @@ public:
 	void glDraw()
 	{
 		glColor3ub(c_r, c_g, c_b);
-		//glColor3ub(255, 0, 0);
-		a.glDrawTo(b);
-		//glColor3ub(0, 255, 0);
+		/*a.glDrawTo(b);
 		b.glDrawTo(c);
-		//glColor3ub(0, 0, 255);
-		c.glDrawTo(a);
+		c.glDrawTo(a);*/
+		glBegin(GL_TRIANGLES);
+		a.glVertex();
+		b.glVertex();
+		c.glVertex();
+		glEnd();
 	}
 	/** @return true if this polygon, if convex, has it's points in clockwise order */
 	bool isClockwiseCalc()

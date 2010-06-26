@@ -64,6 +64,24 @@ public:
 			this->setColorTri(CONTINENT_COLOR_OC);
 			break;
 		}
+	
+		int r = rand() % 90, g = rand() % 90, b = rand() % 90;
+		bool once = false;
+		bool onceAgain = false;
+		for(int i = 0; i < this->m_areaTri.size(); ++i)
+		{		
+			//if(this->m_areaTri.get(i)->c_r == 0)
+				this->m_areaTri.get(i)->c_r += r;
+				this->m_areaTri.get(i)->c_g += g;
+			//if(this->m_areaTri.get(i)->c_b == 0)
+			if(this->m_continentID == CONTINENT_ID_AFRICA && !once)
+			{
+				b+=25;
+				once = true;
+			}
+			if(this->m_continentID != CONTINENT_ID_N_AMERICA)
+				{this->m_areaTri.get(i)->c_b += b;}
+		}
 	}
 	Territory(short a_ID, short a_continentID)
 	{
@@ -244,6 +262,8 @@ public:
 	{
 		//draw connections toadjacent territories
 		glColor3f(COLOR_GREY);
+
+		
 		for(int i = 0; i < this->m_connect.size(); ++i)
 		{
 			glBegin(GL_LINES);
@@ -251,6 +271,7 @@ public:
 			this->m_connect.get(i)->getPosition().glVertex();
 			glEnd();
 		}
+		
 	}
 	bool isWithin(V2DF &click)
 	{
@@ -277,6 +298,105 @@ public:
 	void moveTroopsTo(TemplateArray<Territory *> a_board, short a_ID, short a_numTroops)
 	{
 		this->moveTroopsTo(a_board.get(a_ID), a_numTroops);
+	}
+	char* getTerName()
+	{
+		char * terName = new char[20];
+		switch(m_ID)
+		{
+			//North America
+			case 0:
+				return terName = "Alaska"; 
+			case 1:
+				return terName = "Alberta"; 
+			case 2:
+				return terName = "Central America";
+			case 3:
+				return terName = "Eastern US"; 
+			case 4:
+				return terName = "Greenland";
+			case 5:
+				return terName = "Northwest Territory";
+			case 6:
+				return terName = "Ontario";
+			case 7:
+				return terName = "Quebec"; 
+			case 8:
+				return terName = "Western US"; 
+			//South America
+			case 9:
+				return terName = "Argentina";
+			case 10:
+				return terName = "Brazil"; 
+			case 11:
+				return terName = "Peru";
+			case 12:
+				return terName = "Venezuela"; 
+			//Europe
+			case 13:
+				return terName = "Great Britian";
+			case 14:
+				return terName = "Iceland"; 
+			case 15:
+				return terName = "Northern Europe"; 
+			case 16:
+				return terName = "Scandinavia";
+			case 17:
+				return terName = "Southern Europe"; 
+			case 18:
+				return terName = "Russia";
+			case 19:
+				return terName = "Western Europe"; 
+			//Africa
+			case 20:
+				return terName = "Congo"; 
+			case 21:
+				return terName = "Eastern Africa";
+			case 22:
+				return terName = "Egypt"; 
+			case 23:
+				return terName = "Madagascar";
+			case 24:
+				return terName = "Northern Africa"; 
+			case 25:
+				return terName = "Southern Africa"; 
+			//Asia
+			case 26:
+				return terName = "Afghanistan"; 
+			case 27:
+				return terName = "China";
+			case 28:
+				return terName = "India"; 
+			case 29:
+				return terName = "Irkutsk"; 
+			case 30:
+				return terName = "Japan"; 
+			case 31:
+				return terName = "Kamchatka"; 
+			case 32:
+				return terName = "Middle East"; 
+			case 33:
+				return terName = "Mongolia"; 
+			case 34:
+				return terName = "Siam"; 
+			case 35:
+				return terName = "Siberia";
+			case 36:
+				return terName = "Ural";
+			case 37:
+				return terName = "Yakutsk"; 
+			//Oceania
+			case 38:
+				return terName = "Eastern Australia"; 
+			case 39:
+				return terName = "Indonesia"; 
+			case 40:
+				return terName = "New Guinea"; 
+			case 41:
+				return terName = "Western Australia"; 
+			break;
+		}
+			delete terName;
 	}
 	~Territory()
 	{
