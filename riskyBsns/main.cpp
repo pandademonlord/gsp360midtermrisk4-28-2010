@@ -4,6 +4,8 @@
 #include <iostream>
 using namespace std;
 
+//checking that SVN is still working
+
 #include "GLUTRenderingContext.h"
 #include "random.h"
 #include "templatearray.h"
